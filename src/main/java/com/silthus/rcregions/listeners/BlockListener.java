@@ -17,7 +17,6 @@
 
 package com.silthus.rcregions.listeners;
 
-import com.silthus.raidcraft.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
@@ -122,7 +121,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             } else {
                 RCMessaging.send(player, RCMessaging.red("You are not the owner of this region!"));
             }
-        } catch (UnknownRegionException ure) {
+        } catch (Exception ure) {
             RCMessaging.send(player, RCMessaging.red(ure.getMessage()));
         }
     }
@@ -148,7 +147,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             } else {
                 RCMessaging.noPermission(player);
             }
-        } catch (UnknownRegionException e) {
+        } catch (Exception e) {
             event.setCancelled(false);
         }
     }
