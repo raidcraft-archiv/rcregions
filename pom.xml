@@ -30,8 +30,8 @@
   </ciManagement>
 
   <scm>
-      <connection>ssh://git@78.46.16.2:15973/~/rcregion.git</connection>
-      <developerConnection>ssh://git@78.46.16.2:15973/~/rcregion.git</developerConnection>
+      <connection>ssh://git@78.46.16.2:15973/~/rcregions.git</connection>
+      <developerConnection>ssh://git@78.46.16.2:15973/~/rcregions.git</developerConnection>
       <url>http://redmine.raid-craft.de/projects/coins/repository</url>
   </scm>
 
@@ -39,14 +39,6 @@
       <repository>
           <id>raidcraft</id>
           <url>http://ci.raid-craft.de/plugin/repository/everything</url>
-      </repository>
-      <repository>
-          <id>worldedit</id>
-          <url>http://build.sk89q.com/plugin/repository/everything</url>
-      </repository>
-      <repository>
-          <id>bukkit</id>
-          <url>http://ci.bukkit.org/plugin/repository/everything</url>
       </repository>
   </repositories>
 
