@@ -18,25 +18,48 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.silthus</groupId>
-    <artifactId>raidcraft</artifactId>
-    <version>0.1-SNAPSHOT</version>
-  </parent>
+  <groupId>com.silthus</groupId>
   <artifactId>rcregions</artifactId>
   <version>0.1-SNAPSHOT</version>
   <name>RaidCraft RCRegions</name>
 
+    
+  <ciManagement>
+      <system>jenkins</system>
+      <url>http://ci.raid-craft.de</url>
+  </ciManagement>
+
+  <scm>
+      <connection>ssh://git@78.46.16.2:15973/~/rcregion.git</connection>
+      <developerConnection>ssh://git@78.46.16.2:15973/~/rcregion.git</developerConnection>
+      <url>http://redmine.raid-craft.de/projects/coins/repository</url>
+  </scm>
+
+  <repositories>
+      <repository>
+          <id>raidcraft</id>
+          <url>http://ci.raid-craft.de/plugin/repository/everything</url>
+      </repository>
+      <repository>
+          <id>worldedit</id>
+          <url>http://build.sk89q.com/plugin/repository/everything</url>
+      </repository>
+      <repository>
+          <id>bukkit</id>
+          <url>http://ci.bukkit.org/plugin/repository/everything</url>
+      </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>com.silthus</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>RaidCraftCore</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
       <dependency>
           <groupId>com.sk89q</groupId>
           <artifactId>worldguard</artifactId>
-          <version>5.4</version>
+          <version>5.4-SNAPSHOT</version>
       </dependency>
   </dependencies>
 
