@@ -17,7 +17,6 @@
 
 package com.silthus.rcregions;
 
-import com.silthus.raidcraft.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.rcregions.bukkit.RCRegionsPlugin;
 import com.silthus.rcregions.config.RegionsConfig;
@@ -77,6 +76,7 @@ public class RCRegionManager {
      * Gets a WorldGuardRegion from all worlds defined by the id
      * @param id of the WorldGuard region
      * @return WorldGuard Region
+     * @throws UnknownRegionException
      */
     public static ProtectedRegion getWorldGuardRegion(String id) throws UnknownRegionException {
         for (RegionManager regionManager : getAllRegionManagers()) {

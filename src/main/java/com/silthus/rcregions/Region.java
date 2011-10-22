@@ -17,7 +17,6 @@
 
 package com.silthus.rcregions;
 
-import com.silthus.raidcraft.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.rcregions.config.RegionsConfig;
 import com.sk89q.worldguard.domains.DefaultDomain;
