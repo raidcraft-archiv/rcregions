@@ -17,11 +17,11 @@
 
 package com.silthus.rcregions.listeners;
 
-import com.silthus.raidcraft.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import com.silthus.rcregions.RCRegionManager;
 import com.silthus.rcregions.Region;
+import com.silthus.rcregions.UnknownRegionException;
 import com.silthus.rcregions.bukkit.RCRegionsPlugin;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
