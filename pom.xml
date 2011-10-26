@@ -38,7 +38,7 @@
   <repositories>
       <repository>
           <id>raidcraft</id>
-          <url>http://ci.raid-craft.de/plugin/repository/everything</url>
+          <url>http://nexus.raid-craft.de/content/groups/raidcraft/</url>
       </repository>
   </repositories>
 
