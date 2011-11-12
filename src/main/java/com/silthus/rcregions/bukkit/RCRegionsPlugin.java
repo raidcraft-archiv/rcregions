@@ -19,7 +19,6 @@ package com.silthus.rcregions.bukkit;
 
 import com.nijikokun.register.payment.Methods;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import com.silthus.raidcraft.exceptions.UnknownPluginException;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.rcregions.RCRegionManager;
@@ -108,30 +107,22 @@ public class RCRegionsPlugin extends BukkitBasePlugin {
      * WorldGuard was not found
      */
     private void loadWorldGuard() {
-        try {
-            // try to get WorldGuard
-            worldGuard = enableWorldGuard();
-        } catch (UnknownPluginException e) {
-            // print fail message and ...
-            RCLogger.warning(e.getMessage());
-            // ... stop our plugin
-            getServer().getPluginManager().disablePlugin(this);
-        }
+        worldGuard = enableWorldGuard();
     }
 
     /**
      * Gets the refrence to the WorldGuardPlugin
      * @return WorldGuard
-     * @throws UnknownPluginException WorldGuard not enabled
      */
-    private WorldGuardPlugin enableWorldGuard() throws UnknownPluginException {
+    private WorldGuardPlugin enableWorldGuard() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
         // WorldGuard may not be loaded
         if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            throw new UnknownPluginException("WorldGuard not found! Disabling RCRegions...");
+            RCLogger.warning("WorldGuard not found! Disabling RCRegions...");
+            this.getPluginLoader().disablePlugin(this);
         }
-    return (WorldGuardPlugin) plugin;
+        return (WorldGuardPlugin) plugin;
     }
 
     /**
