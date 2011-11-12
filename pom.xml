@@ -37,21 +37,31 @@
 
   <repositories>
       <repository>
+          <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+          </snapshots>
+          <releases>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+          </releases>
           <id>raidcraft</id>
           <url>http://nexus.raid-craft.de/content/groups/raidcraft/</url>
       </repository>
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>com.silthus</groupId>
-      <artifactId>RaidCraftCore</artifactId>
-      <version>0.1-SNAPSHOT</version>
-    </dependency>
       <dependency>
-          <groupId>com.sk89q</groupId>
-          <artifactId>worldguard</artifactId>
-          <version>5.4-SNAPSHOT</version>
+          <groupId>com.silthus</groupId>
+          <artifactId>RaidCraftCore</artifactId>
+          <version>0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+          <scope>provided</scope>
       </dependency>
   </dependencies>
 
