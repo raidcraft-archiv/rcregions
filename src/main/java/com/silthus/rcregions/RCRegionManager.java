@@ -38,7 +38,7 @@ import java.util.List;
 public class RCRegionManager {
 
     private static RCRegionsPlugin plugin;
-    // Zest
+
     private static HashMap<String,Region> regions = new HashMap<String, Region>();
 
     public static void init(RCRegionsPlugin plugin) {
