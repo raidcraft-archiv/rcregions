@@ -17,12 +17,13 @@
 
 package com.silthus.rcregions.listeners;
 
+import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import com.silthus.rcregions.RCRegionManager;
 import com.silthus.rcregions.Region;
-import com.silthus.rcregions.UnknownRegionException;
 import com.silthus.rcregions.bukkit.RCRegionsPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -33,7 +34,7 @@ import static com.silthus.rcregions.util.RegionUtils.isRegionSign;
 
 /**
  *
- * 30.09.11 - 15:39
+ * 14.10.11
  * @author Silthus
  */
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
@@ -48,7 +49,14 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // check if the clicked block is a region sign
-            if (isRegionSign(event.getClickedBlock())) {
+            RCLogger.debug("type " + event.getPlayer().getItemInHand().getTypeId());
+            RCLogger.debug("inhand "+event.getPlayer().getItemInHand());
+            if(event.getPlayer().getItemInHand().getTypeId() == 323)
+            {
+                //TODO: Abbruch einrichten!
+                RCLogger.debug("Schild in der Hand!");
+            }
+            else if (isRegionSign(event.getClickedBlock())) {
                 buyRegion(event);
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -67,10 +75,10 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         Player player = event.getPlayer();
         Sign sign = getSign(event.getClickedBlock());
         try {
-            Region region = RCRegionManager.getRegion(sign.getLine(1));
+            Region region = RCRegionManager.getRegion(sign.getLine(1).substring(2,sign.getLine(1).length()-2));
             RCMessaging.send(player, region.toDetailedString());
             
-        } catch (UnknownRegionException e) {
+        } catch (Exception e) {
             RCMessaging.send(player, RCMessaging.red(e.getMessage()));
             RCUtils.destroyBlock(sign.getBlock());
         }
@@ -86,17 +94,19 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         Sign sign = getSign(event.getClickedBlock());
         try {
             // get the region
-            Region region = RCRegionManager.getRegion(sign.getLine(1));
+            Region region = RCRegionManager.getRegion(sign.getLine(1).substring(2, sign.getLine(1).length() - 2));
             // try to buy the region and abort if player has not enough money
             if (RCRegionManager.buyRegion(player, region)) {
                 // update the region sign
                 RCUtils.updateRegionSign(sign);
                 RCMessaging.send(player, "You just bought " + RCMessaging.yellow(region.getId())
-                    + " for " + RCMessaging.yellow(region.getPrice() + "") + " Coins.");
+                    + " for " + RCMessaging.yellow(RCRegionManager.getTotalRegionCost(player, region) + "") + " Coins.");
             }
-            RCMessaging.send(player, "You dont have enough Coins to buy this region. " +
-                    "You need " + RCRegionManager.getTotalRegionCost(player, region));
-        } catch (UnknownRegionException e) {
+            else{
+                RCMessaging.send(player, "You dont have enough Coins to buy this region. " +
+                    "You need " + ChatColor.YELLOW + RCRegionManager.getTotalRegionCost(player, region) + " Coins");
+            }
+        } catch (Exception e) {
             RCMessaging.send(player, RCMessaging.red(e.getMessage()));
             RCUtils.destroyBlock(sign.getBlock());
         }

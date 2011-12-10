@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  *
- * 03.10.11 - 09:25
+ * 14.10.11
  * @author Silthus
  */
 public class Region {
@@ -86,7 +86,6 @@ public class Region {
         this.minPrice = RegionsConfig.getMinPrice();
         this.price = minPrice;
         this.forSale = false;
-        // TODO: load owners from worldguard
         setOwners();
     }
 
@@ -245,7 +244,7 @@ public class Region {
      */
     public String[] toDetailedString() {
         return new String[]{"Region: " + RCMessaging.yellow(getId()),
-                "Price: " + RCMessaging.yellow(getPrice() + ""),
+                "Price: " + RCMessaging.yellow(getPrice() + " Coins"),
                 "Owner: " + RCMessaging.yellow(getMainOwner())};
     }
 

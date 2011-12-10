@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  *
- * 29.09.11 - 17:56
+ * 14.10.11
  * @author Silthus
  */
 public class RCRegionManager {
@@ -76,7 +76,6 @@ public class RCRegionManager {
      * Gets a WorldGuardRegion from all worlds defined by the id
      * @param id of the WorldGuard region
      * @return WorldGuard Region
-     * @throws UnknownRegionException
      */
     public static ProtectedRegion getWorldGuardRegion(String id) throws UnknownRegionException {
         for (RegionManager regionManager : getAllRegionManagers()) {
@@ -94,7 +93,7 @@ public class RCRegionManager {
      * @return ProtectedRegion
      */
     public static Region getRegion(String name) throws UnknownRegionException {
-        if (regions.containsKey(name)) {
+       if (regions.containsKey(name)) {
             return regions.get(name);
         } else if (isWorldGuardRegion(name)) {
             return addRegion(name);
@@ -159,8 +158,10 @@ public class RCRegionManager {
     public static int getRegionCount(Player player) throws UnknownRegionException {
         int cnt = 0;
         for (String region : getAllRegions().keySet()) {
-            if (getRegion(region).getMainOwner().equalsIgnoreCase(player.getName())) {
-                cnt ++;
+            if(getRegion(region).getMainOwner()!=null){
+                if (getRegion(region).getMainOwner().equalsIgnoreCase(player.getName())) {
+                cnt++;
+                }
             }
         }
         return cnt;
@@ -210,7 +211,7 @@ public class RCRegionManager {
     public static boolean buyRegion(Player player, Region region) throws UnknownRegionException {
         if (hasEnough(player, region)) {
             region.clearOwners();
-            RCEconomy.substract(player, region.getPrice());
+            RCEconomy.substract(player, getTotalRegionCost(player, region));
             region.setMainOwner(player.getName());
             region.setForSale(false);
             return true;

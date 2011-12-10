@@ -30,7 +30,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 
-import static com.nijikokun.register.payment.Methods.getMethod;
+import static com.silthus.raidcraft.util.RCEconomy.getMethod;
 
 /**
  *
@@ -38,7 +38,7 @@ import static com.nijikokun.register.payment.Methods.getMethod;
  * @author Silthus
  */
 public class RCRegionsPlugin extends BukkitBasePlugin {
-    
+
     // our event listeners
     private final org.bukkit.event.block.BlockListener blockListener = new BlockListener(this);
     private final org.bukkit.event.player.PlayerListener playerListener = new PlayerListener(this);
@@ -107,22 +107,30 @@ public class RCRegionsPlugin extends BukkitBasePlugin {
      * WorldGuard was not found
      */
     private void loadWorldGuard() {
-        worldGuard = enableWorldGuard();
+        try {
+            // try to get WorldGuard
+            worldGuard = enableWorldGuard();
+        } catch (Exception e) {
+            // print fail message and ...
+            RCLogger.warning(e.getMessage());
+            // ... stop our plugin
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     /**
      * Gets the refrence to the WorldGuardPlugin
      * @return WorldGuard
+     * @throws Exception WorldGuard not enabled
      */
-    private WorldGuardPlugin enableWorldGuard() {
+    private WorldGuardPlugin enableWorldGuard() throws Exception {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
         // WorldGuard may not be loaded
         if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            RCLogger.warning("WorldGuard not found! Disabling RCRegions...");
-            this.getPluginLoader().disablePlugin(this);
+            throw new Exception("WorldGuard not found! Disabling RCRegions...");
         }
-        return (WorldGuardPlugin) plugin;
+    return (WorldGuardPlugin) plugin;
     }
 
     /**

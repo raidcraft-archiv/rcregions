@@ -23,17 +23,19 @@ import com.silthus.raidcraft.util.RCUtils;
 import com.silthus.rcregions.RCRegionManager;
 import com.silthus.rcregions.Region;
 import com.silthus.rcregions.bukkit.RCRegionsPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import com.silthus.rcregions.config.RegionsConfig;
 
 import static com.silthus.raidcraft.util.RCUtils.isSign;
 import static com.silthus.rcregions.util.RegionUtils.isRegionSign;
 
 /**
  *
- * 29.09.11 - 17:14
+ * 14.10.11
  * @author Silthus
  */
 public class BlockListener extends org.bukkit.event.block.BlockListener {
@@ -50,13 +52,16 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
      */
     @Override
     public void onSignChange(SignChangeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         // check the first line for the unique marker
-        if (isRegionSign(event.getLine(0))) {
+        if (event.getLine(0).equalsIgnoreCase("[" + RegionsConfig.getUniqueLine() + "]")) {
             RCLogger.debug("Region sign found! Canceling event... " + event.toString());
             // cancel the event first and uncancel if everything was a success
             event.setCancelled(true);
             // check the permission
-            if (event.getPlayer().hasPermission("rcregions.sign.create")) {
+            if (event.getPlayer().hasPermission("rcregions.sign.create") || event.getPlayer().hasPermission("rcregions.admin")) {
                 // creates a new SalesSign
                 createSalesSign(event);
                 RCLogger.debug("Sales Sign created successfully: " + event.toString());
@@ -158,10 +163,10 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
      * @param region setting the text from
      */
     private void setSignText(SignChangeEvent event, Region region) {
-        event.setLine(0, "[" + RCMessaging.green(event.getLine(0).toUpperCase()) + "]");
-        event.setLine(1, RCMessaging.red(region.getId()));
-        event.setLine(2, RCMessaging.yellow(region.getPrice() + "") + " Coins");
-        event.setLine(3, RCMessaging.green(region.getMainOwner()));
+        event.setLine(0, RCMessaging.blue(event.getLine(0).toUpperCase()));
+        event.setLine(1, RCMessaging.yellow(region.getId()));
+        event.setLine(2, RCMessaging.black(region.getPrice() + " Coins"));
+        event.setLine(3, RCMessaging.blue(region.getMainOwner()));
         RCLogger.debug("Sign updated: " + event.toString());
     }
 }

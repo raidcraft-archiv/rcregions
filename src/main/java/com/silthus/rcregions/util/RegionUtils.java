@@ -18,11 +18,12 @@
 package com.silthus.rcregions.util;
 
 import com.silthus.rcregions.config.RegionsConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
 /**
- * 03.10.11 - 19:27
+ * 14.10.11 - 19:27
  *
  * @author Silthus
  */
@@ -45,15 +46,6 @@ public class RegionUtils {
      * @return true if region sign
      */
     public static boolean isRegionSign(Sign sign) {
-        return isRegionSign(sign.getLine(0));
-    }
-
-    /**
-     * Checks if the text is the identifier for a region sign
-     * @param text to check
-     * @return true if it is a region text
-     */
-    public static boolean isRegionSign(String text) {
-        return text.equalsIgnoreCase(RegionsConfig.getUniqueLine());
+        return sign.getLine(0).equalsIgnoreCase(ChatColor.BLUE + "[" + RegionsConfig.getUniqueLine() + "]" + ChatColor.WHITE);
     }
 }
