@@ -1,0 +1,8 @@
+signIdentifier: 'region'
+defaults:
+    price: 5000.00
+    owner: 'Server'
+    forSale: true
+ignoredRegions:
+    - City
+    - EventArea

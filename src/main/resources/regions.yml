@@ -1,6 +1,0 @@
-configversion: 1
-###############
-regions:
-  minPrice: 200.00
-  identifier: "RCRegion"
-  percentage: 0.30

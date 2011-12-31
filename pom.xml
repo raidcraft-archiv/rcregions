@@ -19,7 +19,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.silthus</groupId>
-  <artifactId>rcregions</artifactId>
+  <artifactId>RCRegions</artifactId>
   <version>0.1-SNAPSHOT</version>
   <name>RaidCraft RCRegions</name>
 
@@ -60,7 +60,7 @@
       <dependency>
           <groupId>org.bukkit</groupId>
           <artifactId>bukkit</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>1.0.0-R1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
@@ -72,7 +72,7 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+    <sourceDirectory>/src/main/java</sourceDirectory>
 
     <!-- Resources -->
     <resources>
@@ -89,7 +89,7 @@
         <filtering>true</filtering>
         <directory>${basedir}/src/main/resources/</directory>
         <includes>
-          <include>regions.yml</include>
+          <include>config.yml</include>
         </includes>
       </resource>
     </resources>
@@ -116,7 +116,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Class-Path>RaidCraft.jar</Class-Path>
+              <Class-Path>RCRegions.jar</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>

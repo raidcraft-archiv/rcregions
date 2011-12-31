@@ -1,17 +1,13 @@
-name: RaidCraftRCRegions
-main: com.silthus.rcregions.bukkit.RCRegionsPlugin
+name: RCRegions
 version: 0.1
 author: Silthus
 website: www.raid-craft.de
-depend: [RaidCraft,WorldGuard]
-softdepend: [Register]
-load: POSTWORLD
 
-permissions:
-  rcregions.*:
-    description: Gives access to all Inferno commands
-    children:
-      rcregions.sign.create: true
-  rcregions.sign.create:
-    description: Allows you to sell regions via signs
-    default: true
+main: de.raidcraft.rcregions.bukkit.RegionsPlugin
+database: true
+depend: [RaidCraftCore,WorldGuard]
+
+commands:
+  rcr:
+    description: Gives acces to the RCRegions plugin.
+    usage: Please see the help with /<command> help.
