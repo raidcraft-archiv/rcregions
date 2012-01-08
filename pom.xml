@@ -21,7 +21,7 @@
   <groupId>de.raidcraft</groupId>
   <artifactId>RCRegions</artifactId>
   <version>0.1-SNAPSHOT</version>
-  <name>RaidCraft RCRegions</name>
+  <name>RaidCraft Regions</name>
 
     
   <ciManagement>
