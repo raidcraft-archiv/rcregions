@@ -1,11 +1,11 @@
-package de.raidcraft.rcregions.bukkit;
+package com.raidcraft.rcregions.bukkit;
 
+import com.raidcraft.rcregions.commands.RegionCommand;
+import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.database.RegionDatabase;
+import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCLogger;
-import de.raidcraft.rcregions.commands.RegionCommand;
-import de.raidcraft.rcregions.config.MainConfig;
-import de.raidcraft.rcregions.database.RegionDatabase;
-import de.raidcraft.rcregions.listeners.RCBlockListener;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockListener;
 

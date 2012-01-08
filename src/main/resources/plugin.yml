@@ -3,7 +3,7 @@ version: 0.1
 author: Silthus
 website: www.raid-craft.de
 
-main: de.raidcraft.rcregions.bukkit.RegionsPlugin
+main: com.raidcraft.rcregions.bukkit.RegionsPlugin
 database: true
 depend: [RaidCraftCore,WorldGuard]
 

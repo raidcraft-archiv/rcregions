@@ -1,4 +1,4 @@
-package de.raidcraft.rcregions.database;
+package com.raidcraft.rcregions.database;
 
 import com.avaje.ebean.validation.NotNull;
 

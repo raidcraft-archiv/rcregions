@@ -1,11 +1,11 @@
-package de.raidcraft.rcregions.listeners;
+package com.raidcraft.rcregions.listeners;
 
+import com.raidcraft.rcregions.Region;
+import com.raidcraft.rcregions.RegionManager;
 import com.silthus.raidcraft.util.RCMessaging;
-import de.raidcraft.rcregions.Region;
-import de.raidcraft.rcregions.RegionManager;
-import de.raidcraft.rcregions.config.MainConfig;
-import de.raidcraft.rcregions.exceptions.UnknownRegionException;
-import de.raidcraft.rcregions.exceptions.WrongSignFormat;
+import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.exceptions.WrongSignFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockListener;

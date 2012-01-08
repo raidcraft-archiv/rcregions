@@ -1,11 +1,11 @@
-package de.raidcraft.rcregions.exceptions;
+package com.raidcraft.rcregions.exceptions;
 
 /**
- * 31.12.11 - 11:25
+ * 02.01.12 - 16:37
  *
  * @author Silthus
  */
-public class WrongSignFormat extends Throwable {
+public class RegionException extends Throwable {
 
     /**
      * Constructs a new throwable with {@code null} as its detail message.
@@ -15,8 +15,8 @@ public class WrongSignFormat extends Throwable {
      * <p>The {@link #fillInStackTrace()} method is called to initialize
      * the stack trace data in the newly created throwable.
      */
-    public WrongSignFormat() {
-        super("Falsche Schild Formatierung!");
+    public RegionException() {
+        super("Es ist ein Regions Fehler aufgetreten. Bitte kontaktiere einen Admin deines Vertrauens.");
     }
 
     /**
@@ -30,7 +30,9 @@ public class WrongSignFormat extends Throwable {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public WrongSignFormat(String message) {
+    public RegionException(String message) {
         super(message);
     }
 }
+
+

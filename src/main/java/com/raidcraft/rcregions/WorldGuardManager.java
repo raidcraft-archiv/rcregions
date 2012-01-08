@@ -1,14 +1,19 @@
-package de.raidcraft.rcregions;
+package com.raidcraft.rcregions;
 
 import com.silthus.raidcraft.util.RCLogger;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -52,16 +57,38 @@ public class WorldGuardManager {
         return region;
     }
 
+    private static LocalPlayer wrapPlayer(Player player) {
+        return getWorldGuard().wrapPlayer(player);
+    }
+
+    public static Map<String, ProtectedRegion> getPlayerRegions(Player player) {
+        Map<String, ProtectedRegion> regionMap = new HashMap<String, ProtectedRegion>();
+        RegionManager regionManager = getWorldGuard().getRegionManager(player.getWorld());
+        Map<String, ProtectedRegion> regions = regionManager.getRegions();
+        int count = regionManager.getRegionCountOfPlayer(wrapPlayer(player));
+        int i = 0;
+        for (ProtectedRegion region : regions.values()) {
+            if (isOwner(player.getName(), region)) {
+                i++;
+                regionMap.put(region.getId(), region);
+            }
+            if (i == count) {
+                break;
+            }
+        }
+        return regionMap;
+    }
+
     public static ApplicableRegionSet getLocalRegions(Location location) {
         return getWorldGuard().getRegionManager(location.getWorld()).getApplicableRegions(location);
     }
 
     public static boolean isOwner(String player, String id, World world) {
-        return getRegion(id, world).isOwner(getWorldGuard().wrapPlayer(Bukkit.getServer().getPlayer(player)));
+        return getRegion(id, world).isOwner(wrapPlayer(Bukkit.getServer().getPlayer(player)));
     }
 
     public static boolean isOwner(String player, ProtectedRegion region) {
-        return region.isOwner(getWorldGuard().wrapPlayer(Bukkit.getServer().getPlayer(player)));
+        return region.isOwner(wrapPlayer(Bukkit.getServer().getPlayer(player)));
     }
 
     public static Set<String> getOwners(String id, World world) {

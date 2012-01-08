@@ -1,4 +1,4 @@
-package de.raidcraft.rcregions.config;
+package com.raidcraft.rcregions.config;
 
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.config.ConfigManager;

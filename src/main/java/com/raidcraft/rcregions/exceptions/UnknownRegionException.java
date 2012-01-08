@@ -1,4 +1,4 @@
-package de.raidcraft.rcregions.exceptions;
+package com.raidcraft.rcregions.exceptions;
 
 /**
  * 17.12.11 - 12:08

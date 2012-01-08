@@ -1,10 +1,10 @@
-package de.raidcraft.rcregions;
+package com.raidcraft.rcregions;
 
 import com.silthus.raidcraft.util.RCLogger;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import de.raidcraft.rcregions.bukkit.RegionsPlugin;
-import de.raidcraft.rcregions.config.MainConfig;
-import de.raidcraft.rcregions.database.RegionDatabase;
+import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.database.RegionDatabase;
 
 /**
  *
