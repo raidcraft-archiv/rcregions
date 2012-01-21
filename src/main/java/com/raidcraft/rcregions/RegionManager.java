@@ -190,10 +190,8 @@ public final class RegionManager {
     }
 
     public void clearRegion(Player player, Region region) {
-        double minPrice = region.getDistrict().getMinPrice();
         region.setOwner(null);
-        region.setPrice(minPrice);
-        region.setBuyable(false);
-        RCEconomy.add(player, minPrice);
+        region.setBuyable(true);
+        RCEconomy.add(player, region.getDistrict().getMinPrice());
     }
 }
