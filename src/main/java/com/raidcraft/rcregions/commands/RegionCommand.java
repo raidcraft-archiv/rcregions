@@ -57,6 +57,7 @@ public class RegionCommand implements CommandExecutor {
             if (cmd.is(label, "reload")) {
                 if (sender.hasPermission("rcregions.admin")) {
                     RegionsPlugin.get().reload();
+                    RCMessaging.send(sender, "Config Files reloaded and Cache cleared.");
                 } else {
                     RCMessaging.noPermission(sender);
                 }
