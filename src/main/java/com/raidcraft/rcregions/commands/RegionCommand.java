@@ -33,28 +33,79 @@ public class RegionCommand implements CommandExecutor {
             // [/rcr claim]
             if (cmd.is(label, "buy", "claim", "-b")) {
                 if (sender.hasPermission("rcregions.region.buy") && sender instanceof Player) {
-                    buyRegion();
+                    if (args.length > 1) {
+                        buyRegion(args[1]);
+                    } else {
+                        buyRegion();
+                    }
                 } else {
                     RCMessaging.noPermission(sender);
+                }
+            }
+            if (cmd.is(label, "drop", "sell", "-d", "-s")) {
+                if (args.length > 1) {
+                    dropRegion(args[1]);
+                } else {
+                    dropRegion();
                 }
             }
         }
         return true;
     }
-
+    
+    private void buyRegion(String region) {
+        try {
+            buyRegion(RegionManager.get().getRegion(region));
+        } catch (UnknownRegionException e) {
+            RCMessaging.warn(sender, e.getMessage());
+        }
+    }
+    
     private void buyRegion() {
         try {
             Player player = cmd.getPlayerOfSender(sender);
             Location location = player.getLocation();
-            RegionManager regionManager = RegionManager.get();
-            Region region = regionManager.getRegion(location);
-            regionManager.buyRegion(player, region);
+            buyRegion(RegionManager.get().getRegion(location));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
+        }
+    }
+
+    private void buyRegion(Region region) {
+        try {
+            Player player = cmd.getPlayerOfSender(sender);
+            RegionManager regionManager = RegionManager.get();
+            regionManager.buyRegion(player, region);
+            RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
         } catch (RegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         } catch (PlayerException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
+    }
+
+    private void dropRegion(String region) {
+        try {
+            dropRegion(RegionManager.get().getRegion(region));
+        } catch (UnknownRegionException e) {
+            RCMessaging.warn(sender, e.getMessage());
+        }
+    }
+    
+    private void dropRegion() {
+        try {
+            Player player = cmd.getPlayerOfSender(sender);
+            Region region = RegionManager.get().getRegion(player.getLocation());
+            dropRegion(region);
+        } catch (UnknownRegionException e) {
+            RCMessaging.warn(sender, e.getMessage());
+        }
+    }
+
+    private void dropRegion(Region region) {
+/*        Player player = cmd.getPlayerOfSender(sender);
+        RegionManager.dropRegion(player, region);
+        RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
+                ChatColor.YELLOW + region.getDistrict().getMinPrice() + ChatColor.WHITE + " Coins an den Server verkauft.");*/
     }
 }

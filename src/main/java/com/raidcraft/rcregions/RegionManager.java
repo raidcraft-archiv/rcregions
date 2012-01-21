@@ -11,9 +11,12 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +55,10 @@ public final class RegionManager {
         _self = null;
         _self = new RegionManager();
     }
+    
+    public static void init() {
+        get();
+    }
 
     public static RegionManager get() {
         if (_self == null) {
@@ -67,9 +74,9 @@ public final class RegionManager {
             ProtectedRegion region = WorldGuardManager.getRegion(name);
             if (region != null && isAllowedRegion(region)) {
                 try {
-                    Region regio = new Region(region);
-                    _regions.put(name, regio);
-                    return regio;
+                    Region rcRegion = new Region(region);
+                    _regions.put(name, rcRegion);
+                    return rcRegion;
                 } catch (UnknownDistrictException e) {
                     RCLogger.warning(e.getMessage());
                 }
@@ -110,35 +117,84 @@ public final class RegionManager {
 
     public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
         String owner = region.getOwner();
-        if ( !(owner == null || owner.equals("") || owner.equalsIgnoreCase("Staff"))) {
-            throw new RegionException("Die Region gehört bereits jemandem.\nBesitzer: " + owner);
+        if (!(owner == null) && owner.equalsIgnoreCase(player.getName())) {
+            throw new PlayerException("Du bist bereits der Besitzer dieser Region.");
+        }
+        District district = region.getDistrict();
+        if (!(getPlayerRegionCount(player, district) <= district.getMaxRegions())) {
+            throw new RegionException("Du hast bereits zu viele Grundstücke in diesem Distrikt.");
+        }
+        if (!region.isBuyable()) {
+            throw new RegionException("Diese Region steht nicht zum Verkauf bereit.");
         }
         double price = region.getPrice();
         if (!RCEconomy.hasEnough(player, price)) {
-            throw new PlayerException("Nicht genug Geld um dieses Grundstück zu kaufen.\nPreis: " + price + " Coins.");
+            throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
         }
-        price = price * getTaxes(player, region);
-        if (!RCEconomy.hasEnough(player, price)) {
-            throw new PlayerException("Du hast nicht genug Geld um die Steuern zu bezahlen.\nPreis: " + price + " Coins.");
+        double tax = price * getTaxes(player, region);
+        if (!RCEconomy.hasEnough(player, (price + tax))) {
+            throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
         }
+        RCEconomy.substract(player, (price + tax));
+        region.setOwner(player.getName());
+        region.setBuyable(false);
     }
 
     public double getTaxes(Player player, Region region) {
-       District district = region.getDistrict();
-        int taxCnt = 0;
+        District district = region.getDistrict();
+        return district.getTaxes(getPlayerRegionCount(player, district));
+    }
+
+    public double getFullPrice(Player player, Region region) {
+        return (region.getPrice() * getTaxes(player, region)) + region.getPrice();
+    }
+
+    public int getPlayerRegionCount(Player player, District district) {
+        int cnt = 0;
         for (String r :getPlayerRegions(player).keySet()) {
             try {
                 if (getRegion(r).getDistrict() == district) {
-                    taxCnt++;
+                    cnt++;
                 }
             } catch (UnknownRegionException e) {
                 RCLogger.debug(e.getMessage());
             }
         }
-        return district.getTaxes(taxCnt);
+        return cnt;
     }
 
     private Map<String, ProtectedRegion> getPlayerRegions(Player player) {
         return WorldGuardManager.getPlayerRegions(player);
+    }
+
+    public void updateSign(Sign sign, Region region) {
+        sign.setLine(0, "" + ChatColor.GREEN + region.getPrice() + ChatColor.YELLOW + "c");
+        sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
+        String owner = region.getOwner();
+        if (owner == null || owner.equalsIgnoreCase("")) {
+            owner = "Staff";
+        }
+        sign.setLine(2, ChatColor.WHITE + owner);
+        if (region.isBuyable()) {
+            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+        } else {
+            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+        }
+        sign.update();
+    }
+
+    public void updateSign(SignChangeEvent sign, Region region) {
+        sign.setLine(0, "" + ChatColor.GREEN + region.getPrice() + ChatColor.YELLOW + "c");
+        sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
+        String owner = region.getOwner();
+        if (owner == null || owner.equalsIgnoreCase("")) {
+            owner = "Staff";
+        }
+        sign.setLine(2, ChatColor.WHITE + owner);
+        if (region.isBuyable()) {
+            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+        } else {
+            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+        }
     }
 }

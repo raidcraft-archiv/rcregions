@@ -2,10 +2,11 @@ package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
-import com.silthus.raidcraft.util.RCMessaging;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.exceptions.WrongSignFormat;
+import com.silthus.raidcraft.util.RCMessaging;
+import com.silthus.raidcraft.util.RCUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockListener;
@@ -23,44 +24,31 @@ public class RCBlockListener extends BlockListener {
         if (event.isCancelled()) {
             return;
         }
-        if (event.getLine(0).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
+        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + MainConfig.getSignIdentifier() + "]"))) {
+            RCMessaging.warn(event.getPlayer(), "Nene Freundchen, erstell mal lieber nen richtiges Schild!");
+            event.setCancelled(true);
+        } else if (event.getLine(0).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
             Player player = event.getPlayer();
-            // TODO: replace debug "true" with: player.hasPermission("rcregions.sign.place")
-            if (true) {
+            if (player.hasPermission("rcregions.sign.place")) {
                 try {
+                    Region region;
                     if (!(event.getLine(1) == null) && !(event.getLine(1).equals(""))) {
-                        Region region = RegionManager.get().getRegion(event.getLine(1));
-                        event.setLine(1, "Nummer: " + ChatColor.RED + region.getName());
-                        if (!(event.getLine(2) == null) && !(event.getLine(2).equals(""))) {
-                            double price = Double.parseDouble(event.getLine(2));
-                            if (price < region.getDistrict().getMinPrice()) {
-                                throw new WrongSignFormat("Preis ist unter dem Mindestpreis der Region!");
-                            }
-                            region.setPrice(price);
-                            event.setLine(0, "Preis: " + ChatColor.GREEN + price);
-                        }
-                        if ((event.getLine(3) == null) && (event.getLine(3).equals(""))) {
-                            String owner = region.getOwner();
-                            if (owner == null || owner.equals("") || owner.equals("Staff")) {
-                                owner = "Staff";
-                            }
-                            if (owner.length() < 6) {
-                                event.setLine(2, "Makler: " + ChatColor.WHITE + owner);
-                            } else if (owner.length() < 14) {
-                                event.setLine(2, "Makler: ");
-                                event.setLine(3, ChatColor.WHITE + owner);
-                            } else if (owner.length() < 18) {
-                                event.setLine(2, "Makler: " + ChatColor.WHITE + owner.substring(0, 4) + "-");
-                                event.setLine(3, ChatColor.WHITE + owner.substring(4));
-                            } else {
-                                event.setLine(2, "Makler: " + ChatColor.WHITE + "Owner");
-                            }
-                        } else {
-                            throw new WrongSignFormat("In Zeile 4 darf nichts stehen.");
-                        } 
+                        region = RegionManager.get().getRegion(event.getLine(1));
                     } else {
-                        throw new WrongSignFormat("In Zeile 2 muss der Name der Region stehen.");
+                        region = RegionManager.get().getRegion(event.getBlock().getLocation());
                     }
+                    if (!(player.getName().equalsIgnoreCase(region.getOwner()))) {
+                        RCMessaging.send(player, "Du bist nicht der Besitzer dieser Region.");
+                    }
+                    if (!(event.getLine(2) == null) && !(event.getLine(2).equals(""))) {
+                        double price = Double.parseDouble(event.getLine(2));
+                        if (price < region.getDistrict().getMinPrice()) {
+                            event.setCancelled(true);
+                            throw new WrongSignFormat("Preis ist unter dem Mindestpreis der Region!");
+                        }
+                        region.setPrice(price);
+                    }
+                    RegionManager.get().updateSign(event, region);
                 } catch (WrongSignFormat e) {
                     RCMessaging.warn(player, e.getMessage());
                     event.setCancelled(true);
@@ -75,6 +63,9 @@ public class RCBlockListener extends BlockListener {
                 RCMessaging.noPermission(player);
                 event.setCancelled(true);
             }
+        }
+        if (event.isCancelled()) {
+            RCUtils.destroyBlock(event.getBlock());
         }
     }
 }

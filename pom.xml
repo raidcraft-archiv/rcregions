@@ -37,16 +37,16 @@
 
   <repositories>
       <repository>
-          <snapshots>
-              <enabled>true</enabled>
-              <updatePolicy>always</updatePolicy>
-          </snapshots>
-          <releases>
-              <enabled>true</enabled>
-              <updatePolicy>always</updatePolicy>
-          </releases>
           <id>raidcraft</id>
-          <url>http://nexus.raid-craft.de/content/groups/raidcraft/</url>
+          <url>http://nexus.raid-craft.de/content/groups/public/</url>
+      </repository>
+      <repository>
+          <id>tehkode-repo</id>
+          <url>http://repo.tehkode.ru/repository/repo/</url>
+      </repository>
+      <repository>
+          <id>bukkit-repo</id>
+          <url>http://repo.bukkit.org/content/groups/repo</url>
       </repository>
   </repositories>
 

@@ -1,6 +1,9 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.silthus.raidcraft.util.RCLogger;
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -38,11 +41,19 @@ public class Region {
             this.owner = player;
             break;
         }
+        RCLogger.warning("Region " + region.getId() + " is buyable? " + region.getFlag(DefaultFlag.BUYABLE));
         // check if it is for sale
-        this.buyable = region.getFlag(DefaultFlag.BUYABLE);
-        save();
+        if (region.getFlag(DefaultFlag.BUYABLE) == null) {
+            setBuyable(MainConfig.getDefaultBuyable());
+        } else {
+            this.buyable = region.getFlag(DefaultFlag.BUYABLE);
+        }
         // set the price
-        this.price = region.getFlag(DefaultFlag.PRICE);
+        if (region.getFlag(DefaultFlag.PRICE) == null) {
+            setPrice(getDistrict().getMinPrice());
+        } else {
+            this.price = region.getFlag(DefaultFlag.PRICE);
+        }
     }
 
     /* All Getters and Setters go here */
@@ -68,6 +79,10 @@ public class Region {
 
     public void setOwner(String player) {
         this.owner = player;
+        DefaultDomain domain = new DefaultDomain();
+        domain.addPlayer(player);
+        region.setOwners(domain);
+        save();
     }
 
     public void setPrice(double price) {
@@ -91,6 +106,6 @@ public class Region {
     }
     
     private void save() {
-        WorldGuardManager.getWorldGuard().saveConfig();
+        WorldGuardManager.save();
     }
 }

@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -105,5 +106,15 @@ public class WorldGuardManager {
 
     public static Set<String> getMembers(ProtectedRegion region) {
         return region.getMembers().getPlayers();
+    }
+    
+    public static void save() {
+        for (World world : Bukkit.getServer().getWorlds()) {
+            try {
+                getWorldGuard().getRegionManager(world).save();
+            } catch (IOException e) {
+                RCLogger.warning(e.getMessage());
+            }
+        }
     }
 }

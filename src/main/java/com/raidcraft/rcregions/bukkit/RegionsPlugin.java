@@ -5,9 +5,11 @@ import com.raidcraft.rcregions.RegionManager;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
+import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.player.PlayerListener;
 
 /**
  *
@@ -18,6 +20,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
 
     private static BukkitBasePlugin _self;
     private static final BlockListener blockListener = new RCBlockListener();
+    private static final PlayerListener playerListener = new RCPlayerListener();
 
     public void onEnable() {
         super.onEnable();
@@ -31,8 +34,15 @@ public class RegionsPlugin extends BukkitBasePlugin {
     @Override
     public void registerEvents() {
         MainConfig.init(this);
+        initializeManagers();
         registerCommand("rcr", new RegionCommand());
         registerEvent(Event.Type.SIGN_CHANGE, blockListener);
+        registerEvent(Event.Type.PLAYER_INTERACT, playerListener);
+    }
+
+    private void initializeManagers() {
+        DistrictManager.init();
+        RegionManager.init();
     }
     
     public void reload() {

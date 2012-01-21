@@ -30,6 +30,10 @@ public final class DistrictManager {
         _self = null;
         _self = new DistrictManager();
     }
+    
+    public static void init() {
+        get();
+    }
 
     public static DistrictManager get() {
         if (_self == null) {
