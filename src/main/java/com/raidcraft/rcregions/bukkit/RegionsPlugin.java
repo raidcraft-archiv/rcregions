@@ -18,7 +18,7 @@ import org.bukkit.event.player.PlayerListener;
  */
 public class RegionsPlugin extends BukkitBasePlugin {
 
-    private static BukkitBasePlugin _self;
+    private static RegionsPlugin _self;
     private static final BlockListener blockListener = new RCBlockListener();
     private static final PlayerListener playerListener = new RCPlayerListener();
 
@@ -27,7 +27,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
         _self = this;
     }
     
-    public static BukkitBasePlugin get() {
+    public static RegionsPlugin get() {
         return _self;
     }
     

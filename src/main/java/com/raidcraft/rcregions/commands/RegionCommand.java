@@ -2,6 +2,7 @@ package com.raidcraft.rcregions.commands;
 
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
+import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
@@ -43,10 +44,21 @@ public class RegionCommand implements CommandExecutor {
                 }
             }
             if (cmd.is(label, "drop", "sell", "-d", "-s")) {
-                if (args.length > 1) {
-                    dropRegion(args[1]);
+                if (sender.hasPermission("rcregions.region.drop") && sender instanceof Player) {
+                    if (args.length > 1) {
+                        dropRegion(args[1]);
+                    } else {
+                        dropRegion();
+                    }
                 } else {
-                    dropRegion();
+                    RCMessaging.noPermission(sender);
+                }
+            }
+            if (cmd.is(label, "reload")) {
+                if (sender.hasPermission("rcregions.admin")) {
+                    RegionsPlugin.get().reload();
+                } else {
+                    RCMessaging.noPermission(sender);
                 }
             }
         }
@@ -103,9 +115,13 @@ public class RegionCommand implements CommandExecutor {
     }
 
     private void dropRegion(Region region) {
-/*        Player player = cmd.getPlayerOfSender(sender);
-        RegionManager.dropRegion(player, region);
-        RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
-                ChatColor.YELLOW + region.getDistrict().getMinPrice() + ChatColor.WHITE + " Coins an den Server verkauft.");*/
+        Player player = cmd.getPlayerOfSender(sender);
+        if (region.getOwner().equalsIgnoreCase(player.getName()) || sender.hasPermission("rcregions.admin")) {
+            RegionManager.get().clearRegion(player, region);
+            RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
+                    RCMessaging.yellow(region.getDistrict().getMinPrice() + "") + " Coins an den Server verkauft.");
+        } else {
+            RCMessaging.noPermission(player);
+        }
     }
 }

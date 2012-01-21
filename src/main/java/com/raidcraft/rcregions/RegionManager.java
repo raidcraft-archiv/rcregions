@@ -7,13 +7,10 @@ import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -33,22 +30,6 @@ public final class RegionManager {
 
     private RegionManager() {
         _regions = new HashMap<String, Region>();
-        load();
-    }
-
-    private void load() {
-        WorldGuardPlugin worldGuard = WorldGuardManager.getWorldGuard();
-        for (World world : Bukkit.getServer().getWorlds()) {
-            for (ProtectedRegion region : worldGuard.getRegionManager(world).getRegions().values()) {
-                if (isAllowedRegion(region)) {
-                    try {
-                        _regions.put(region.getId(), new Region(region));
-                    } catch (UnknownDistrictException e) {
-                        RCLogger.warning(e.getMessage());
-                    }
-                }
-            }
-        }
     }
     
     public synchronized static void reload() {
@@ -107,7 +88,7 @@ public final class RegionManager {
         String id = region.getId();
         boolean matches = false;
         for (String district : MainConfig.getDistricts()) {
-            if (id.matches("^" + MainConfig.getDistrict(district).getIdentifier() + ".*")) {
+            if (id.matches("^" + MainConfig.getDistrict(district).getIdentifier() + "\\d*")) {
                 matches = true;
                 break;
             }
@@ -168,7 +149,12 @@ public final class RegionManager {
     }
 
     public void updateSign(Sign sign, Region region) {
-        sign.setLine(0, "" + ChatColor.GREEN + region.getPrice() + ChatColor.YELLOW + "c");
+        double price = region.getPrice();
+        if (price > 0.0) {
+            sign.setLine(0, "" + ChatColor.GREEN + price + ChatColor.YELLOW + "c");
+        } else {
+            sign.setLine(0, ChatColor.GREEN + "Kostenlos");
+        }
         sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
         String owner = region.getOwner();
         if (owner == null || owner.equalsIgnoreCase("")) {
@@ -184,7 +170,12 @@ public final class RegionManager {
     }
 
     public void updateSign(SignChangeEvent sign, Region region) {
-        sign.setLine(0, "" + ChatColor.GREEN + region.getPrice() + ChatColor.YELLOW + "c");
+        double price = region.getPrice();
+        if (price > 0.0) {
+            sign.setLine(0, "" + ChatColor.GREEN + price + ChatColor.YELLOW + "c");
+        } else {
+            sign.setLine(0, ChatColor.GREEN + "Kostenlos");
+        }
         sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
         String owner = region.getOwner();
         if (owner == null || owner.equalsIgnoreCase("")) {
@@ -196,5 +187,13 @@ public final class RegionManager {
         } else {
             sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
         }
+    }
+
+    public void clearRegion(Player player, Region region) {
+        double minPrice = region.getDistrict().getMinPrice();
+        region.setOwner(null);
+        region.setPrice(minPrice);
+        region.setBuyable(false);
+        RCEconomy.add(player, minPrice);
     }
 }

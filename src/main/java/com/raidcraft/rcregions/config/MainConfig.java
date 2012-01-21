@@ -33,10 +33,6 @@ public class MainConfig {
     public static ConfigurationSection getConfig() {
         return ConfigManager.getConfig(FILENAME, plugin);
     }
-    
-    public static boolean getDefaultBuyable() {
-        return getConfig().getBoolean("defaults.buyable");
-    }
 
     public static String getSignIdentifier() {
         return getConfig().getString("signIdentifier");

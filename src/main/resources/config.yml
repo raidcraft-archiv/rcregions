@@ -1,9 +1,4 @@
 signIdentifier: 'region'
-# defaults for creating a new region
-defaults:
-    # should all new regions be for sale?
-    # you need to add them first or place a sign on them
-    buyable: true
 # regions exist in districts and need to have the following annotation:
 # WorldGuard Name: <district identifier><unique number>
 # e.g.: z10 - Region in the Zentrum district with the number 10

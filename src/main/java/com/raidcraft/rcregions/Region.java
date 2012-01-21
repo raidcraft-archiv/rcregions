@@ -1,8 +1,6 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
-import com.silthus.raidcraft.util.RCLogger;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -41,10 +39,13 @@ public class Region {
             this.owner = player;
             break;
         }
-        RCLogger.warning("Region " + region.getId() + " is buyable? " + region.getFlag(DefaultFlag.BUYABLE));
         // check if it is for sale
         if (region.getFlag(DefaultFlag.BUYABLE) == null) {
-            setBuyable(MainConfig.getDefaultBuyable());
+            if (owner == null || owner.equals("")) {
+                setBuyable(true);
+            } else {
+                setBuyable(false);
+            }
         } else {
             this.buyable = region.getFlag(DefaultFlag.BUYABLE);
         }

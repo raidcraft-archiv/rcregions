@@ -7,6 +7,7 @@ import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.SignUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -58,7 +59,9 @@ public class RCPlayerListener extends PlayerListener {
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
             Sign sign = SignUtils.getSign(event.getClickedBlock());
             if (ChatColor.stripColor(sign.getLine(3)).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
-                event.setCancelled(true);
+                if (player.getGameMode() == GameMode.CREATIVE) {
+                    event.setCancelled(true);
+                }
                 try {
                     Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                     RegionManager.get().updateSign(sign, region);
