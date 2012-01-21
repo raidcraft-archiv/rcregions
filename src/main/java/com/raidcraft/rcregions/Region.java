@@ -81,7 +81,9 @@ public class Region {
     public void setOwner(String player) {
         this.owner = player;
         DefaultDomain domain = new DefaultDomain();
-        domain.addPlayer(player);
+        if (!(player == null) && !player.equals("")) {
+            domain.addPlayer(player);
+        }
         region.setOwners(domain);
         save();
     }
