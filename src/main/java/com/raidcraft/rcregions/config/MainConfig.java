@@ -26,6 +26,10 @@ public class MainConfig {
         ConfigManager.save(FILENAME, plugin);
     }
     
+    public static void reload() {
+        ConfigManager.reload(FILENAME, plugin);
+    }
+    
     public static void load() {
         ConfigManager.loadConfig(FILENAME, plugin);
     }

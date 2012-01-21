@@ -46,6 +46,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
     }
     
     public void reload() {
+        MainConfig.reload();
         DistrictManager.reload();
         RegionManager.reload();
     }
