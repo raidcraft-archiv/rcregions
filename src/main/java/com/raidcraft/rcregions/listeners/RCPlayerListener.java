@@ -59,7 +59,7 @@ public class RCPlayerListener extends PlayerListener {
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
             Sign sign = SignUtils.getSign(event.getClickedBlock());
             if (ChatColor.stripColor(sign.getLine(3)).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
-                if (player.getGameMode() == GameMode.CREATIVE) {
+                if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
                     event.setCancelled(true);
                 }
                 try {
