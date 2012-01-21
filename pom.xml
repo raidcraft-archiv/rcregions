@@ -87,7 +87,7 @@
         <resources>
             <resource>
                 <targetPath>.</targetPath>
-                <directory>/src/main/resources/</directory>
+                <directory>src/main/resources/</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>plugin.yml</include>
