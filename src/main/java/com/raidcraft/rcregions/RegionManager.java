@@ -1,13 +1,18 @@
 package com.raidcraft.rcregions;
 
-import com.silthus.raidcraft.util.RCEconomy;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
+import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.silthus.raidcraft.util.RCEconomy;
+import com.silthus.raidcraft.util.RCLogger;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -18,20 +23,41 @@ import java.util.Map;
  *
  * @author Silthus
  */
-public class RegionManager {
+public final class RegionManager {
 
-    private static RegionManager self;
+    private static RegionManager _self;
     private final HashMap<String, Region> _regions;
 
     private RegionManager() {
         _regions = new HashMap<String, Region>();
+        load();
+    }
+
+    private void load() {
+        WorldGuardPlugin worldGuard = WorldGuardManager.getWorldGuard();
+        for (World world : Bukkit.getServer().getWorlds()) {
+            for (ProtectedRegion region : worldGuard.getRegionManager(world).getRegions().values()) {
+                if (isAllowedRegion(region)) {
+                    try {
+                        _regions.put(region.getId(), new Region(region));
+                    } catch (UnknownDistrictException e) {
+                        RCLogger.warning(e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+    
+    public synchronized static void reload() {
+        _self = null;
+        _self = new RegionManager();
     }
 
     public static RegionManager get() {
-        if (self == null) {
-            self = new RegionManager();
+        if (_self == null) {
+            _self = new RegionManager();
         }
-        return self;
+        return _self;
     }
 
     public Region getRegion(String name) throws UnknownRegionException {
@@ -40,11 +66,16 @@ public class RegionManager {
         } else {
             ProtectedRegion region = WorldGuardManager.getRegion(name);
             if (region != null && isAllowedRegion(region)) {
-                _regions.put(name, new Region(region));
-                return getRegion(name);
+                try {
+                    Region regio = new Region(region);
+                    _regions.put(name, regio);
+                    return regio;
+                } catch (UnknownDistrictException e) {
+                    RCLogger.warning(e.getMessage());
+                }
             }
         }
-        throw new UnknownRegionException("Die Region " + name + " existiert nicht!");
+        throw new UnknownRegionException("The region " + name + " does not exist. Did you name it correctly?");
     }
 
     public Region getRegion(Location location) throws UnknownRegionException {
@@ -54,15 +85,27 @@ public class RegionManager {
             if (_regions.containsKey(name)) {
                 return _regions.get(name);
             } else if (isAllowedRegion(region)) {
-                _regions.put(name, new Region(region));
-                return getRegion(name);
+                try {
+                    _regions.put(name, new Region(region));
+                    return getRegion(name);
+                } catch (UnknownDistrictException e) {
+                    RCLogger.warning(e.getMessage());
+                }
             }
         }
         throw new UnknownRegionException("Die Region existiert nicht oder steht nicht zum Verkauf bereit.");
     }
 
     public boolean isAllowedRegion(ProtectedRegion region) {
-        return !(MainConfig.getIgnoredRegions().contains(region.getId()));
+        String id = region.getId();
+        boolean matches = false;
+        for (String district : MainConfig.getDistricts()) {
+            if (id.matches("^" + MainConfig.getDistrict(district).getIdentifier() + ".*")) {
+                matches = true;
+                break;
+            }
+        }
+        return matches;
     }
 
     public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
@@ -81,11 +124,18 @@ public class RegionManager {
     }
 
     public double getTaxes(Player player, Region region) {
-        Map<String, ProtectedRegion> playerRegions = getPlayerRegions(player);
-        // the identifier of the regions district, e.g. z for zentrum
-        // the regex removes all numbers at the end of the string
-        String district = region.getName().replaceAll("\\d*$", "");
-
+       District district = region.getDistrict();
+        int taxCnt = 0;
+        for (String r :getPlayerRegions(player).keySet()) {
+            try {
+                if (getRegion(r).getDistrict() == district) {
+                    taxCnt++;
+                }
+            } catch (UnknownRegionException e) {
+                RCLogger.debug(e.getMessage());
+            }
+        }
+        return district.getTaxes(taxCnt);
     }
 
     private Map<String, ProtectedRegion> getPlayerRegions(Player player) {

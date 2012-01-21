@@ -33,7 +33,7 @@ public class RCBlockListener extends BlockListener {
                         event.setLine(1, "Nummer: " + ChatColor.RED + region.getName());
                         if (!(event.getLine(2) == null) && !(event.getLine(2).equals(""))) {
                             double price = Double.parseDouble(event.getLine(2));
-                            if (price < region.getMinPrice()) {
+                            if (price < region.getDistrict().getMinPrice()) {
                                 throw new WrongSignFormat("Preis ist unter dem Mindestpreis der Region!");
                             }
                             region.setPrice(price);

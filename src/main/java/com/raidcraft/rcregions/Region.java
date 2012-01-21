@@ -1,10 +1,8 @@
 package com.raidcraft.rcregions;
 
-import com.silthus.raidcraft.util.RCLogger;
+import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
-import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.database.RegionDatabase;
 
 /**
  *
@@ -18,60 +16,33 @@ public class Region {
     
     private String owner;
     private double price;
-    private double minPrice;
-    private boolean forSale;
+    private District district;
+    private boolean buyable;
     
-    public Region(ProtectedRegion region) {
+    public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
         this.region = region;
         load();
     }
     
-    private void setDefaults() {
-        this.owner = MainConfig.getDefaultOwner();
-        this.price = MainConfig.getDefaultPrice();
-        this.forSale = MainConfig.getDefaultForSale();
-    }
-    
-    private void load() {
-        RegionDatabase regionDatabase = RegionsPlugin.get().getDatabase().find(RegionDatabase.class).
-                where().ieq("region", getName()).findUnique();
-        if (regionDatabase == null) {
-            setDefaults();
-            regionDatabase = new RegionDatabase();
-            regionDatabase.setOwner(getOwner());
-            regionDatabase.setPrice(getPrice());
-            regionDatabase.setMinPrice(getMinPrice());
-            regionDatabase.setRegion(getName());
-            regionDatabase.setForSale(isForSale());
-            saveDatabase(regionDatabase);
-            RCLogger.debug("New Region Database entry for " + getName() + " created.");
-            return;
+    private void load() throws UnknownDistrictException {
+        // get the district
+        String district = getName().replaceAll("\\d*$", "");
+        this.district = DistrictManager.get().getDistrictFromIdentifier(district);
+        // check for null
+        if (district == null) {
+            throw new UnknownDistrictException("The district of this region is not configured!");
         }
-        loadFromDatabase(regionDatabase);
-        RCLogger.debug("Region loaded from database: " + getName());
-    }
-    
-    private void loadFromDatabase(RegionDatabase database) {
-        this.owner = database.getOwner();
-        this.price = database.getPrice();
-        this.minPrice = database.getMinPrice();
-        this.forSale = database.isForSale();
-    }
-
-    private void saveDatabase(RegionDatabase database) {
-        RegionsPlugin.get().getDatabase().save(database);
-    }
-    
-    public void save() {
-        // TODO: add more save functions
-        RegionDatabase regionDatabase = RegionsPlugin.get().getDatabase().find(RegionDatabase.class).
-                where().ieq("region", getName()).findUnique();
-        regionDatabase.setOwner(getOwner());
-        regionDatabase.setPrice(getPrice());
-        regionDatabase.setMinPrice(getMinPrice());
-        regionDatabase.setForSale(isForSale());
-        saveDatabase(regionDatabase);
+        // set the first owner as main owner
+        for (String player : region.getOwners().getPlayers()) {
+            this.owner = player;
+            break;
+        }
+        // check if it is for sale
+        this.buyable = region.getFlag(DefaultFlag.BUYABLE);
+        save();
+        // set the price
+        this.price = region.getFlag(DefaultFlag.PRICE);
     }
 
     /* All Getters and Setters go here */
@@ -87,12 +58,8 @@ public class Region {
         return price;
     }
     
-    public double getMinPrice() {
-        return minPrice;
-    }
-    
-    public boolean isForSale() {
-        return forSale;
+    public boolean isBuyable() {
+        return buyable;
     }
     
     public ProtectedRegion getRegion() {
@@ -104,14 +71,26 @@ public class Region {
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        if (price < district.getMinPrice()) {
+            this.price = district.getMinPrice();
+        } else {
+            this.price = price;
+        }
+        this.region.setFlag(DefaultFlag.PRICE, price);
+        save();
     }
-
-    public void setMinPrice(double price) {
-        this.minPrice = price;
+    
+    public void setBuyable(boolean sell) {
+        this.buyable = sell;
+        region.setFlag(DefaultFlag.BUYABLE, sell);
+        save();
     }
-
-    public void setForSale(boolean forSale) {
-        this.forSale = forSale;
+    
+    public District getDistrict() {
+        return district;
+    }
+    
+    private void save() {
+        WorldGuardManager.getWorldGuard().saveConfig();
     }
 }
