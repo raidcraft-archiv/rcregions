@@ -118,6 +118,9 @@ public final class RegionManager {
             throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
         }
         RCEconomy.substract(player, (price + tax));
+        if (!(owner == null) && !(owner.equals(""))) {
+            RCEconomy.add(region.getOwner(), price);
+        }
         region.setOwner(player.getName());
         region.setBuyable(false);
         region.setAccessFlags(false);
