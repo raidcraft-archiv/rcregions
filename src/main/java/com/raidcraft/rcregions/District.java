@@ -3,6 +3,7 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
 import com.silthus.raidcraft.util.RCLogger;
+import com.silthus.raidcraft.util.RCMessaging;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -96,6 +97,6 @@ public class District {
     }
     
     public String toString() {
-        return getName() + "[" + getIdentifier() + "]";
+        return RCMessaging.green(getName()) + "[" + RCMessaging.yellow(getIdentifier()) + "]";
     }
 }

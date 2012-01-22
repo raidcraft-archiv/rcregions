@@ -92,8 +92,8 @@ public class RegionCommand implements CommandExecutor {
             for (Region region : RegionManager.get().getPlayerRegions(player, district)) {
                 list.add(region.toString());
             }
-            RCMessaging.send(sender, "| " + RCMessaging.green(district.toString() + " :")
-                    + RCUtils.arrayToString(list, ","));
+            RCMessaging.send(sender, "| " + district.toString() + ": "
+                    + RCUtils.arrayToString(list, ", "), false);
         }
     }
 
