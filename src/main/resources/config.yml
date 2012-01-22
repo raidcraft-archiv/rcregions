@@ -55,3 +55,4 @@ districts:
     slums:
         # you always need this value, the rest is optional and will use the default
         identifier: 'sl'
+        maxRegions: 1
