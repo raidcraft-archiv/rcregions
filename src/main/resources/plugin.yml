@@ -1,0 +1,32 @@
+name: RCRegions
+version: 0.1
+author: Silthus
+website: www.raid-craft.de
+
+main: com.raidcraft.rcregions.bukkit.RegionsPlugin
+depend: [RaidCraftCore,WorldGuard]
+
+commands:
+  rcr:
+    description: Gives acces to the RCRegions plugin.
+    usage: Please see the help with /<command> help.
+    aliases: [plot]
+permissions:
+  rcregions.user:
+      description: Gives access to basic Region commands.
+      default: true
+      children:
+        rcregions.region.buy: true
+        rcregions.sign.place: true
+        rcregions.region.drop: true
+        rcregions.region.sell: true
+  rcregions.region.buy:
+      default: true
+  rcregions.region.drop:
+        default: true
+  rcregions.sign.place:
+      default: true
+  rcregions.region.sell:
+      default: true
+  rcregions.admin:
+      default: op

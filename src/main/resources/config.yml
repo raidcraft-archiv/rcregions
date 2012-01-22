@@ -1,0 +1,57 @@
+signIdentifier: 'region'
+# regions exist in districts and need to have the following annotation:
+# WorldGuard Name: <district identifier><unique number>
+# e.g.: z10 - Region in the Zentrum district with the number 10
+#       sl10 - Region in the Slums district with the number 10
+# If you want to add a region to the database simply place a sign on it
+# the <> specify a variable and must not be written on the sign
+# SIGN_FORMAT: [LINE1]      [<signIdentifier>]      | always needed
+#              [LINE2]      <WorldGuard Name>       | always needed
+#              [LINE3]      <Region Price>          | optional
+#              [LINE4]      <for sale>              | optional and needs to be true or false
+districts:
+    # this is the identifier of the region (the chars that are written before the numbers)
+    zentrum:
+        # the identifier for regions in this district
+        identifier: 'z'
+        # the minimum price a region can be sold for in this district
+        # default: 0.0
+        minPrice: 20000.0
+        # can players drop this region?
+        # default: true
+        dropable: true
+        # should we drop the region when the user buys a region in a diffrent district?
+        # setting this to true will set the flags chest-access and use to allow and
+        # the user can get his items out of chests and access doors but he wont be able to build
+        # default: false
+        drop-region-on-change: false
+        # the maximum amount of regions a player can buy in this district
+        # if this is set to -1 the number if regions a player can buy here is infinite
+        # default: -1
+        maxRegions: 5
+        # defines how much tax a player must pay depending on the amount if regions he
+        # has in this district. This is an one time tax pay when the player buys the region
+        # default: none
+        taxes:
+            # the number before the taxes in percent defines how many regions the player already has.
+            # the player always starts with 0 regions to 0.0 percent tax - this can be overriden
+            # if you dont specifiy any taxes - the players wont have to pay any
+            1: 0.30
+            2: 0.70
+            3: 1.30
+        # default: none
+        scheduledTaxes:
+            # this is the maximum amount of regions a player can have
+            # before daily or weekly taxes are applied to all of his regions
+            # the number only applies to the district
+            # default: 3
+            regionCount: 3
+            # tax interval in minutes
+            # default: 3600 (1day)
+            interval: 3600
+            # tax amount in percent off the region price
+            # default: 0.20 (20%)
+            tax: 0.20
+    slums:
+        # you always need this value, the rest is optional and will use the default
+        identifier: 'sl'
