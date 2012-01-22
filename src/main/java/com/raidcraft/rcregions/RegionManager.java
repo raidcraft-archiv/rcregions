@@ -7,6 +7,7 @@ import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
+import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.ChatColor;
@@ -120,6 +121,15 @@ public final class RegionManager {
         RCEconomy.substract(player, (price + tax));
         if (!(owner == null) && !(owner.equals(""))) {
             RCEconomy.add(region.getOwner(), price);
+        }
+        for (District d : DistrictManager.get().getDistricts().values()) {
+            if (d.dropOnChange()) {
+                for (Region r : getPlayerRegions(player, district)) {
+                    clearRegion(player, r);
+                    RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
+                    RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
+                }
+            }
         }
         region.setOwner(player.getName());
         region.setBuyable(false);
