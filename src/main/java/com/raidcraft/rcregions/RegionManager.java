@@ -124,8 +124,8 @@ public final class RegionManager {
         }
         boolean droped = false;
         for (District d : DistrictManager.get().getDistricts().values()) {
-            if (!d.dropOnChange()) {
-                for (Region r : getPlayerRegions(player, district)) {
+            if (d.dropOnChange()) {
+                for (Region r : getPlayerRegions(player, d)) {
                     clearRegion(player, r);
                     RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
                     droped = true;

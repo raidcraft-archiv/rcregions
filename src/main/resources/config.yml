@@ -24,7 +24,7 @@ districts:
         # setting this to true will set the flags chest-access and use to allow and
         # the user can get his items out of chests and access doors but he wont be able to build
         # default: false
-        drop-region-on-change: false
+        drop-on-change: false
         # the maximum amount of regions a player can buy in this district
         # if this is set to -1 the number if regions a player can buy here is infinite
         # default: -1
@@ -56,3 +56,4 @@ districts:
         # you always need this value, the rest is optional and will use the default
         identifier: 'sl'
         maxRegions: 1
+        drop-on-change: true

@@ -77,7 +77,7 @@ public class MainConfig {
         }
         
         public boolean dropRegionOnChange() {
-            return section.getBoolean("drop-region-on-change", false);
+            return section.getBoolean("drop-on-change", false);
         }
         
         public int getMaxRegions() {

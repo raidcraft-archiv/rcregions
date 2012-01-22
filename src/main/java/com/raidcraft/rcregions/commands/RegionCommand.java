@@ -67,8 +67,11 @@ public class RegionCommand implements CommandExecutor {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     for (District district : DistrictManager.get().getDistricts().values()) {
-                        RCMessaging.send(sender, district + ": "
-                                + RCMessaging.yellow(RegionManager.get().getTaxes(player, district) * 100 + "%"));
+                        double taxes = RegionManager.get().getTaxes(player, district);
+                        if (taxes > 0) {
+                            RCMessaging.send(sender, district + ": "
+                                    + RCMessaging.yellow(taxes * 100 + "%"));
+                        }
                     }
                 } else {
                     RCMessaging.noPermission(sender);
