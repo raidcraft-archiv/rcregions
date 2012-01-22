@@ -73,7 +73,11 @@ public class MainConfig {
         } 
         
         public boolean isFreeDistrict() {
-            return section.getBoolean("freeDistrict", true);
+            return section.getBoolean("dropable", true);
+        }
+        
+        public boolean dropRegionOnChange() {
+            return section.getBoolean("drop-region-on-change", false);
         }
         
         public int getMaxRegions() {

@@ -17,9 +17,14 @@ districts:
         # the minimum price a region can be sold for in this district
         # default: 0.0
         minPrice: 20000.0
-        # if this is true all the tax stuff below and the min price does not apply
+        # can players drop this region?
         # default: true
-        freeDistrict: false
+        dropable: true
+        # should we drop the region when the user buys a region in a diffrent district?
+        # setting this to true will set the flags chest-access and use to allow and
+        # the user can get his items out of chests and access doors but he wont be able to build
+        # default: false
+        drop-region-on-change: false
         # the maximum amount of regions a player can buy in this district
         # if this is set to -1 the number if regions a player can buy here is infinite
         # default: -1
