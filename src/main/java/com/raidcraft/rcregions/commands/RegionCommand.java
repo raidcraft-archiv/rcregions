@@ -61,6 +61,19 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            // displays the diffrent taxes for the districts
+            // [/rcr tax]
+            if (cmd.is(label, "tax", "-t")) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    for (District district : DistrictManager.get().getDistricts().values()) {
+                        RCMessaging.send(sender, district + ": "
+                                + RCMessaging.yellow(RegionManager.get().getTaxes(player, district) * 100 + "%"));
+                    }
+                } else {
+                    RCMessaging.noPermission(sender);
+                }
+            }
             // reloads the config
             // [/rcr reload]
             if (cmd.is(label, "reload")) {

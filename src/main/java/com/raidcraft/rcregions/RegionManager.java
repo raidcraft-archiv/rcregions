@@ -137,7 +137,10 @@ public final class RegionManager {
     }
 
     public double getTaxes(Player player, Region region) {
-        District district = region.getDistrict();
+        return getTaxes(player, region.getDistrict());
+    }
+
+    public double getTaxes(Player player, District district) {
         return district.getTaxes(getPlayerRegionCount(player, district));
     }
 
