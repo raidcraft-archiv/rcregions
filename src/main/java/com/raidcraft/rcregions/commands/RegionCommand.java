@@ -31,7 +31,7 @@ public class RegionCommand implements CommandExecutor {
         if (args.length > 0) {
             label = args[0];
             // buys or claims the region the player is standing on
-            // [/rcr claim]
+            // [/rcr claim <region>]
             if (cmd.is(label, "buy", "claim", "-b")) {
                 if (sender.hasPermission("rcregions.region.buy") && sender instanceof Player) {
                     if (args.length > 1) {
@@ -43,6 +43,8 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            // sells to region to the server
+            // [/rcr drop <region>]
             if (cmd.is(label, "drop", "sell", "-d", "-s")) {
                 if (sender.hasPermission("rcregions.region.drop") && sender instanceof Player) {
                     if (args.length > 1) {
@@ -54,6 +56,8 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            // reloads the config
+            // [/rcr reload]
             if (cmd.is(label, "reload")) {
                 if (sender.hasPermission("rcregions.admin")) {
                     RegionsPlugin.get().reload();

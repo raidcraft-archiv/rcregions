@@ -102,7 +102,7 @@ public final class RegionManager {
             throw new PlayerException("Du bist bereits der Besitzer dieser Region.");
         }
         District district = region.getDistrict();
-        if (!(getPlayerRegionCount(player, district) <= district.getMaxRegions())) {
+        if (!(getPlayerRegionCount(player, district) < district.getMaxRegions())) {
             throw new RegionException("Du hast bereits zu viele Grundstücke in diesem Distrikt.");
         }
         if (!region.isBuyable()) {
