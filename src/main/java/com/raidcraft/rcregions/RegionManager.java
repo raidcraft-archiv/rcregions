@@ -226,6 +226,9 @@ public final class RegionManager {
         if (!region.getDistrict().isDropable()) {
             throw new RegionException("Du kannst diese Region nicht an den Server abgeben.");
         }
+        if (!player.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(player.getName())) {
+            throw new RegionException("Du bist nicht der Besitzer dieser Region.");
+        }
         clearRegion(player, region);
     }
 
