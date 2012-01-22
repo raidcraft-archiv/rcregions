@@ -86,4 +86,16 @@ public class District {
     public double getScheduledTaxesAmount() {
         return scheduledTaxesAmount;
     }
+    
+    public boolean equals(Object district) {
+        if (district instanceof District) {
+            District d = (District) district;
+            return d.getIdentifier().equalsIgnoreCase(getIdentifier());
+        }
+        return false;
+    }
+    
+    public String toString() {
+        return getName() + "[" + getIdentifier() + "]";
+    }
 }

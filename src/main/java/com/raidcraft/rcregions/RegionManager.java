@@ -15,8 +15,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 17.12.11 - 11:49
@@ -132,21 +133,33 @@ public final class RegionManager {
     }
 
     public int getPlayerRegionCount(Player player, District district) {
-        int cnt = 0;
-        for (String r :getPlayerRegions(player).keySet()) {
-            try {
-                if (getRegion(r).getDistrict() == district) {
-                    cnt++;
-                }
-            } catch (UnknownRegionException e) {
-                RCLogger.debug(e.getMessage());
-            }
-        }
-        return cnt;
+        return getPlayerRegions(player, district).size();
     }
 
-    private Map<String, ProtectedRegion> getPlayerRegions(Player player) {
-        return WorldGuardManager.getPlayerRegions(player);
+    public int getPlayerRegionCount(Player player) {
+        return getPlayerRegions(player).size();
+    }
+
+    public List<Region> getPlayerRegions(Player player) {
+        List<Region> playerRegions = new ArrayList<Region>();
+        for (String region : WorldGuardManager.getPlayerRegions(player).keySet()) {
+            try {
+                playerRegions.add(getRegion(region));
+            } catch (UnknownRegionException e) {
+                RCLogger.warning("Player " + player.getName() + " owns a region of a undefined district.");
+            }
+        }
+        return playerRegions;
+    }
+
+    public List<Region> getPlayerRegions(Player player, District district) {
+        List<Region> playerRegions = new ArrayList<Region>();
+        for (Region region : getPlayerRegions(player)) {
+            if (region.getDistrict().equals(district)) {
+                playerRegions.add(region);
+            }
+        }
+        return playerRegions;
     }
 
     public void updateSign(Sign sign, Region region) {
@@ -194,6 +207,7 @@ public final class RegionManager {
         if (!region.getDistrict().isDropable()) {
             throw new RegionException("Du kannst diese Region nicht an den Server abgeben.");
         }
+        clearRegion(player, region);
     }
 
     public void clearRegion(Player player, Region region) {

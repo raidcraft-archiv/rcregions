@@ -119,4 +119,8 @@ public class Region {
         getRegion().setFlag(DefaultFlag.BUILD, (denyAccess ? StateFlag.State.DENY : null));
         save();
     }
+    
+    public String toString() {
+        return getName();
+    }
 }

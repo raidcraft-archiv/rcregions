@@ -1,5 +1,7 @@
 package com.raidcraft.rcregions.commands;
 
+import com.raidcraft.rcregions.District;
+import com.raidcraft.rcregions.DistrictManager;
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
@@ -8,11 +10,17 @@ import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCMessaging;
+import com.silthus.raidcraft.util.RCUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 17.12.11 - 11:30
@@ -21,7 +29,7 @@ import org.bukkit.entity.Player;
  */
 public class RegionCommand implements CommandExecutor {
 
-    private final RCCommandManager cmd = new RCCommandManager();
+    private final RCCommandManager cmd = RCCommandManager.get();
     private CommandSender sender;
 
     @Override
@@ -66,10 +74,28 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+        } else if (sender instanceof Player) {
+            showRegionInfo((Player)sender);
         }
         return true;
     }
-    
+
+    private void showRegionInfo(Player player) {
+        List<Region> regions = RegionManager.get().getPlayerRegions(player);
+        Set<District> uniqueDistricts = new HashSet<District>();
+        Map<String,District> districts = DistrictManager.get().getDistricts();
+        for (Region region : regions) {
+            uniqueDistricts.add(region.getDistrict());
+        }
+        RCMessaging.send(sender, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Regionen: ") + RCMessaging.yellow(String.valueOf(regions.size())) + " | "
+                + RCMessaging.green("Distrikte: ") + RCMessaging.yellow(uniqueDistricts.size() + "/" + districts.size()),false);
+        for (District district : uniqueDistricts) {
+            RCMessaging.send(sender, "| " + RCMessaging.green(district.toString() + " :")
+                    + RCUtils.arrayToString(RegionManager.get().getPlayerRegions(player, district)));
+        }
+    }
+
     private void buyRegion(String region) {
         try {
             buyRegion(RegionManager.get().getRegion(region));
@@ -122,9 +148,13 @@ public class RegionCommand implements CommandExecutor {
     private void dropRegion(Region region) {
         Player player = cmd.getPlayerOfSender(sender);
         if (region.getOwner().equalsIgnoreCase(player.getName()) || sender.hasPermission("rcregions.admin")) {
-            RegionManager.get().clearRegion(player, region);
-            RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
-                    RCMessaging.yellow(region.getDistrict().getMinPrice() + "") + " Coins an den Server verkauft.");
+            try {
+                RegionManager.get().dropRegion(player, region);
+                RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
+                        RCMessaging.yellow(region.getDistrict().getMinPrice() + "") + " Coins an den Server verkauft.");
+            } catch (RegionException e) {
+                RCMessaging.warn(sender, e.getMessage());
+            }
         } else {
             RCMessaging.noPermission(player);
         }

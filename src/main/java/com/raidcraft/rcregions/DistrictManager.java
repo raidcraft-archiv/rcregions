@@ -4,6 +4,7 @@ import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 21.01.12 - 10:21
@@ -61,5 +62,9 @@ public final class DistrictManager {
             }
         }
         return null;
+    }
+    
+    public Map<String, District> getDistricts() {
+        return _districts;
     }
 }

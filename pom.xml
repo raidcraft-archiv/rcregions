@@ -40,14 +40,6 @@
           <id>raidcraft</id>
           <url>http://nexus.raid-craft.de/content/groups/public/</url>
       </repository>
-      <repository>
-          <id>tehkode-repo</id>
-          <url>http://repo.tehkode.ru/repository/repo/</url>
-      </repository>
-      <repository>
-          <id>bukkit-repo</id>
-          <url>http://repo.bukkit.org/content/groups/repo</url>
-      </repository>
   </repositories>
 
     <dependencies>
@@ -55,13 +47,11 @@
             <groupId>de.raidcraft</groupId>
             <artifactId>RaidCraftCore</artifactId>
             <version>1.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.0.0-R1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
