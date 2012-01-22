@@ -122,15 +122,18 @@ public final class RegionManager {
         if (!(owner == null) && !(owner.equals(""))) {
             RCEconomy.add(region.getOwner(), price);
         }
+        boolean droped = false;
         for (District d : DistrictManager.get().getDistricts().values()) {
-            if (d.dropOnChange()) {
+            if (!d.dropOnChange()) {
                 for (Region r : getPlayerRegions(player, district)) {
                     clearRegion(player, r);
                     RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
-                    RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
+                    droped = true;
                 }
             }
         }
+        if (droped)
+        RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
         region.setOwner(player.getName());
         region.setBuyable(false);
         region.setAccessFlags(false);
