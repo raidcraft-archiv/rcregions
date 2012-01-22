@@ -72,7 +72,7 @@ public class MainConfig {
             return section.getDouble("minPrice", 0.0);
         } 
         
-        public boolean isFreeDistrict() {
+        public boolean isDropable() {
             return section.getBoolean("dropable", true);
         }
         

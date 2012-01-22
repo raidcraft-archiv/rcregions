@@ -17,7 +17,7 @@ public class District {
     private final String name;
     private String identifier;
     private double minPrice;
-    private boolean free;
+    private boolean dropable;
     private int maxRegions;
     private boolean scheduleTaxes = false;
     private int scheduledTaxesCount;
@@ -33,7 +33,7 @@ public class District {
         MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(getName());
         this.identifier = district.getIdentifier();
         this.minPrice = district.getMinPrice();
-        this.free = district.isFreeDistrict();
+        this.dropable = district.isDropable();
         this.maxRegions = district.getMaxRegions();
         this.maxRegions = district.getMaxRegions();
         try {
@@ -59,8 +59,8 @@ public class District {
         return minPrice;
     }
 
-    public boolean isFree() {
-        return free;
+    public boolean isDropable() {
+        return dropable;
     }
 
     public int getMaxRegions() {

@@ -119,6 +119,7 @@ public final class RegionManager {
         RCEconomy.substract(player, (price + tax));
         region.setOwner(player.getName());
         region.setBuyable(false);
+        region.setAccessFlags(false);
     }
 
     public double getTaxes(Player player, Region region) {
@@ -189,9 +190,16 @@ public final class RegionManager {
         }
     }
 
+    public void dropRegion(Player player, Region region) throws RegionException {
+        if (!region.getDistrict().isDropable()) {
+            throw new RegionException("Du kannst diese Region nicht an den Server abgeben.");
+        }
+    }
+
     public void clearRegion(Player player, Region region) {
         region.setOwner(null);
         region.setBuyable(true);
+        region.setAccessFlags(true);
         RCEconomy.add(player, region.getDistrict().getMinPrice());
     }
 }

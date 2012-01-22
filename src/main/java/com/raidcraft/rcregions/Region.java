@@ -3,6 +3,7 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
@@ -110,5 +111,12 @@ public class Region {
     
     private void save() {
         WorldGuardManager.save();
+    }
+
+    public void setAccessFlags(boolean denyAccess) {
+        getRegion().setFlag(DefaultFlag.CHEST_ACCESS, (denyAccess ? StateFlag.State.ALLOW : null));
+        getRegion().setFlag(DefaultFlag.USE, (denyAccess ? StateFlag.State.ALLOW : null));
+        getRegion().setFlag(DefaultFlag.BUILD, (denyAccess ? StateFlag.State.DENY : null));
+        save();
     }
 }
