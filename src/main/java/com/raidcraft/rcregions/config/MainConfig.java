@@ -81,7 +81,7 @@ public class MainConfig {
         }
         
         public double getPricePerBlock() {
-            return section.getDouble("taxes.pricePerBlock", 1.0);
+            return section.getDouble("taxes.pricePerBlock", 0.0);
         }
         
         public boolean dropRegionOnChange() {
