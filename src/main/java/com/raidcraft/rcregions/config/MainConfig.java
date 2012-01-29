@@ -5,6 +5,7 @@ import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.config.ConfigManager;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,6 +33,10 @@ public class MainConfig {
     
     public static void load() {
         ConfigManager.loadConfig(FILENAME, plugin);
+    }
+
+    public static List<String> getAdmins() {
+        return getConfig().getStringList("admins");
     }
 
     public static ConfigurationSection getConfig() {

@@ -11,6 +11,8 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -141,7 +143,13 @@ public class Region {
             }
             return Math.round(volume * district.getPricePerBlock());
         }
-        RCMessaging.broadcast("Region " + getName() + " is a Polygon Region! Using minPrice...");
+        Player player;
+        for (String name : MainConfig.getAdmins()) {
+            player = Bukkit.getPlayer(name);
+            if (!(player == null)) {
+                RCMessaging.warn(player, "Region " + region.getTypeName() + " is a polygon! Please change it to a cuboid...");
+            }
+        }
         return MainConfig.getDistrict(district.getName()).getMinPrice();
     }
     
