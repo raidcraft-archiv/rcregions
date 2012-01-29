@@ -126,7 +126,7 @@ public class Region {
         save();
     }
     
-    public double getBasePrice() throws RegionException {
+    public double getBasePrice() {
         if (region instanceof ProtectedCuboidRegion) {
             MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
             BlockVector max = region.getMaximumPoint();

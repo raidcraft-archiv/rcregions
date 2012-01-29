@@ -123,7 +123,7 @@ public final class RegionManager {
             if (!RCEconomy.hasEnough(player, price)) {
                 throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
             }
-            double tax = price * getTaxes(player, region);
+            double tax = region.getBasePrice() * getTaxes(player, region);
             if (!RCEconomy.hasEnough(player, (price + tax))) {
                 throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
             }
