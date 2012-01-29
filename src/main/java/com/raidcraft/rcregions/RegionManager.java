@@ -1,10 +1,12 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -118,18 +120,19 @@ public final class RegionManager {
 
     public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
         if (isBuyableRegion(player, region)) {
+            RCEconomy economy = RegionsPlugin.get().getEconomy();
             String owner = region.getOwner();
             double price = region.getPrice();
-            if (!RCEconomy.hasEnough(player, price)) {
+            if (economy.has(player.getName(), price)) {
                 throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
             }
             double tax = region.getBasePrice() * getTaxes(player, region);
-            if (!RCEconomy.hasEnough(player, (price + tax))) {
+            if (economy.hasEnough(player, (price + tax))) {
                 throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
             }
-            RCEconomy.substract(player, (price + tax));
+            economy.substract(player, (price + tax));
             if (!(owner == null) && !(owner.equals(""))) {
-                RCEconomy.add(region.getOwner(), price);
+                economy.add(region.getOwner(), price);
             }
             boolean droped = false;
             for (District d : DistrictManager.get().getDistricts().values()) {
@@ -246,6 +249,6 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
-        RCEconomy.add(player, region.getDistrict().getMinPrice());
+        RegionsPlugin.get().getEconomy().add(player, region.getBasePrice());
     }
 }
