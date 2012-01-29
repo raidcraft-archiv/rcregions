@@ -161,7 +161,7 @@ public final class RegionManager {
     }
 
     public double getFullPrice(Player player, Region region) {
-        return (region.getBasePrice() * getTaxes(player, region)) + region.getPrice();
+        return Math.round(region.getBasePrice() * getTaxes(player, region)) + region.getPrice();
     }
 
     public int getPlayerRegionCount(Player player, District district) {
