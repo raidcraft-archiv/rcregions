@@ -123,11 +123,11 @@ public final class RegionManager {
             RCEconomy economy = RegionsPlugin.get().getEconomy();
             String owner = region.getOwner();
             double price = region.getPrice();
-            if (economy.has(player.getName(), price)) {
+            if (!economy.has(player.getName(), price)) {
                 throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
             }
             double tax = region.getBasePrice() * getTaxes(player, region);
-            if (economy.hasEnough(player, (price + tax))) {
+            if (!economy.hasEnough(player, (price + tax))) {
                 throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
             }
             economy.substract(player, (price + tax));
