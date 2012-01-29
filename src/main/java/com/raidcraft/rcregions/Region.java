@@ -139,7 +139,7 @@ public class Region {
             } else {
                 volume = xLength * zWidth;
             }
-            return volume * district.getPricePerBlock();
+            return Math.round(volume * district.getPricePerBlock());
         }
         RCMessaging.broadcast("Region " + getName() + " is a Polygon Region! Using minPrice...");
         return MainConfig.getDistrict(district.getName()).getMinPrice();
