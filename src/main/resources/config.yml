@@ -1,4 +1,7 @@
 signIdentifier: 'region'
+# who should recieve the polygon warning?
+admins:
+    - Silthus
 # regions exist in districts and need to have the following annotation:
 # WorldGuard Name: <district identifier><unique number>
 # e.g.: z10 - Region in the Zentrum district with the number 10
