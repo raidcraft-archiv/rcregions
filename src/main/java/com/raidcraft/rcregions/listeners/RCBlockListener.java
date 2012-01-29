@@ -9,6 +9,8 @@ import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 
@@ -17,9 +19,9 @@ import org.bukkit.event.block.SignChangeEvent;
  * 31.12.11 - 11:15
  * @author Silthus
  */
-public class RCBlockListener extends BlockListener {
+public class RCBlockListener implements Listener {
 
-    @Override
+    @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if (event.isCancelled()) {
             return;

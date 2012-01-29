@@ -19,8 +19,6 @@ import org.bukkit.event.player.PlayerListener;
 public class RegionsPlugin extends BukkitBasePlugin {
 
     private static RegionsPlugin _self;
-    private static final BlockListener blockListener = new RCBlockListener();
-    private static final PlayerListener playerListener = new RCPlayerListener();
 
     public void onEnable() {
         super.onEnable();
@@ -36,8 +34,6 @@ public class RegionsPlugin extends BukkitBasePlugin {
         MainConfig.init(this);
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
-        registerEvent(Event.Type.SIGN_CHANGE, blockListener);
-        registerEvent(Event.Type.PLAYER_INTERACT, playerListener);
     }
 
     private void initializeManagers() {

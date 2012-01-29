@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -19,9 +21,9 @@ import org.bukkit.event.player.PlayerListener;
  *
  * @author Silthus
  */
-public class RCPlayerListener extends PlayerListener {
+public class RCPlayerListener implements Listener {
 
-    @Override
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.isCancelled()) {
             return;
