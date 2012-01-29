@@ -63,6 +63,20 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            if (cmd.is(label, "player", "-p")) {
+                if (sender.hasPermission("rcregions.playerinfo")) {
+                    if (args.length > 1) {
+                        Player player = Bukkit.getServer().getPlayer(args[1]);
+                        if (!(player == null)) {
+                            showRegionInfo(player);
+                        } else {
+                            RCMessaging.send(sender, "Sorry but I can only show you players who are online.");
+                        }
+                    }
+                } else {
+                    RCMessaging.noPermission(sender);
+                }
+            }
             // warps the player to the max point of the region
             // [/rcr warp <region>]
             if (cmd.is(label, "warp", "-w") && args.length > 1) {
