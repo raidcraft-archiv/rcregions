@@ -23,6 +23,8 @@ public class RegionsPlugin extends BukkitBasePlugin {
     public void onEnable() {
         super.onEnable();
         _self = this;
+        getServer().getPluginManager().registerEvents(new RCBlockListener(), this);
+        getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
     }
     
     public static RegionsPlugin get() {
