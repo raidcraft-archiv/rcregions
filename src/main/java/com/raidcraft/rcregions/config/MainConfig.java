@@ -76,6 +76,14 @@ public class MainConfig {
             return section.getBoolean("dropable", true);
         }
         
+        public boolean useVolume() {
+            return section.getBoolean("taxes.useVolume", true);
+        }
+        
+        public double getPricePerBlock() {
+            return section.getDouble("taxes.pricePerBlock", 1.0);
+        }
+        
         public boolean dropRegionOnChange() {
             return section.getBoolean("drop-on-change", false);
         }
@@ -85,6 +93,10 @@ public class MainConfig {
         }
 
         public double getTaxes(int count) {
+            double tax = section.getDouble("taxes." + count);
+            if (tax == 0 && count > 0) {
+                return getTaxes(--count);
+            }
             return section.getDouble("taxes." + count, 0.0);
         }
         

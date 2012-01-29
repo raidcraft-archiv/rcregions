@@ -33,6 +33,12 @@ districts:
         # has in this district. This is an one time tax pay when the player buys the region
         # default: none
         taxes:
+            # set this to true if you want to pricePerBlock to be based on the region volume
+            # x * y * z = volume
+            useVolume: true
+            # set the price per block here
+            # volume * pricePerBlock = basePrice
+            pricePerBlock: 1.0
             # the number before the taxes in percent defines how many regions the player already has.
             # the player always starts with 0 regions to 0.0 percent tax - this can be overriden
             # if you dont specifiy any taxes - the players wont have to pay any

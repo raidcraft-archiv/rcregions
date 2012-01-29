@@ -11,6 +11,8 @@ import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
+import com.sk89q.worldedit.BlockVector;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -61,6 +63,15 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            // warps the player to the max point of the region
+            // [/rcr warp <region>]
+            if (cmd.is(label, "warp", "-w") && args.length > 1) {
+                if (sender.hasPermission("rcregions.region.warp") && sender instanceof Player) {
+                    warp((Player) sender, args[1]);
+                } else {
+                    RCMessaging.noPermission(sender);
+                }
+            }
             // displays the diffrent taxes for the districts
             // [/rcr tax]
             if (cmd.is(label, "tax", "-t")) {
@@ -91,6 +102,19 @@ public class RegionCommand implements CommandExecutor {
             showRegionInfo((Player)sender);
         }
         return true;
+    }
+
+    private void warp(Player player, String strRegion) {
+        try {
+            Region region = RegionManager.get().getRegion(strRegion);
+            BlockVector maximumPoint = region.getRegion().getMaximumPoint();
+            Location location = new Location(player.getWorld(), maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ());
+            player.teleport(location);
+            RCMessaging.send(player, "Teleported to Region "
+                    + RCMessaging.green(region.getName()) + " owned by " + RCMessaging.green(region.getOwner()));
+        } catch (UnknownRegionException e) {
+            RCMessaging.warn(sender, e.getMessage());
+        }
     }
 
     private void showRegionInfo(Player player) {

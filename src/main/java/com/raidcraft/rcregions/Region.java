@@ -1,9 +1,15 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.silthus.raidcraft.util.RCMessaging;
+import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
@@ -118,6 +124,25 @@ public class Region {
         getRegion().setFlag(DefaultFlag.USE, (denyAccess ? StateFlag.State.ALLOW : null));
         getRegion().setFlag(DefaultFlag.BUILD, (denyAccess ? StateFlag.State.DENY : null));
         save();
+    }
+    
+    public double getBasePrice() throws RegionException {
+        if (region instanceof ProtectedCuboidRegion) {
+            MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
+            BlockVector max = region.getMaximumPoint();
+            BlockVector min = region.getMinimumPoint();
+            int xLength = max.getBlockX() - min.getBlockX();
+            int zWidth = max.getBlockZ() - min.getBlockZ();
+            int volume;
+            if (district.useVolume()) {
+                volume = xLength * zWidth * (max.getBlockY() - min.getBlockY());
+            } else {
+                volume = xLength * zWidth;
+            }
+            return volume * district.getPricePerBlock();
+        }
+        RCMessaging.broadcast("Region " + getName() + " is a Polygon Region! Using minPrice...");
+        return MainConfig.getDistrict(district.getName()).getMinPrice();
     }
     
     public String toString() {
