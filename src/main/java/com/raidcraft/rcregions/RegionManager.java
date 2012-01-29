@@ -98,7 +98,7 @@ public final class RegionManager {
         return matches;
     }
 
-    public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
+    public boolean isBuyableRegion(Player player, Region region) throws PlayerException, RegionException {
         String owner = region.getOwner();
         if (!(owner == null) && owner.equalsIgnoreCase(player.getName())) {
             throw new PlayerException("Du bist bereits der Besitzer dieser Region.");
@@ -110,33 +110,43 @@ public final class RegionManager {
         if (!region.isBuyable()) {
             throw new RegionException("Diese Region steht nicht zum Verkauf bereit.");
         }
-        double price = region.getPrice();
-        if (!RCEconomy.hasEnough(player, price)) {
-            throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
+        if (district.dropOnChange() && getPlayerRegionCount(player) > 0) {
+            throw new RegionException("Tut mir leid, du darfst diese Region nicht mehr kaufen.");
         }
-        double tax = price * getTaxes(player, region);
-        if (!RCEconomy.hasEnough(player, (price + tax))) {
-            throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
-        }
-        RCEconomy.substract(player, (price + tax));
-        if (!(owner == null) && !(owner.equals(""))) {
-            RCEconomy.add(region.getOwner(), price);
-        }
-        boolean droped = false;
-        for (District d : DistrictManager.get().getDistricts().values()) {
-            if (d.dropOnChange()) {
-                for (Region r : getPlayerRegions(player, d)) {
-                    clearRegion(player, r);
-                    RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
-                    droped = true;
+        return true;
+    }
+
+    public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
+        if (isBuyableRegion(player, region)) {
+            String owner = region.getOwner();
+            double price = region.getPrice();
+            if (!RCEconomy.hasEnough(player, price)) {
+                throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
+            }
+            double tax = price * getTaxes(player, region);
+            if (!RCEconomy.hasEnough(player, (price + tax))) {
+                throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
+            }
+            RCEconomy.substract(player, (price + tax));
+            if (!(owner == null) && !(owner.equals(""))) {
+                RCEconomy.add(region.getOwner(), price);
+            }
+            boolean droped = false;
+            for (District d : DistrictManager.get().getDistricts().values()) {
+                if (d.dropOnChange()) {
+                    for (Region r : getPlayerRegions(player, d)) {
+                        clearRegion(player, r);
+                        RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
+                        droped = true;
+                    }
                 }
             }
+            if (droped)
+                RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
+            region.setOwner(player.getName());
+            region.setBuyable(false);
+            region.setAccessFlags(false);
         }
-        if (droped)
-        RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
-        region.setOwner(player.getName());
-        region.setBuyable(false);
-        region.setAccessFlags(false);
     }
 
     public double getTaxes(Player player, Region region) {
