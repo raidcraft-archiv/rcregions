@@ -70,7 +70,9 @@ public class RCPlayerListener implements Listener {
                     if (region.isBuyable()) {
                         double price = RegionManager.get().getFullPrice(player, region);
                         RCMessaging.send(player, "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
-                        RCMessaging.send(player, "Preis inkl. Steuern: " + price);
+                        RCMessaging.send(player, "Grundpreis: " + region.getBasePrice());
+                        RCMessaging.send(player, "Preis inkl. Steuern("
+                                + RCMessaging.green(RegionManager.get().getTaxes(player, region) * 100 + "%") + "): " + price);
                     }
                 } catch (UnknownRegionException e) {
                     RCMessaging.warn(player, e.getMessage());
