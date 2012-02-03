@@ -147,7 +147,7 @@ public class Region {
         for (String name : MainConfig.getAdmins()) {
             player = Bukkit.getPlayer(name);
             if (!(player == null)) {
-                RCMessaging.warn(player, "Region " + region.getTypeName() + " is a polygon! Please change it to a cuboid...");
+                RCMessaging.warn(player, "Region " + region.getId() + " is a polygon! Please change it to a cuboid...");
             }
         }
         return MainConfig.getDistrict(district.getName()).getMinPrice();
