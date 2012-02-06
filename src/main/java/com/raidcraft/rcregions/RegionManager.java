@@ -249,6 +249,6 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
-        RegionsPlugin.get().getEconomy().add(player, region.getBasePrice());
+        RegionsPlugin.get().getEconomy().add(player, (region.getBasePrice() * MainConfig.getDistrict(region.getName()).getRefundPercentage()));
     }
 }

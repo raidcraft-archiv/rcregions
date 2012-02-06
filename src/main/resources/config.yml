@@ -23,6 +23,9 @@ districts:
         # can players drop this region?
         # default: true
         dropable: true
+        # for what percentage should the regions be sold to the server?
+        # default: 20%
+        refund-percentage: 0.20
         # should we drop the region when the user buys a region in a diffrent district?
         # setting this to true will set the flags chest-access and use to allow and
         # the user can get his items out of chests and access doors but he wont be able to build

@@ -80,6 +80,10 @@ public class MainConfig {
         public boolean isDropable() {
             return section.getBoolean("dropable", true);
         }
+
+        public double getRefundPercentage() {
+            return section.getDouble("refund-percentage", 0.20);
+        }
         
         public boolean useVolume() {
             return section.getBoolean("taxes.useVolume", true);
