@@ -22,6 +22,7 @@ public class District {
     private int maxRegions;
     private boolean scheduleTaxes = false;
     private boolean dropOnChange;
+    private boolean useVolume;
     private int scheduledTaxesCount;
     private int scheduledTaxesInterval;
     private double scheduledTaxesAmount;
@@ -39,6 +40,7 @@ public class District {
         this.dropOnChange = district.dropRegionOnChange();
         this.maxRegions = district.getMaxRegions();
         this.maxRegions = district.getMaxRegions();
+        this.useVolume = district.useVolume();
         try {
             this.scheduledTaxesCount = district.getScheduledRegionCount();
             this.scheduledTaxesInterval = district.getScheduledRegionInterval();
@@ -64,6 +66,10 @@ public class District {
 
     public boolean isDropable() {
         return dropable;
+    }
+
+    public boolean useVolume() {
+        return useVolume;
     }
     
     public boolean dropOnChange() {

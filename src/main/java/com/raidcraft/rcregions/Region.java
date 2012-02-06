@@ -76,6 +76,9 @@ public class Region {
     } 
     
     public double getPrice() {
+        if (district.useVolume() && price < getBasePrice()) {
+            setPrice(getBasePrice());
+        }
         return price;
     }
     
@@ -98,10 +101,18 @@ public class Region {
     }
 
     public void setPrice(double price) {
-        if (price < district.getMinPrice()) {
-            this.price = district.getMinPrice();
+        if (district.useVolume()) {
+            if (price < getBasePrice()) {
+                this.price = getBasePrice();
+            } else {
+                this.price = price;
+            }
         } else {
-            this.price = price;
+            if (price < district.getMinPrice()) {
+                this.price = district.getMinPrice();
+            } else {
+                this.price = price;
+            }
         }
         this.region.setFlag(DefaultFlag.PRICE, price);
         save();
