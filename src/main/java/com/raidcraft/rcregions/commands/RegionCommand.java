@@ -97,7 +97,7 @@ public class RegionCommand implements CommandExecutor {
                     if (args.length > 1) {
                         Player player = Bukkit.getServer().getPlayer(args[1]);
                         if (!(player == null)) {
-                            showRegionInfo(player);
+                            showPlayerInfo(player);
                         } else {
                             RCMessaging.send(sender, "Sorry but I can only show you players who are online.");
                         }
@@ -141,8 +141,27 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            // gives information about the region
+            // [/rcr -i <region>]
+            if (cmd.is(label, "-i", "info")) {
+                if (sender.hasPermission("rcregions.info")) {
+                    if (sender instanceof Player && args.length == 1) {
+                        try {
+                            Region region = RegionManager.get().getRegion(((Player) sender).getLocation());
+                            showRegionInfo(region);
+                        } catch (UnknownRegionException e) {
+                            RCMessaging.warn(sender, e.getMessage());
+                        }
+                    } else {
+                        showRegionInfo(args[1]);
+                    }
+                    return true;
+                } else {
+                    RCMessaging.noPermission(sender);
+                }
+            }
         } else if (sender instanceof Player) {
-            showRegionInfo((Player)sender);
+            showPlayerInfo((Player) sender);
         }
         return true;
     }
@@ -160,7 +179,7 @@ public class RegionCommand implements CommandExecutor {
         }
     }
 
-    private void showRegionInfo(Player player) {
+    private void showPlayerInfo(Player player) {
         List<Region> regions = RegionManager.get().getPlayerRegions(player);
         Set<District> uniqueDistricts = new HashSet<District>();
         Map<String,District> districts = DistrictManager.get().getDistricts();
@@ -182,6 +201,27 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(sender, "| " + district.toString() + ": "
                     + RCUtils.arrayToString(list, ", "), false);
         }
+    }
+
+    private void showRegionInfo(String strRegion) {
+        try {
+            showRegionInfo(RegionManager.get().getRegion(strRegion));
+        } catch (UnknownRegionException e) {
+            RCMessaging.warn(sender, e.getMessage());
+        }
+    }
+
+    private void showRegionInfo(Region region) {
+        RegionManager regionManager = RegionManager.get();
+        District district = region.getDistrict();
+        RCMessaging.send(sender, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
+                    + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
+                    + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"),false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
+        RCMessaging.send(sender, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
     }
 
     private void buyRegion(String region) {
@@ -239,7 +279,7 @@ public class RegionCommand implements CommandExecutor {
             try {
                 RegionManager.get().dropRegion(player, region);
                 RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
-                        RCMessaging.yellow(region.getDistrict().getMinPrice() + "") + " Coins an den Server verkauft.");
+                        RCMessaging.yellow(RegionManager.get().getRefundValue(region) + "") + " Coins an den Server verkauft.");
             } catch (RegionException e) {
                 RCMessaging.warn(sender, e.getMessage());
             }

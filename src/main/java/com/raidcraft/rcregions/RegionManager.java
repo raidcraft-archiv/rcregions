@@ -249,8 +249,7 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
-        RegionsPlugin.get().getEconomy().add(player, (region.getBasePrice() *
-                MainConfig.getDistrict(region.getDistrict().getName()).getRefundPercentage()));
+        RegionsPlugin.get().getEconomy().add(player, getRefundValue(region));
     }
 
     public boolean hasWarnedRegions(Player player) {
@@ -266,5 +265,13 @@ public final class RegionManager {
             }
         }
         return regions;
+    }
+
+    public double getRefundValue(Region region) {
+        return region.getBasePrice() * getRefundPercentage(region);
+    }
+
+    public double getRefundPercentage(Region region) {
+        return MainConfig.getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
 }
