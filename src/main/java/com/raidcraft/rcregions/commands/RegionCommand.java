@@ -63,6 +63,33 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+            if (cmd.is(label, "warn")) {
+                if (sender.hasPermission("rcregions.warn")) {
+                    try {
+                        Region region = null;
+                        if (args.length > 1) {
+                            region = RegionManager.get().getRegion(args[1]);
+                        } else if (args.length == 1 && sender instanceof Player) {
+                            region = RegionManager.get().getRegion(cmd.getPlayerOfSender(sender).getLocation());
+                        }
+                        if (region != null) {
+                            if (region.isWarned()) {
+                                region.setWarned(false);
+                                RCMessaging.send(sender, "Die Verwarnung der Region " + region.getName() + " wurde aufgehoben.");
+                            } else {
+                                region.setWarned(true);
+                                RCMessaging.send(sender, "Die Region " + region.getName() + "wurde verwarnt.");
+                            }
+                            return true;
+                        }
+                    } catch (UnknownRegionException e) {
+                        RCMessaging.warn(sender, e.getMessage());
+                        return true;
+                    }
+                }
+            }
+            // gets region information about the player
+            // [/rcr -p <player>]
             if (cmd.is(label, "player", "-p")) {
                 if (sender.hasPermission("rcregions.playerinfo")) {
                     if (args.length > 1) {
@@ -144,6 +171,10 @@ public class RegionCommand implements CommandExecutor {
         for (District district : uniqueDistricts) {
             ArrayList<String> list = new ArrayList<String>();
             for (Region region : RegionManager.get().getPlayerRegions(player, district)) {
+                if (region.isWarned()) {
+                    list.add(RCMessaging.red(region.toString()));
+                    continue;
+                }
                 list.add(region.toString());
             }
             RCMessaging.send(sender, "| " + district.toString() + ": "

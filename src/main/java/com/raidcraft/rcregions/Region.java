@@ -28,6 +28,7 @@ public class Region {
     private double price;
     private District district;
     private boolean buyable;
+    private boolean warned = false;
     
     public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
@@ -64,28 +65,33 @@ public class Region {
         } else {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
+        if (region.getFlag(CustomFlag.WARNED) == null) {
+            setWarned(false);
+        } else {
+            this.warned = region.getFlag(CustomFlag.WARNED);
+        } 
     }
 
     /* All Getters and Setters go here */
     public String getName() {
         return name;
     }
-    
+
     public String getOwner() {
         return owner;
-    } 
-    
+    }
+
     public double getPrice() {
         if (district.useVolume() && price < getBasePrice()) {
             setPrice(getBasePrice());
         }
         return price;
     }
-    
+
     public boolean isBuyable() {
         return buyable;
     }
-    
+
     public ProtectedRegion getRegion() {
         return region;
     }
@@ -117,17 +123,27 @@ public class Region {
         this.region.setFlag(DefaultFlag.PRICE, price);
         save();
     }
-    
+
     public void setBuyable(boolean sell) {
         this.buyable = sell;
         region.setFlag(DefaultFlag.BUYABLE, sell);
         save();
     }
-    
+
+    public boolean isWarned() {
+        return warned;
+    }
+
+    public void setWarned(boolean warned) {
+        this.warned = warned;
+        region.setFlag(CustomFlag.WARNED, warned);
+        save();
+    }
+
     public District getDistrict() {
         return district;
     }
-    
+
     private void save() {
         WorldGuardManager.save();
     }
@@ -138,7 +154,7 @@ public class Region {
         getRegion().setFlag(DefaultFlag.BUILD, (denyAccess ? StateFlag.State.DENY : null));
         save();
     }
-    
+
     public double getBasePrice() {
         if (region instanceof ProtectedCuboidRegion) {
             MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
