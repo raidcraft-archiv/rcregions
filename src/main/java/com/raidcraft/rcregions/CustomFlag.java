@@ -6,8 +6,9 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 public class CustomFlag {
     
     public static final BooleanFlag WARNED = new BooleanFlag("warned");
-    
-    public static void init() {
-        DefaultFlag.addCustomFlag(WARNED);
+
+    static {
+        // TODO: wait until worldguard is fixed
+        // DefaultFlag.addCustomFlag(WARNED);
     }
 }
