@@ -99,7 +99,8 @@ public class RCPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (!(_taskList.containsKey(player.getName())) && RegionManager.get().hasWarnedRegions(player)) {
-            Task task = new Task(RegionsPlugin.get(), new Warning(player, RegionManager.get().getWarnedRegions(player))) {
+            List<Region> regions = RegionManager.get().getWarnedRegions(player);
+            Task task = new Task(RegionsPlugin.get(), new Warning(player, regions)) {
 
                 @Override
                 public void run() {
@@ -132,7 +133,7 @@ public class RCPlayerListener implements Listener {
             this.regions = regions;
         }
         
-        public void issue() {
+        public synchronized void issue() {
             for (Region region : regions) {
                 RCMessaging.send(player, RCMessaging.red("Dein Grundstück " + region.getName() + " wurde verwarnt! Bitte verschönere es..."));
             }

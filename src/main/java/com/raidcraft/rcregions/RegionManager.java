@@ -259,7 +259,7 @@ public final class RegionManager {
 
     public List<Region> getWarnedRegions(Player player) {
         List<Region> regions = getPlayerRegions(player);
-        for (Region region : regions) {
+        for (Region region : getPlayerRegions(player)) {
             if (!region.isWarned()) {
                 regions.remove(region);
             }
