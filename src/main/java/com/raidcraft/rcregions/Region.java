@@ -3,6 +3,7 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -28,7 +29,7 @@ public class Region {
     private double price;
     private District district;
     private boolean buyable;
-    private boolean warned = false;
+    private boolean warned;
     
     public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
@@ -66,6 +67,7 @@ public class Region {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
         if (region.getFlag(CustomFlag.WARNED) == null) {
+            RCLogger.warning("Custom Flag - WARNED - " + region.getFlag(CustomFlag.WARNED));
             setWarned(false);
         } else {
             this.warned = region.getFlag(CustomFlag.WARNED);
