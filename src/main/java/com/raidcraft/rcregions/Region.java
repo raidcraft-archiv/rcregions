@@ -71,7 +71,7 @@ public class Region {
             setWarned(false);
         } else {
             this.warned = region.getFlag(CustomFlag.WARNED);
-        } 
+        }
     }
 
     /* All Getters and Setters go here */

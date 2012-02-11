@@ -249,7 +249,8 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
-        RegionsPlugin.get().getEconomy().add(player, (region.getBasePrice() * MainConfig.getDistrict(region.getName()).getRefundPercentage()));
+        RegionsPlugin.get().getEconomy().add(player, (region.getBasePrice() *
+                MainConfig.getDistrict(region.getDistrict().getName()).getRefundPercentage()));
     }
 
     public boolean hasWarnedRegions(Player player) {
