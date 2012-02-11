@@ -86,6 +86,8 @@ public class RegionCommand implements CommandExecutor {
                         RCMessaging.warn(sender, e.getMessage());
                         return true;
                     }
+                } else {
+                    RCMessaging.noPermission(sender);
                 }
             }
             // gets region information about the player
