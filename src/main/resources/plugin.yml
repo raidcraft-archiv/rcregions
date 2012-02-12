@@ -20,6 +20,7 @@ permissions:
         rcregions.sign.place: true
         rcregions.region.drop: true
         rcregions.region.sell: true
+        rcregions.info: true
   rcregions.region.buy:
       default: op
   rcregions.region.drop:
@@ -34,3 +35,5 @@ permissions:
       default: op
   rcregions.warn:
       default: op
+  rcregions.info:
+      default: true
