@@ -14,20 +14,20 @@ commands:
 permissions:
   rcregions.user:
       description: Gives access to basic Region commands.
-      default: true
+      default: op
       children:
         rcregions.region.buy: true
         rcregions.sign.place: true
         rcregions.region.drop: true
         rcregions.region.sell: true
   rcregions.region.buy:
-      default: true
+      default: op
   rcregions.region.drop:
-        default: true
+        default: op
   rcregions.sign.place:
-      default: true
+      default: op
   rcregions.region.sell:
-      default: true
+      default: op
   rcregions.admin:
       default: op
   rcregions.region.warp:
