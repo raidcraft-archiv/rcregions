@@ -1,4 +1,6 @@
 signIdentifier: 'region'
+# warn interval in seconds
+warn-interval: 300
 # who should recieve the polygon warning?
 admins:
     - Silthus
