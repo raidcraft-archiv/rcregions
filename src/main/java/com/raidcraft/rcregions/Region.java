@@ -1,12 +1,12 @@
 package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.exceptions.RegionException;
+import com.raidcraft.rcregions.config.RegionsConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -66,11 +66,10 @@ public class Region {
         } else {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
-        if (region.getFlag(CustomFlag.WARNED) == null) {
-            RCLogger.warning("Custom Flag - WARNED - " + region.getFlag(CustomFlag.WARNED));
-            setWarned(false);
+        if (RegionsConfig.getRegions().contains(getName())) {
+            this.warned = (Boolean) RegionsConfig.getRegion(getName()).getFlag("warned");
         } else {
-            this.warned = region.getFlag(CustomFlag.WARNED);
+            this.warned = false;
         }
     }
 
@@ -138,8 +137,7 @@ public class Region {
 
     public void setWarned(boolean warned) {
         this.warned = warned;
-        region.setFlag(CustomFlag.WARNED, warned);
-        save();
+        RegionsConfig.getRegion(getName()).setFlag("warned", warned);
     }
 
     public District getDistrict() {
