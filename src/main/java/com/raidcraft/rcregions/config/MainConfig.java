@@ -54,6 +54,10 @@ public class MainConfig {
     public static SingleDistrictConfig getDistrict(String district) {
         return new SingleDistrictConfig(district);
     }
+
+    public static long getWarnInterval() {
+        return getConfig().getLong("warn-interval", 300);
+    }
     
     public static class SingleDistrictConfig {
         

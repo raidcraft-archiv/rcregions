@@ -17,12 +17,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 21.01.12 - 19:09
@@ -31,11 +28,11 @@ import java.util.Map;
  */
 public class RCPlayerListener implements Listener {
 
-    private static Map<String, Task> _taskList = new HashMap<String, Task>();
+    private static Set<Player> warnedPlayers = new HashSet<Player>();
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
     // 20 ticks is one second and we want a five minute interval
-    private static final long INTERVAL = 20 * 60 * 5;
+    private static final long INTERVAL = 20 * MainConfig.getWarnInterval();
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -98,44 +95,42 @@ public class RCPlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!(_taskList.containsKey(player.getName())) && RegionManager.get().hasWarnedRegions(player)) {
-            List<Region> regions = RegionManager.get().getWarnedRegions(player);
-            Task task = new Task(RegionsPlugin.get(), new Warning(player, regions)) {
-
-                @Override
-                public void run() {
-                    Warning warning = (Warning) getArg(0);
-                    warning.issue();
-                }
-            };
-            _taskList.put(player.getName(), task);
-            task.startRepeating(DELAY, INTERVAL, false);
+        if (RegionManager.get().hasWarnedRegions(player) && !warnedPlayers.contains(player)) {
+            warnedPlayers.add(player);
+        } else if (warnedPlayers.contains(player)) {
+            warnedPlayers.remove(player);
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        String name = event.getPlayer().getName();
-        if (_taskList.containsKey(name)) {
-            Task task = _taskList.get(name);
-            task.stop();
-            _taskList.remove(name);
+        Player player = event.getPlayer();
+        if (warnedPlayers.contains(player)) {
+            warnedPlayers.remove(player);
         }
     }
 
-    public class Warning {
+    public static void startWarningTask() {
+        Task task = new Task(RegionsPlugin.get(), new Warning()) {
 
-        private final Player player;
-        private final List<Region> regions;
+            @Override
+            public void run() {
+                Warning warning = (Warning) getArg(0);
+                warning.issue();
+            }
+        };
+        task.startRepeating(DELAY, INTERVAL, false);
+    }
+
+    public static class Warning {
+
         
-        public Warning(Player player, List<Region> regions) {
-            this.player = player;
-            this.regions = regions;
+        public Warning() {
         }
         
         public synchronized void issue() {
-            for (Region region : regions) {
-                RCMessaging.send(player, RCMessaging.red("Dein Grundstück " + region.getName() + " wurde verwarnt! Bitte verschönere es..."));
+            for (Player player : warnedPlayers) {
+                RCMessaging.warn(player, "Ein Grundstück von dir wurde verwarnt! Gebe /rcr für Details ein.");
             }
         }
     }

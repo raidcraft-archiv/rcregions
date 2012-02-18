@@ -38,6 +38,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
         RegionsConfig.init(this);
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
+        RCPlayerListener.startWarningTask();
     }
 
     private void initializeManagers() {
