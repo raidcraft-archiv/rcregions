@@ -45,7 +45,7 @@ public class RCPlayerListener implements Listener {
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
             Sign sign = SignUtils.getSign(event.getClickedBlock());
-            if (ChatColor.stripColor(sign.getLine(3)).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
+            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
                 try {
                     Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                     String owner = region.getOwner();
@@ -74,7 +74,7 @@ public class RCPlayerListener implements Listener {
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
             Sign sign = SignUtils.getSign(event.getClickedBlock());
-            if (ChatColor.stripColor(sign.getLine(3)).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
+            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
                 if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
                     event.setCancelled(true);
                 }
