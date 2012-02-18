@@ -90,6 +90,14 @@
                     <include>config.yml</include>
                 </includes>
             </resource>
+            <resource>
+                <targetPath>defaults/</targetPath>
+                <directory>src/main/resources/</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>regions.yml</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 </project>
