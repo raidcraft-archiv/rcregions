@@ -5,6 +5,7 @@ import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.config.ConfigManager;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -37,7 +38,11 @@ public class RegionsConfig {
     }
 
     public static Set<String> getRegions() {
-        return getConfig().getKeys(false);
+        Set<String> keys = getConfig().getKeys(false);
+        if (keys == null) {
+            return new HashSet<String>();
+        }
+        return keys;
     }
     
     public static SingleRegionConfig getRegion(String id) {
@@ -46,12 +51,13 @@ public class RegionsConfig {
 
     public static class SingleRegionConfig {
 
-        private final String id;
         private final ConfigurationSection section;
         
         public SingleRegionConfig(String id) {
-            this.id = id;
-            this.section = getConfig().getConfigurationSection("id");
+            this.section = getConfig().getConfigurationSection(id);
+            if (section == null) {
+                getConfig().createSection(id);
+            }
         }
 
         public Object getFlag(String flag) {
