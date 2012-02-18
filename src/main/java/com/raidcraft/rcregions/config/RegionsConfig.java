@@ -51,13 +51,14 @@ public class RegionsConfig {
 
     public static class SingleRegionConfig {
 
-        private final ConfigurationSection section;
+        private ConfigurationSection section;
         
         public SingleRegionConfig(String id) {
             this.section = getConfig().getConfigurationSection(id);
             if (section == null) {
                 getConfig().createSection(id);
                 save();
+                this.section = getConfig().getConfigurationSection(id);
             }
         }
 
@@ -66,7 +67,6 @@ public class RegionsConfig {
         }
 
         public void setFlag(String flag, Object value) {
-            section.createSection(flag);
             section.set(flag, value);
             save();
         }
