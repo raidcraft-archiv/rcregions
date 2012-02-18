@@ -57,6 +57,7 @@ public class RegionsConfig {
             this.section = getConfig().getConfigurationSection(id);
             if (section == null) {
                 getConfig().createSection(id);
+                save();
             }
         }
 
