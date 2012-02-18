@@ -32,7 +32,8 @@ public class RCPlayerListener implements Listener {
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
     // 20 ticks is one second and we want a five minute interval
-    private static final long INTERVAL = 20 * MainConfig.getWarnInterval();
+    private static long INTERVAL;
+    private static boolean taskIsRunning = false;
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -94,6 +95,7 @@ public class RCPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        RCPlayerListener.startWarningTask();
         Player player = event.getPlayer();
         if (RegionManager.get().hasWarnedRegions(player) && !warnedPlayers.contains(player)) {
             warnedPlayers.add(player);
@@ -111,6 +113,10 @@ public class RCPlayerListener implements Listener {
     }
 
     public static void startWarningTask() {
+        if (taskIsRunning) {
+            return;
+        }
+        INTERVAL = 20 * MainConfig.getWarnInterval();
         Task task = new Task(RegionsPlugin.get(), new Warning()) {
 
             @Override
@@ -120,6 +126,7 @@ public class RCPlayerListener implements Listener {
             }
         };
         task.startRepeating(DELAY, INTERVAL, false);
+        taskIsRunning = true;
     }
 
     public static class Warning {
