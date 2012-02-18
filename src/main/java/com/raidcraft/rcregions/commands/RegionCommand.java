@@ -73,12 +73,15 @@ public class RegionCommand implements CommandExecutor {
                             region = RegionManager.get().getRegion(cmd.getPlayerOfSender(sender).getLocation());
                         }
                         if (region != null) {
+                            Player player = Bukkit.getPlayer(region.getOwner());
                             if (region.isWarned()) {
                                 region.setWarned(false);
                                 RCMessaging.send(sender, "Die Verwarnung der Region " + region.getName() + " wurde aufgehoben.");
+                                RCMessaging.send(player, "Die Verwarnung deiner Region " + region.getName() + " wurde aufgehoben.");
                             } else {
                                 region.setWarned(true);
                                 RCMessaging.send(sender, "Die Region " + region.getName() + " wurde verwarnt.");
+                                RCMessaging.send(player, "Deine Region " + region.getName() + " wurde verwarnt.");
                             }
                             return true;
                         }
