@@ -66,6 +66,7 @@ public class RegionsConfig {
         }
 
         public void setFlag(String flag, Object value) {
+            section.createSection(flag);
             section.set(flag, value);
             save();
         }
