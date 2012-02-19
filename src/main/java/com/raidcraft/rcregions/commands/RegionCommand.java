@@ -77,10 +77,12 @@ public class RegionCommand implements CommandExecutor {
                             if (region.isWarned()) {
                                 region.setWarned(false);
                                 RCMessaging.send(sender, "Die Verwarnung der Region " + region.getName() + " wurde aufgehoben.");
+                                if (player != null)
                                 RCMessaging.send(player, "Die Verwarnung deiner Region " + region.getName() + " wurde aufgehoben.");
                             } else {
                                 region.setWarned(true);
                                 RCMessaging.send(sender, "Die Region " + region.getName() + " wurde verwarnt.");
+                                if (player != null)
                                 RCMessaging.send(player, "Deine Region " + region.getName() + " wurde verwarnt.");
                             }
                             return true;
