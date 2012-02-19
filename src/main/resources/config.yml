@@ -25,6 +25,9 @@ districts:
         # can players drop this region?
         # default: true
         dropable: true
+        # does the player need the permission rcregions.district.<name>
+        # e.g.: rcregions.district.zentrum
+        needs-permission: false
         # for what percentage should the regions be sold to the server?
         # default: 20%
         refund-percentage: 0.20

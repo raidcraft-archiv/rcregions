@@ -63,7 +63,7 @@ public class MainConfig {
         
         private final ConfigurationSection section;
         private final String name;
-        
+
         public SingleDistrictConfig(String name) {
             this.section = getConfig().getConfigurationSection("districts." + name);
             this.name = name;
@@ -131,6 +131,10 @@ public class MainConfig {
         
         public double getScheduledTax() throws UnconfiguredConfigException {
             return getScheduledTaxes().getDouble("tax", 0.20);
+        }
+
+        public boolean getNeedsPermission() {
+            return section.getBoolean("needs-permission", false);
         }
     }
 }

@@ -17,6 +17,7 @@ public class District {
 
     private final String name;
     private String identifier;
+    private boolean needsPermission;
     private double minPrice;
     private boolean dropable;
     private int maxRegions;
@@ -41,6 +42,7 @@ public class District {
         this.maxRegions = district.getMaxRegions();
         this.maxRegions = district.getMaxRegions();
         this.useVolume = district.useVolume();
+        this.needsPermission = district.getNeedsPermission();
         try {
             this.scheduledTaxesCount = district.getScheduledRegionCount();
             this.scheduledTaxesInterval = district.getScheduledRegionInterval();
@@ -78,6 +80,10 @@ public class District {
 
     public int getMaxRegions() {
         return maxRegions;
+    }
+
+    public boolean getNeedsPermission() {
+        return needsPermission;
     }
     
     public double getTaxes(int count) {

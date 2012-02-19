@@ -106,6 +106,9 @@ public final class RegionManager {
             throw new PlayerException("Du bist bereits der Besitzer dieser Region.");
         }
         District district = region.getDistrict();
+        if (district.getNeedsPermission() && !player.hasPermission("rcregions.district." + district.getName())) {
+            throw new PlayerException("Du darfst kein Grundstück in diesem Distrikt kaufen!");
+        }
         if (!(district.getMaxRegions() == -1) && !(getPlayerRegionCount(player, district) < district.getMaxRegions())) {
             throw new RegionException("Du hast bereits zu viele Grundstücke in diesem Distrikt.");
         }
