@@ -1,5 +1,6 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.config.RegionsConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
@@ -157,7 +158,7 @@ public class Region {
 
     public double getBasePrice() {
         if (region instanceof ProtectedCuboidRegion) {
-            MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
+            DistrictConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
             BlockVector max = region.getMaximumPoint();
             BlockVector min = region.getMinimumPoint();
             int xLength = max.getBlockX() - min.getBlockX();
