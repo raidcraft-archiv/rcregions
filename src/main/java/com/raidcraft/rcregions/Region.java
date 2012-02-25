@@ -170,10 +170,8 @@ public class Region {
             }
             return Math.round(volume * district.getPricePerBlock());
         }
-        Player player;
-        for (String name : MainConfig.getAdmins()) {
-            player = Bukkit.getPlayer(name);
-            if (!(player == null)) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (player.hasPermission("rcregions.notify")) {
                 RCMessaging.warn(player, "Region " + region.getId() + " is a polygon! Please change it to a cuboid...");
             }
         }
