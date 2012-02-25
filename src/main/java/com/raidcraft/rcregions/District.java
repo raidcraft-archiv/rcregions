@@ -1,5 +1,6 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
 import com.silthus.raidcraft.util.RCLogger;
@@ -34,7 +35,7 @@ public class District {
     }
     
     private void load() {
-        MainConfig.SingleDistrictConfig district = MainConfig.getDistrict(getName());
+        DistrictConfig.SingleDistrictConfig district = MainConfig.getDistrict(getName());
         this.identifier = district.getIdentifier();
         this.minPrice = district.getMinPrice();
         this.dropable = district.isDropable();
