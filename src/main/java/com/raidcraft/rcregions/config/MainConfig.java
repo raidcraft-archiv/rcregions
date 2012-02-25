@@ -47,6 +47,10 @@ public class MainConfig {
         return getConfig().getLong("warn-interval", 300);
     }
     
+    public static int getToolId() {
+        return getConfig().getInt("tool-id");
+    }
+    
     public static DatabaseConfig getDatabase() {
         return new DatabaseConfig();
     }

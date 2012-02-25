@@ -1,6 +1,8 @@
 signIdentifier: 'region'
 # warn interval in seconds
 warn-interval: 300
+# tool to lookup region info
+tool-id: 268
 # database configuration
 database:
     # valid types are:

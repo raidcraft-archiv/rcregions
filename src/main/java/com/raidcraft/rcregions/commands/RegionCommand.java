@@ -153,7 +153,7 @@ public class RegionCommand implements CommandExecutor {
                     if (sender instanceof Player && args.length == 1) {
                         try {
                             Region region = RegionManager.get().getRegion(((Player) sender).getLocation());
-                            showRegionInfo(region);
+                            showRegionInfo((Player)sender, region);
                         } catch (UnknownRegionException e) {
                             RCMessaging.warn(sender, e.getMessage());
                         }
@@ -210,23 +210,24 @@ public class RegionCommand implements CommandExecutor {
 
     private void showRegionInfo(String strRegion) {
         try {
-            showRegionInfo(RegionManager.get().getRegion(strRegion));
+            if (sender instanceof Player)
+            showRegionInfo((Player)sender, RegionManager.get().getRegion(strRegion));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
     }
 
-    private void showRegionInfo(Region region) {
+    public static void showRegionInfo(Player player, Region region) {
         RegionManager regionManager = RegionManager.get();
         District district = region.getDistrict();
-        RCMessaging.send(sender, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
-        RCMessaging.send(sender, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
+        RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
+        RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                     + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
-        RCMessaging.send(sender, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
+        RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
                     + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"),false);
-        RCMessaging.send(sender, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
-        RCMessaging.send(sender, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
-        RCMessaging.send(sender, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
+        RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
+        RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
+        RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
     }
 
     private void buyRegion(String region) {

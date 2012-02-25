@@ -3,6 +3,7 @@ package com.raidcraft.rcregions.listeners;
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -41,33 +42,45 @@ public class RCPlayerListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
-            Sign sign = SignUtils.getSign(event.getClickedBlock());
-            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
-                try {
-                    Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
-                    String owner = region.getOwner();
-                    if (owner == null) owner = "";
-                    if ( !(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
-                        RCMessaging.send(player, "Dieses Grundstück wird vom Server verwaltet.");
-                        event.setCancelled(true);
-                        return;
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (event.getPlayer().getItemInHand().getTypeId() == MainConfig.getToolId()) {
+                if (player.hasPermission("rcregions.info")) {
+                    try {
+                        Region region = RegionManager.get().getRegion(event.getClickedBlock().getLocation());
+                        RegionCommand.showRegionInfo(player, region);
+                    } catch (UnknownRegionException e) {
+                        RCMessaging.warn(player, e.getMessage());
                     }
-                    if ((player.hasPermission("rcregions.admin")) ||
-                            (player.hasPermission("rcregions.region.sell") && owner.equalsIgnoreCase(player.getName()))) {
-                        if (region.isBuyable()) {
-                            region.setBuyable(false);
-                            RCMessaging.send(player, "Die Region kann nun nicht mehr gekauft werden.");
-                        } else {
-                            region.setBuyable(true);
-                            RCMessaging.send(player, "Die Region kann nun gekauft werden.");
+                }
+            }
+            if (SignUtils.isSign(event.getClickedBlock())) {
+                Sign sign = SignUtils.getSign(event.getClickedBlock());
+                if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
+                    try {
+                        Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                        String owner = region.getOwner();
+                        if (owner == null) owner = "";
+                        if (!(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
+                            RCMessaging.send(player, "Dieses Grundstück wird vom Server verwaltet.");
+                            event.setCancelled(true);
+                            return;
                         }
-                        RegionManager.get().updateSign(sign, region);
-                    } else {
-                        RCMessaging.noPermission(player);
+                        if ((player.hasPermission("rcregions.admin")) ||
+                                (player.hasPermission("rcregions.region.sell") && owner.equalsIgnoreCase(player.getName()))) {
+                            if (region.isBuyable()) {
+                                region.setBuyable(false);
+                                RCMessaging.send(player, "Die Region kann nun nicht mehr gekauft werden.");
+                            } else {
+                                region.setBuyable(true);
+                                RCMessaging.send(player, "Die Region kann nun gekauft werden.");
+                            }
+                            RegionManager.get().updateSign(sign, region);
+                        } else {
+                            RCMessaging.noPermission(player);
+                        }
+                    } catch (UnknownRegionException e) {
+                        RCMessaging.warn(player, e.getMessage());
                     }
-                } catch (UnknownRegionException e) {
-                    RCMessaging.warn(player, e.getMessage());
                 }
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
