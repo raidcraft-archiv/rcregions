@@ -35,5 +35,7 @@ permissions:
       default: op
   rcregions.warn:
       default: op
+  rcregions.notify:
+      default: op
   rcregions.info:
       default: true
