@@ -43,7 +43,7 @@ public class RCPlayerListener implements Listener {
         }
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getPlayer().getItemInHand().getTypeId() == MainConfig.getToolId()) {
+            if (event.getPlayer().getItemInHand().getType().getId() == MainConfig.getToolId()) {
                 if (player.hasPermission("rcregions.info")) {
                     try {
                         Region region = RegionManager.get().getRegion(event.getClickedBlock().getLocation());
