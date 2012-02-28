@@ -37,6 +37,10 @@
 
     <repositories>
         <repository>
+            <id>sk89q-mvn2</id>
+            <url>http://mvn2.sk89q.com/repo</url>
+        </repository>
+        <repository>
             <id>raidcraft</id>
             <url>http://nexus.raid-craft.de/content/groups/public/</url>
         </repository>
@@ -61,13 +65,6 @@
             <artifactId>worldguard</artifactId>
             <version>5.6-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.2.11-SNAPSHOT</version>
-            <scope>compile</scope>
-            <type>jar</type>
         </dependency>
     </dependencies>
 

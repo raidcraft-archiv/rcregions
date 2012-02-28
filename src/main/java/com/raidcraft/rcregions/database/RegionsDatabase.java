@@ -26,6 +26,7 @@ public class RegionsDatabase extends RCDatabase {
     public static RegionsDatabase get() {
         if (_self == null) {
             _self = new RegionsDatabase();
+            _self.setupTables();
         }
         return _self;
     }
@@ -39,27 +40,7 @@ public class RegionsDatabase extends RCDatabase {
                 config.getUrl(),
                 config.getUsername(),
                 config.getPassword(),
-                config.getType());
-        this.prefix = config.getPrefix();
-    }
-
-    public Set<String> getTableNames() {
-        return tables;
-    }
-    
-    private String getPrefix() {
-        return prefix;
-    }
-
-    public void createTables(Connection connection) {
-        PreparedStatement prepare = connection.prepare(
-                "CREATE TABLE  `" + getName() + "`.`" + getPrefix() + "regions` (\n" +
-                "`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,\n" +
-                "`name` VARCHAR( 64 ) NOT NULL ,\n" +
-                "`owner` VARCHAR( 64 ) NULL ,\n" +
-                "`volume` DOUBLE NULL ,\n" +
-                "`buyable` INT( 1 ) NULL\n" +
-                ") ENGINE = InnoDB ;");
-        connection.executeUpdate(prepare);
+                config.getType(),
+                config.getPrefix());
     }
 }
