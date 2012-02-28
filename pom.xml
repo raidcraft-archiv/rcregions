@@ -32,7 +32,7 @@
   <scm>
       <connection>ssh://git@78.46.16.2:15973/~/rcregions.git</connection>
       <developerConnection>ssh://git@78.46.16.2:15973/~/rcregions.git</developerConnection>
-      <url>http://redmine.raid-craft.de/projects/coins/repository</url>
+      <url>http://redmine.raid-craft.de/projects/regions/repository</url>
   </scm>
 
   <repositories>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R3</version>
+            <version>1.1-R5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>RaidCraftCore</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

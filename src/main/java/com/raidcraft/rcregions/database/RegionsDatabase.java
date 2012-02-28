@@ -13,11 +13,13 @@ import java.util.Set;
 /**
  * User: Silthus
  */
-public class RegionsDatabase implements Database {
+public class RegionsDatabase extends RCDatabase {
     
     private static RegionsDatabase _self;
+    private static MainConfig.DatabaseConfig config;
     
     public static void init() {
+        config = MainConfig.getDatabase();
         get();
     }
     
@@ -28,67 +30,21 @@ public class RegionsDatabase implements Database {
         return _self;
     }
     
-    private String username;
-    private String password;
-    private String hostname;
-    private String databaseName;
     private String prefix;
-    private DatabaseType type;
     private Set<String> tables = new HashSet<String>();
-    
-    private Connection connection;
 
     private RegionsDatabase() {
-        MainConfig.DatabaseConfig config = MainConfig.getDatabase();
-        this.username = config.getUsername();
-        this.password = config.getPassword();
-        this.hostname = config.getUrl();
-        this.databaseName = config.getName();
+        super(RegionsPlugin.get(),
+                config.getName(),
+                config.getUrl(),
+                config.getUsername(),
+                config.getPassword(),
+                config.getType());
         this.prefix = config.getPrefix();
-        try {
-            this.type = DatabaseType.getType(config.getType());
-            if (type == DatabaseType.SQLITE) {
-                this.databaseName = "regions.db";
-            }
-        } catch (UnknownDatabaseType e) {
-            RCLogger.warning("Wrong database Type defined in Config! Fallback to Default: SQLite");
-            this.type = DatabaseType.SQLITE;
-            this.databaseName = "regions.db";
-        }
-        try {
-            this.connection = DatabaseHandler.get().registerDatabase(this);
-            tables.add(getPrefix() + "regions");
-            tables.add(getPrefix() + "flags");
-            tables.add(getPrefix() + "districts");
-        } catch (DuplicateDatabaseException e) {
-            RCLogger.warning("Error when opening Connection to the Database...");
-            RCLogger.warning("...disabling RCRegions!");
-            Bukkit.getServer().getPluginManager().disablePlugin(RegionsPlugin.get());
-        }
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getHostname() {
-        return hostname;
     }
 
     public Set<String> getTableNames() {
         return tables;
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-    
-    public DatabaseType getType() {
-        return type;
     }
     
     private String getPrefix() {
@@ -97,7 +53,7 @@ public class RegionsDatabase implements Database {
 
     public void createTables(Connection connection) {
         PreparedStatement prepare = connection.prepare(
-                "CREATE TABLE  `" + getDatabaseName() + "`.`" + getPrefix() + "regions` (\n" +
+                "CREATE TABLE  `" + getName() + "`.`" + getPrefix() + "regions` (\n" +
                 "`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,\n" +
                 "`name` VARCHAR( 64 ) NOT NULL ,\n" +
                 "`owner` VARCHAR( 64 ) NULL ,\n" +
