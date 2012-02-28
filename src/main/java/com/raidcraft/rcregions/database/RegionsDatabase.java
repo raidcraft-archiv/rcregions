@@ -2,11 +2,8 @@ package com.raidcraft.rcregions.database;
 
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
-import com.silthus.raidcraft.database.*;
-import com.silthus.raidcraft.util.RCLogger;
-import org.bukkit.Bukkit;
+import com.silthus.raidcraft.database.RCDatabase;
 
-import java.sql.PreparedStatement;
 import java.util.HashSet;
 import java.util.Set;
 
