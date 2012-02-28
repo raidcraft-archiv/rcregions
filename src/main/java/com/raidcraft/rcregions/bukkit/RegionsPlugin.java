@@ -10,9 +10,6 @@ import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.player.PlayerListener;
 
 /**
  *

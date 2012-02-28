@@ -37,10 +37,6 @@
 
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/artifactory/repo</url>
-        </repository>
-        <repository>
             <id>raidcraft</id>
             <url>http://nexus.raid-craft.de/content/groups/public/</url>
         </repository>
@@ -59,6 +55,12 @@
             <version>1.1-R5-SNAPSHOT</version>
             <scope>provided</scope>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>5.6-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
