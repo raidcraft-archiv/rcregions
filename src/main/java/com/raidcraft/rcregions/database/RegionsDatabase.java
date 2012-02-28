@@ -95,7 +95,7 @@ public class RegionsDatabase implements Database {
         return prefix;
     }
 
-    public void createTables() {
+    public void createTables(Connection connection) {
         PreparedStatement prepare = connection.prepare(
                 "CREATE TABLE  `" + getDatabaseName() + "`.`" + getPrefix() + "regions` (\n" +
                 "`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,\n" +
