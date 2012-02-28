@@ -47,6 +47,9 @@ public class RegionsDatabase implements Database {
         this.prefix = config.getPrefix();
         try {
             this.type = DatabaseType.getType(config.getType());
+            if (type == DatabaseType.SQLITE) {
+                this.databaseName = "regions.db";
+            }
         } catch (UnknownDatabaseType e) {
             RCLogger.warning("Wrong database Type defined in Config! Fallback to Default: SQLite");
             this.type = DatabaseType.SQLITE;

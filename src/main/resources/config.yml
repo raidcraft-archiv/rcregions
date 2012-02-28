@@ -8,7 +8,7 @@ database:
     # valid types are:
     # MySQL
     # SQLite
-    type: 'MySQL'
+    type: 'SQLite'
     # the name of the database
     database: 'minecraft'
     # username of the database
