@@ -4,9 +4,6 @@ import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.silthus.raidcraft.database.RCDatabase;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * User: Silthus
  */
@@ -27,9 +24,6 @@ public class RegionsDatabase extends RCDatabase {
         }
         return _self;
     }
-    
-    private String prefix;
-    private Set<String> tables = new HashSet<String>();
 
     private RegionsDatabase() {
         super(RegionsPlugin.get(),
