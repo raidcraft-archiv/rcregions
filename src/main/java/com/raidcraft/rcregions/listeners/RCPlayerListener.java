@@ -144,7 +144,6 @@ public class RCPlayerListener implements Listener {
 
     public static class Warning {
 
-        
         public Warning() {
         }
         

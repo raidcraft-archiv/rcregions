@@ -6,6 +6,7 @@ import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.config.RegionsConfig;
+import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
@@ -40,6 +41,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
         DistrictConfig.init(this);
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
+        RegionsDatabase.init();
     }
 
     private void initializeManagers() {
