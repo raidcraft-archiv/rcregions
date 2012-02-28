@@ -2,9 +2,7 @@ package com.raidcraft.rcregions.database;
 
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
-import com.silthus.raidcraft.database.*;
-import com.silthus.raidcraft.util.RCLogger;
-import org.bukkit.Bukkit;
+import com.silthus.raidcraft.database.RCDatabase;
 
 import java.sql.PreparedStatement;
 import java.util.HashSet;
@@ -26,6 +24,7 @@ public class RegionsDatabase extends RCDatabase {
     public static RegionsDatabase get() {
         if (_self == null) {
             _self = new RegionsDatabase();
+            _self.getConnection().setupTables();
         }
         return _self;
     }
@@ -41,6 +40,7 @@ public class RegionsDatabase extends RCDatabase {
                 config.getPassword(),
                 config.getType());
         this.prefix = config.getPrefix();
+        tables.add(getPrefix() + "regions");
     }
 
     public Set<String> getTableNames() {
@@ -51,7 +51,7 @@ public class RegionsDatabase extends RCDatabase {
         return prefix;
     }
 
-    public void createTables(Connection connection) {
+    public void createTables() {
         PreparedStatement prepare = connection.prepare(
                 "CREATE TABLE  `" + getName() + "`.`" + getPrefix() + "regions` (\n" +
                 "`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,\n" +
