@@ -67,8 +67,9 @@
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
-            <version>5.5-SNAPSHOT</version>
+            <version>5.4-SNAPSHOT</version>
             <scope>provided</scope>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
