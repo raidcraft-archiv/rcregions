@@ -27,9 +27,6 @@ public class RegionsDatabase extends RCDatabase {
         }
         return _self;
     }
-    
-    private String prefix;
-    private Set<String> tables = new HashSet<String>();
 
     private RegionsDatabase() {
         super(RegionsPlugin.get(),
@@ -39,5 +36,6 @@ public class RegionsDatabase extends RCDatabase {
                 config.getPassword(),
                 config.getType(),
                 config.getPrefix());
+        addTable(new RegionsTable(this));
     }
 }
