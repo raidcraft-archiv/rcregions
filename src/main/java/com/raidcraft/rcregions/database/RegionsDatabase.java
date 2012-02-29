@@ -4,9 +4,6 @@ import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.silthus.raidcraft.database.RCDatabase;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * User: Silthus
  */
