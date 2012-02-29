@@ -37,12 +37,16 @@
 
     <repositories>
         <repository>
-            <id>sk89q-mvn2</id>
-            <url>http://mvn2.sk89q.com/repo</url>
-        </repository>
-        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
             <id>raidcraft</id>
-            <url>http://nexus.raid-craft.de/content/groups/public/</url>
+            <url>http://nexus.raid-craft.de/content/groups/raidcraft/</url>
         </repository>
     </repositories>
 
@@ -64,12 +68,6 @@
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
             <version>5.5-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>commandbook</artifactId>
-            <version>2.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
