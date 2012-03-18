@@ -1,124 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2011 RaidCraft <http://www.raid-craft.de>
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
-  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>de.raidcraft</groupId>
-  <artifactId>RCRegions</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>RaidCraft Regions</name>
+    <groupId>de.raidcraft</groupId>
+    <artifactId>RCRegions</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <description>Module for selling, buying and trading WorldGuard regions via signs.</description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-    
-  <ciManagement>
-      <system>jenkins</system>
-      <url>http://ci.raid-craft.de</url>
-  </ciManagement>
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.raid-craft.de</url>
+    </ciManagement>
 
-  <scm>
-      <connection>ssh://git@78.46.16.2:15973/~/rcregions.git</connection>
-      <developerConnection>ssh://git@78.46.16.2:15973/~/rcregions.git</developerConnection>
-      <url>http://redmine.raid-craft.de/projects/regions/repository</url>
-  </scm>
+    <scm>
+        <developerConnection>ssh://git@78.46.16.2:15973/~/rcregions.git</developerConnection>
+    </scm>
 
     <repositories>
         <repository>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
             <id>raidcraft</id>
-            <url>http://nexus.raid-craft.de/content/groups/raidcraft/</url>
+            <url>http://nexus.raid-craft.de/content/groups/public/</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- RaidCraft Core API -->
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>RaidCraftCore</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Bukkit API -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R5-SNAPSHOT</version>
+            <version>1.2.3-R0.2-SNAPSHOT</version>
             <scope>provided</scope>
-            <type>jar</type>
         </dependency>
+        <!-- WorldGuard -->
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
-            <version>5.4-SNAPSHOT</version>
+            <version>5.6-SNAPSHOT</version>
             <scope>provided</scope>
-            <type>jar</type>
         </dependency>
+        <!-- Spout -->
+        <!--
+        <dependency>
+            <groupId>org.getspout</groupId>
+            <artifactId>spoutpluginapi</artifactId>
+            <version>dev-snapshot</version>
+        </dependency>
+        -->
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
+
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>spoutplugin.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>defaults/</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>config.yml</include>
+                    <include>districts.yml</include>
+                    <include>regions.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- Plugins -->
         <plugins>
+            <!-- Compile plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
+            <!-- JAR creation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>true</addMavenDescriptor>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Assembly -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-2</version>
+                <configuration>
+                    <descriptor>${basedir}/src/main/assembly/default.xml</descriptor>
+                </configuration>
+            </plugin>
+
+            <!-- Release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+                <configuration>
+                    <preparationGoals>assembly:assembly</preparationGoals>
+                    <goals>assembly:assembly</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
+            <!-- Exclude non-tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/TestOfflinePermissible.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <directory>src/main/resources/</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>plugin.yml</include>
-                </includes>
-            </resource>
-            <resource>
-                <targetPath>defaults/</targetPath>
-                <directory>src/main/resources/</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>config.yml</include>
-                </includes>
-            </resource>
-            <resource>
-                <targetPath>defaults/</targetPath>
-                <directory>src/main/resources/</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>regions.yml</include>
-                </includes>
-            </resource>
-            <resource>
-                <targetPath>defaults/</targetPath>
-                <directory>src/main/resources/</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>districts.yml</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 </project>
