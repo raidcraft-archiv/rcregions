@@ -181,7 +181,7 @@ public final class RegionManager {
             try {
                 playerRegions.add(getRegion(region));
             } catch (UnknownRegionException e) {
-                RCLogger.warning("Player " + player.getName() + " owns a region of a undefined district.");
+                // do nothing because when this happens it means there are other worldguard regions with ownser
             }
         }
         return playerRegions;
