@@ -51,18 +51,15 @@
             <scope>provided</scope>
         </dependency>
         <!-- Spout -->
-        <!--
         <dependency>
             <groupId>org.getspout</groupId>
             <artifactId>spoutpluginapi</artifactId>
             <version>dev-snapshot</version>
         </dependency>
-        -->
     </dependencies>
 
     <build>
-        <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
-
+        <sourceDirectory>src/main/java/</sourceDirectory>
         <!-- Resources -->
         <resources>
             <resource>

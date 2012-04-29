@@ -8,7 +8,9 @@ import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.spout.*;
 import com.silthus.raidcraft.util.RCCommandManager;
+import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import com.sk89q.worldedit.BlockVector;
@@ -18,7 +20,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
+import javax.annotation.processing.SupportedAnnotationTypes;
 import java.util.*;
 
 /**
@@ -41,10 +45,31 @@ public class RegionCommand implements CommandExecutor {
             // [/rcr claim <region>]
             if (cmd.is(label, "buy", "claim", "-b")) {
                 if (sender.hasPermission("rcregions.region.buy") && sender instanceof Player) {
-                    if (args.length > 1) {
-                        buyRegion(args[1]);
-                    } else {
-                        buyRegion();
+                    if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
+                        if (args.length > 1) {
+                            try {
+                                Region region = RegionManager.get().getRegion(args[1]);
+                                new SpoutRegionBuy((Player)sender, region);
+                            } catch (UnknownRegionException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                        }
+                        else {
+                            try {
+                                Region region = RegionManager.get().getRegion(((SpoutPlayer) sender).getLocation());
+                                SpoutRegionBuy s = new SpoutRegionBuy((Player)sender, region);
+                            } catch (UnknownRegionException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (args.length > 1) {
+                            buyRegion(args[1]);
+                        } else {
+                            buyRegion();
+                        }
                     }
                 } else {
                     RCMessaging.noPermission(sender);
@@ -153,7 +178,11 @@ public class RegionCommand implements CommandExecutor {
                     if (sender instanceof Player && args.length == 1) {
                         try {
                             Region region = RegionManager.get().getRegion(((Player) sender).getLocation());
-                            showRegionInfo((Player)sender, region);
+                            if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
+                                new SpoutRegionInfo((Player)sender, region);
+                            }
+                            else
+                                showRegionInfo((Player)sender, region);
                         } catch (UnknownRegionException e) {
                             RCMessaging.warn(sender, e.getMessage());
                         }
@@ -217,17 +246,23 @@ public class RegionCommand implements CommandExecutor {
         }
     }
 
-    public static void showRegionInfo(Player player, Region region) {
+    public static void  showRegionInfo(Player player, Region region) {
         RegionManager regionManager = RegionManager.get();
-        District district = region.getDistrict();
-        RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
-        RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
-                    + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
-        RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
-                    + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"),false);
-        RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
-        RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
-        RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
+        if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
+            SpoutRegionInfo s = new SpoutRegionInfo(player, region);
+        }
+        else
+        {
+            District district = region.getDistrict();
+            RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
+                        + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
+                        + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"),false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
+        }
     }
 
     private void buyRegion(String region) {
@@ -253,7 +288,8 @@ public class RegionCommand implements CommandExecutor {
             Player player = cmd.getPlayerOfSender(sender);
             RegionManager regionManager = RegionManager.get();
             regionManager.buyRegion(player, region);
-            RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
+            if (!((SpoutPlayer)player).isSpoutCraftEnabled())
+                RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
         } catch (RegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         } catch (PlayerException e) {
