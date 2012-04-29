@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.getspout</groupId>
             <artifactId>spoutpluginapi</artifactId>
-            <version>dev-snapshot</version>
+            <version>dev-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
