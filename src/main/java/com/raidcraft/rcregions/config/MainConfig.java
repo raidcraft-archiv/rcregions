@@ -1,11 +1,10 @@
 package com.raidcraft.rcregions.config;
 
-import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
+import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import com.silthus.raidcraft.config.ConfigManager;
+import com.silthus.raidcraft.config.RCConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,42 +12,32 @@ import java.util.Set;
  * 17.12.11 - 11:27
  * @author Silthus
  */
-public class MainConfig {
+public class MainConfig extends RCConfig {
 
     private static final String FILENAME = "config.yml";
-    private static BukkitBasePlugin plugin;
-    
-    public static void init(BukkitBasePlugin plugin) {
-        MainConfig.plugin = plugin;
-        load();
-    }
-    
-    public static void save() {
-        ConfigManager.save(FILENAME, plugin);
-    }
-    
-    public static void reload() {
-        ConfigManager.reload(FILENAME, plugin);
-    }
-    
-    public static void load() {
-        ConfigManager.loadConfig(FILENAME, plugin);
+    private static MainConfig self;
+
+    public MainConfig(BukkitBasePlugin plugin) {
+        super(plugin, FILENAME);
     }
 
-    public static ConfigurationSection getConfig() {
-        return ConfigManager.getConfig(FILENAME, plugin);
+    public static MainConfig get() {
+        if (self == null) {
+            self = new MainConfig(RegionsPlugin.get());
+        }
+        return self;
     }
 
     public static String getSignIdentifier() {
-        return getConfig().getString("signIdentifier");
+        return get().getConfig().getString("signIdentifier");
     }
 
     public static long getWarnInterval() {
-        return getConfig().getLong("warn-interval", 300);
+        return get().getConfig().getLong("warn-interval", 300);
     }
     
     public static int getToolId() {
-        return getConfig().getInt("tool-id");
+        return get().getConfig().getInt("tool-id");
     }
     
     public static DatabaseConfig getDatabase() {
@@ -60,7 +49,7 @@ public class MainConfig {
         private ConfigurationSection section;
         
         public DatabaseConfig() {
-            this.section = getConfig().getConfigurationSection("database");
+            this.section = get().getConfig().getConfigurationSection("database");
         }
         
         public String getType() {

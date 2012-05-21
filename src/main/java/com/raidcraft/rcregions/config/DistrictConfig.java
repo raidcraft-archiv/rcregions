@@ -1,8 +1,9 @@
 package com.raidcraft.rcregions.config;
 
+import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import com.silthus.raidcraft.config.ConfigManager;
+import com.silthus.raidcraft.config.RCConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Set;
@@ -10,34 +11,24 @@ import java.util.Set;
 /**
  * User: Silthus
  */
-public class DistrictConfig {
+public class DistrictConfig extends RCConfig {
 
     private static final String FILENAME = "districts.yml";
-    private static BukkitBasePlugin plugin;
+    private static DistrictConfig self;
 
-    public static void init(BukkitBasePlugin plugin) {
-        DistrictConfig.plugin = plugin;
-        load();
+    public DistrictConfig(BukkitBasePlugin plugin) {
+        super(plugin, FILENAME);
     }
 
-    public static void save() {
-        ConfigManager.save(FILENAME, plugin);
-    }
-
-    public static void reload() {
-        ConfigManager.reload(FILENAME, plugin);
-    }
-
-    public static void load() {
-        ConfigManager.loadConfig(FILENAME, plugin);
-    }
-
-    public static ConfigurationSection getConfig() {
-        return ConfigManager.getConfig(FILENAME, plugin);
+    public static DistrictConfig get() {
+        if (self == null) {
+            self = new DistrictConfig(RegionsPlugin.get());
+        }
+        return self;
     }
 
     public static Set<String> getDistricts() {
-        return getConfig().getConfigurationSection("districts").getKeys(false);
+        return get().getConfig().getConfigurationSection("districts").getKeys(false);
     }
 
     public static SingleDistrictConfig getDistrict(String district) {
@@ -50,7 +41,7 @@ public class DistrictConfig {
         private final String name;
 
         public SingleDistrictConfig(String name) {
-            this.section = getConfig().getConfigurationSection("districts." + name);
+            this.section = get().getConfig().getConfigurationSection("districts." + name);
             this.name = name;
         }
 
