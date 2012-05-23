@@ -20,6 +20,10 @@ public class RegionsConfig extends RCConfig {
         super(plugin, FILENAME);
     }
 
+	public static void init(BukkitBasePlugin plugin) {
+		self = new RegionsConfig(plugin);
+	}
+
     public static RegionsConfig get() {
         if (self == null) {
             self = new RegionsConfig(RegionsPlugin.get());

@@ -20,6 +20,10 @@ public class DistrictConfig extends RCConfig {
         super(plugin, FILENAME);
     }
 
+	public static void init(BukkitBasePlugin plugin) {
+		self = new DistrictConfig(plugin);
+	}
+
     public static DistrictConfig get() {
         if (self == null) {
             self = new DistrictConfig(RegionsPlugin.get());

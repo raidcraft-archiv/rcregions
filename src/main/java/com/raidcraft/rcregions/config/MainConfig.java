@@ -21,6 +21,10 @@ public class MainConfig extends RCConfig {
         super(plugin, FILENAME);
     }
 
+	public static void init(BukkitBasePlugin plugin) {
+		self = new MainConfig(plugin);
+	}
+
     public static MainConfig get() {
         if (self == null) {
             self = new MainConfig(RegionsPlugin.get());

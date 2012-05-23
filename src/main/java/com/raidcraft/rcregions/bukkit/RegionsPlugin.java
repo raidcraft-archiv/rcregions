@@ -51,9 +51,9 @@ public class RegionsPlugin extends BukkitBasePlugin {
     }
 
 	private void loadConfigs() {
-		MainConfig.get();
-		DistrictConfig.get();
-		RegionsConfig.get();
+		MainConfig.init(this);
+		DistrictConfig.init(this);
+		RegionsConfig.init(this);
 	}
 
     private void initializeManagers() {
