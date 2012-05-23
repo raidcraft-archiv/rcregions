@@ -27,15 +27,15 @@ public class DistrictConfig extends RCConfig {
         return self;
     }
 
-    public static Set<String> getDistricts() {
-        return get().getConfig().getConfigurationSection("districts").getKeys(false);
+    public Set<String> getDistricts() {
+        return getConfig().getConfigurationSection("districts").getKeys(false);
     }
 
-    public static SingleDistrictConfig getDistrict(String district) {
+    public SingleDistrictConfig getDistrict(String district) {
         return new SingleDistrictConfig(district);
     }
 
-    public static class SingleDistrictConfig {
+    public class SingleDistrictConfig {
 
         private final ConfigurationSection section;
         private final String name;

@@ -25,10 +25,10 @@ public class RCBlockListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + MainConfig.getSignIdentifier() + "]"))) {
+        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + MainConfig.get().getSignIdentifier() + "]"))) {
             RCMessaging.warn(event.getPlayer(), "Nene Freundchen, erstell mal lieber nen richtiges Schild!");
             event.setCancelled(true);
-        } else if (event.getLine(0).equalsIgnoreCase("[" + MainConfig.getSignIdentifier() + "]")) {
+        } else if (event.getLine(0).equalsIgnoreCase("[" + MainConfig.get().getSignIdentifier() + "]")) {
             Player player = event.getPlayer();
             if (player.hasPermission("rcregions.sign.place")) {
                 try {

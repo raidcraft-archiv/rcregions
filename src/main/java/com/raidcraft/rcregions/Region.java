@@ -67,8 +67,8 @@ public class Region {
         } else {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
-        if (RegionsConfig.getRegions().contains(getName())) {
-            this.warned = (Boolean) RegionsConfig.getRegion(getName()).getFlag("warned");
+        if (RegionsConfig.get().getRegions().contains(getName())) {
+            this.warned = (Boolean) RegionsConfig.get().getRegion(getName()).getFlag("warned");
         } else {
             this.warned = false;
         }
@@ -138,7 +138,7 @@ public class Region {
 
     public void setWarned(boolean warned) {
         this.warned = warned;
-        RegionsConfig.getRegion(getName()).setFlag("warned", warned);
+        RegionsConfig.get().getRegion(getName()).setFlag("warned", warned);
     }
 
     public District getDistrict() {
@@ -158,7 +158,7 @@ public class Region {
 
     public double getBasePrice() {
         if (region instanceof ProtectedCuboidRegion) {
-            DistrictConfig.SingleDistrictConfig district = MainConfig.getDistrict(this.district.getName());
+            DistrictConfig.SingleDistrictConfig district = MainConfig.get().getDistrict(this.district.getName());
             BlockVector max = region.getMaximumPoint();
             BlockVector min = region.getMinimumPoint();
             int xLength = max.getBlockX() - min.getBlockX();
@@ -176,7 +176,7 @@ public class Region {
                 RCMessaging.warn(player, "Region " + region.getId() + " is a polygon! Please change it to a cuboid...");
             }
         }
-        return MainConfig.getDistrict(district.getName()).getMinPrice();
+        return MainConfig.get().getDistrict(district.getName()).getMinPrice();
     }
     
     public String toString() {

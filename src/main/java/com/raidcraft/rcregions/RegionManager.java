@@ -91,8 +91,8 @@ public final class RegionManager {
     public boolean isAllowedRegion(ProtectedRegion region) {
         String id = region.getId();
         boolean matches = false;
-        for (String district : MainConfig.getDistricts()) {
-            if (id.matches("^" + MainConfig.getDistrict(district).getIdentifier() + "\\d*")) {
+        for (String district : MainConfig.get().getDistricts()) {
+            if (id.matches("^" + MainConfig.get().getDistrict(district).getIdentifier() + "\\d*")) {
                 matches = true;
                 break;
             }
@@ -211,9 +211,9 @@ public final class RegionManager {
         }
         sign.setLine(2, ChatColor.WHITE + owner);
         if (region.isBuyable()) {
-            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
         } else {
-            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
         }
         sign.update();
     }
@@ -232,9 +232,9 @@ public final class RegionManager {
         }
         sign.setLine(2, ChatColor.WHITE + owner);
         if (region.isBuyable()) {
-            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
         } else {
-            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
         }
     }
 
@@ -275,6 +275,6 @@ public final class RegionManager {
     }
 
     public double getRefundPercentage(Region region) {
-        return MainConfig.getDistrict(region.getDistrict().getName()).getRefundPercentage();
+        return MainConfig.get().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
 }

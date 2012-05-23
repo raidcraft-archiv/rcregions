@@ -13,7 +13,7 @@ public class RegionsDatabase extends RCDatabase {
     private static MainConfig.DatabaseConfig config;
     
     public static void init() {
-        config = MainConfig.getDatabase();
+        config = MainConfig.get().getDatabase();
         get();
     }
     

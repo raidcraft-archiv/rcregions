@@ -28,23 +28,23 @@ public class MainConfig extends RCConfig {
         return self;
     }
 
-    public static String getSignIdentifier() {
+    public String getSignIdentifier() {
         return get().getConfig().getString("signIdentifier");
     }
 
-    public static long getWarnInterval() {
+    public long getWarnInterval() {
         return get().getConfig().getLong("warn-interval", 300);
     }
     
-    public static int getToolId() {
+    public int getToolId() {
         return get().getConfig().getInt("tool-id");
     }
     
-    public static DatabaseConfig getDatabase() {
+    public DatabaseConfig getDatabase() {
         return new DatabaseConfig();
     }
     
-    public static class DatabaseConfig {
+    public class DatabaseConfig {
         
         private ConfigurationSection section;
         
@@ -77,11 +77,11 @@ public class MainConfig extends RCConfig {
         }
     }
 
-    public static Set<String> getDistricts() {
-        return DistrictConfig.getDistricts();
+    public Set<String> getDistricts() {
+        return DistrictConfig.get().getDistricts();
     }
 
-    public static DistrictConfig.SingleDistrictConfig getDistrict(String district) {
-        return DistrictConfig.getDistrict(district);
+    public DistrictConfig.SingleDistrictConfig getDistrict(String district) {
+        return DistrictConfig.get().getDistrict(district);
     }
 }

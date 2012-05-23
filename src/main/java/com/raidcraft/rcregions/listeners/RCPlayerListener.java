@@ -45,7 +45,7 @@ public class RCPlayerListener implements Listener {
         }
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getPlayer().getItemInHand().getType().getId() == MainConfig.getToolId()) {
+            if (event.getPlayer().getItemInHand().getType().getId() == MainConfig.get().getToolId()) {
                 if (player.hasPermission("rcregions.info")) {
                     try {
                         Region region = RegionManager.get().getRegion(event.getClickedBlock().getLocation());
@@ -57,7 +57,7 @@ public class RCPlayerListener implements Listener {
             }
             if (SignUtils.isSign(event.getClickedBlock())) {
                 Sign sign = SignUtils.getSign(event.getClickedBlock());
-                if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
+                if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.get().getSignIdentifier() + "]")) {
                     try {
                         Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                         String owner = region.getOwner();
@@ -87,7 +87,7 @@ public class RCPlayerListener implements Listener {
             }
         } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
             Sign sign = SignUtils.getSign(event.getClickedBlock());
-            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.getSignIdentifier() + "]")) {
+            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.get().getSignIdentifier() + "]")) {
                 if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
                     event.setCancelled(true);
                 }
@@ -137,7 +137,7 @@ public class RCPlayerListener implements Listener {
         if (taskIsRunning) {
             return;
         }
-        INTERVAL = 20 * MainConfig.getWarnInterval();
+        INTERVAL = 20 * MainConfig.get().getWarnInterval();
         Task task = new Task(RegionsPlugin.get(), new Warning()) {
 
             @Override

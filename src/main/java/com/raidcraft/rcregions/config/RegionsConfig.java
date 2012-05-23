@@ -27,11 +27,11 @@ public class RegionsConfig extends RCConfig {
         return self;
     }
 
-    private static ConfigurationSection getRegionsSection() {
+    private ConfigurationSection getRegionsSection() {
         return get().getConfig().getConfigurationSection("regions");
     }
 
-    public static Set<String> getRegions() {
+    public Set<String> getRegions() {
         Set<String> keys = getRegionsSection().getKeys(false);
         if (keys == null) {
             return new HashSet<String>();
@@ -39,11 +39,11 @@ public class RegionsConfig extends RCConfig {
         return keys;
     }
     
-    public static SingleRegionConfig getRegion(String id) {
+    public SingleRegionConfig getRegion(String id) {
         return new SingleRegionConfig(id);
     }
 
-    public static class SingleRegionConfig {
+    public class SingleRegionConfig {
 
         private ConfigurationSection section;
         

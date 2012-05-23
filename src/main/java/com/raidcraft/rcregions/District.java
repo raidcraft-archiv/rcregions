@@ -35,7 +35,7 @@ public class District {
     }
     
     private void load() {
-        DistrictConfig.SingleDistrictConfig district = MainConfig.getDistrict(getName());
+        DistrictConfig.SingleDistrictConfig district = MainConfig.get().getDistrict(getName());
         this.identifier = district.getIdentifier();
         this.minPrice = district.getMinPrice();
         this.dropable = district.isDropable();
@@ -88,7 +88,7 @@ public class District {
     }
     
     public double getTaxes(int count) {
-        return MainConfig.getDistrict(getName()).getTaxes(count);
+        return MainConfig.get().getDistrict(getName()).getTaxes(count);
     }
     
     public boolean scheduleTaxes() {

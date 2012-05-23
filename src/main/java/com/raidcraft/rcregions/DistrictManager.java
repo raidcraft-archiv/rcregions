@@ -22,7 +22,7 @@ public final class DistrictManager {
     }
     
     private void load() {
-        for (String district : MainConfig.getDistricts()) {
+        for (String district : MainConfig.get().getDistricts()) {
             _districts.put(district, new District(district));
         }
     }
@@ -47,7 +47,7 @@ public final class DistrictManager {
         if (_districts.containsKey(name)) {
             return _districts.get(name);
         }
-        if (MainConfig.getDistricts().contains(name)) {
+        if (MainConfig.get().getDistricts().contains(name)) {
             District district = new District(name);
             _districts.put(name, district);
             return district;
