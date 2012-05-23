@@ -38,6 +38,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
 
     @Override
     public void registerEvents() {
+	    loadConfigs();
 	    getServer().getPluginManager().registerEvents(new RCBlockListener(), this);
 	    getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
 	    Plugin plugin = getServer().getPluginManager().getPlugin("Spout");
@@ -48,6 +49,12 @@ public class RegionsPlugin extends BukkitBasePlugin {
         registerCommand("rcr", new RegionCommand());
         RegionsDatabase.init();
     }
+
+	private void loadConfigs() {
+		MainConfig.get();
+		DistrictConfig.get();
+		RegionsConfig.get();
+	}
 
     private void initializeManagers() {
         DistrictManager.init();
