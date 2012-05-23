@@ -26,12 +26,6 @@ public class RegionsPlugin extends BukkitBasePlugin {
     public void onEnable() {
         super.onEnable();
         _self = this;
-        getServer().getPluginManager().registerEvents(new RCBlockListener(), this);
-        getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
-        Plugin plugin = getServer().getPluginManager().getPlugin("Spout");
-        if (plugin != null) {
-            spoutEnabled = true;
-        }
     }
     
     public static RegionsPlugin get() {
@@ -44,6 +38,12 @@ public class RegionsPlugin extends BukkitBasePlugin {
 
     @Override
     public void registerEvents() {
+	    getServer().getPluginManager().registerEvents(new RCBlockListener(), this);
+	    getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
+	    Plugin plugin = getServer().getPluginManager().getPlugin("Spout");
+	    if (plugin != null) {
+		    spoutEnabled = true;
+	    }
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
         RegionsDatabase.init();
