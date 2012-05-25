@@ -45,13 +45,13 @@ public class RegionCommand implements CommandExecutor {
             // [/rcr claim <region>]
             if (cmd.is(label, "buy", "claim", "-b")) {
                 if (sender.hasPermission("rcregions.region.buy") && sender instanceof Player) {
-                    if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
+                    if (RegionsPlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
                         if (args.length > 1) {
                             try {
                                 Region region = RegionManager.get().getRegion(args[1]);
                                 new SpoutRegionBuy((Player)sender, region);
                             } catch (UnknownRegionException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                RCLogger.error(e);
                             }
                         }
                         else {
@@ -59,7 +59,7 @@ public class RegionCommand implements CommandExecutor {
                                 Region region = RegionManager.get().getRegion(((SpoutPlayer) sender).getLocation());
                                 SpoutRegionBuy s = new SpoutRegionBuy((Player)sender, region);
                             } catch (UnknownRegionException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                RCLogger.error(e);
                             }
                         }
                     }

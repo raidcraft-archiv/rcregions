@@ -33,7 +33,7 @@
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>RaidCraftCore</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- Bukkit API -->
