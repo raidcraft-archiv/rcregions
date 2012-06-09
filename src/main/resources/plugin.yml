@@ -5,6 +5,7 @@ website: www.raid-craft.de
 
 main: com.raidcraft.rcregions.bukkit.RegionsPlugin
 depend: [RaidCraftCore,WorldGuard]
+softdepend: [RCAchievements]
 
 commands:
   rcr:
