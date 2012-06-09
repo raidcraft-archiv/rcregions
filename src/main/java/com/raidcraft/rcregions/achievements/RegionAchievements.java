@@ -36,12 +36,17 @@ public class RegionAchievements implements TaggedAchievement {
 	}
 
 	@MethodName("districts")
-	public static Collection<String> getDistricts(AchievementPlayer player) {
+	public static Collection getDistricts(AchievementPlayer player) {
 		List<Region> regions = RegionManager.get().getPlayerRegions(player.getPlayer());
 		Set<String> uniqueDistricts = new HashSet<String>();
 		for (Region region : regions) {
 			uniqueDistricts.add(region.getDistrict().getIdentifier());
 		}
 		return uniqueDistricts;
+	}
+
+	@MethodName("regions")
+	public static Collection getRegions(AchievementPlayer player) {
+		return RegionManager.get().getPlayerRegions(player.getPlayer());
 	}
 }
