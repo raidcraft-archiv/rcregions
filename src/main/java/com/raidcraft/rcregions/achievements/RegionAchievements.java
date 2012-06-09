@@ -7,7 +7,9 @@ import com.raidcraft.rcregions.RegionManager;
 import de.raidcraft.rcachievements.api.player.AchievementPlayer;
 import de.raidcraft.rcachievements.api.plugin.ClassName;
 import de.raidcraft.rcachievements.api.plugin.TaggedAchievement;
+import org.getspout.commons.entity.Player;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,18 +25,23 @@ public class RegionAchievements implements TaggedAchievement {
 		return getDistrictCount(player) == DistrictManager.get().getDistricts().size();
 	}
 
-	@MethodName("regions")
+	@MethodName("region-count")
 	public static int getRegionCount(AchievementPlayer player) {
 		return RegionManager.get().getPlayerRegionCount(player.getPlayer());
 	}
 
-	@MethodName("districts")
+	@MethodName("district-count")
 	public static int getDistrictCount(AchievementPlayer player) {
+		return getDistricts(player).size();
+	}
+
+	@MethodName("districts")
+	public static Collection<String> getDistricts(AchievementPlayer player) {
 		List<Region> regions = RegionManager.get().getPlayerRegions(player.getPlayer());
-		Set<District> uniqueDistricts = new HashSet<District>();
+		Set<String> uniqueDistricts = new HashSet<String>();
 		for (Region region : regions) {
-			uniqueDistricts.add(region.getDistrict());
+			uniqueDistricts.add(region.getDistrict().getIdentifier());
 		}
-		return uniqueDistricts.size();
+		return uniqueDistricts;
 	}
 }
