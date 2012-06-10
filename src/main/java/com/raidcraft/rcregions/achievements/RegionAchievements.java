@@ -40,7 +40,7 @@ public class RegionAchievements implements TaggedAchievement {
 		List<Region> regions = RegionManager.get().getPlayerRegions(player.getPlayer());
 		Set<String> uniqueDistricts = new HashSet<String>();
 		for (Region region : regions) {
-			uniqueDistricts.add(region.getDistrict().getIdentifier());
+			uniqueDistricts.add(region.getDistrict().getName());
 		}
 		return uniqueDistricts;
 	}
