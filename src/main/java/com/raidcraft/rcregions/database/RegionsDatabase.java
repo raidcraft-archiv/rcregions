@@ -8,12 +8,11 @@ import com.silthus.raidcraft.database.RCDatabase;
  * User: Silthus
  */
 public class RegionsDatabase extends RCDatabase {
-    
+
+	private static final String PREFIX = "rcr";
     private static RegionsDatabase _self;
-    private static MainConfig.DatabaseConfig config;
     
     public static void init() {
-        config = MainConfig.get().getDatabase();
         get();
     }
     
@@ -26,13 +25,7 @@ public class RegionsDatabase extends RCDatabase {
     }
 
     private RegionsDatabase() {
-        super(RegionsPlugin.get(),
-                config.getName(),
-                config.getUrl(),
-                config.getUsername(),
-                config.getPassword(),
-                config.getType(),
-                config.getPrefix());
+        super(RegionsPlugin.get(), "rcr");
         addTable(new RegionsTable(this));
     }
 }

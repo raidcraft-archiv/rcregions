@@ -3,19 +3,3 @@ signIdentifier: 'region'
 warn-interval: 300
 # tool to lookup region info
 tool-id: 268
-# database configuration
-database:
-    # valid types are:
-    # MySQL
-    # SQLite
-    type: 'SQLite'
-    # the name of the database
-    database: 'minecraft'
-    # username of the database
-    username: 'minecraft'
-    # password of the username
-    password: 'password'
-    # hostname and port of the database
-    url: 'localhost:3306'
-    # table prefix
-    prefix: 'rcr_'
