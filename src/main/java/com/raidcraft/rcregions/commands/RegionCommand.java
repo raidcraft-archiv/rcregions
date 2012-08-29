@@ -8,11 +8,13 @@ import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.raidcraft.rcregions.spout.*;
+import com.raidcraft.rcregions.spout.SpoutRegionBuy;
+import com.raidcraft.rcregions.spout.SpoutRegionInfo;
 import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
+import com.silthus.raidcraft.util.databases.logblock.LogBlock;
 import com.sk89q.worldedit.BlockVector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +24,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import javax.annotation.processing.SupportedAnnotationTypes;
 import java.util.*;
 
 /**
@@ -257,8 +258,9 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
             RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                         + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
-            RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner() + "") + " | "
-                        + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"),false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner())
+                    + " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(LogBlock.getInstance().getPlayer(region.getOwner()).getLastlogin()), false);
+            RCMessaging.send(player, "| " + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"), false);
             RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
