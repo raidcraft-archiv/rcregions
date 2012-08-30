@@ -6,7 +6,6 @@ import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -85,7 +84,7 @@ public final class RegionManager {
                 }
             }
         }
-        throw new UnknownRegionException("Die Region existiert nicht oder steht nicht zum Verkauf bereit.");
+        throw new UnknownRegionException("An dieser Stelle befindet sich keine RCRegions Region!");
     }
 
     public boolean isAllowedRegion(ProtectedRegion region) {

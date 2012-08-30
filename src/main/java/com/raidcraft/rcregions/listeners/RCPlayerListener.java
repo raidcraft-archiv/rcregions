@@ -2,6 +2,7 @@ package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
+import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
@@ -10,6 +11,9 @@ import com.raidcraft.rcregions.spout.SpoutRegionBuy;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.SignUtils;
 import com.silthus.raidcraft.util.Task;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
@@ -22,7 +26,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 21.01.12 - 19:09
@@ -52,6 +58,32 @@ public class RCPlayerListener implements Listener {
                         RegionCommand.showRegionInfo(player, region);
                     } catch (UnknownRegionException e) {
                         RCMessaging.warn(player, e.getMessage());
+                        //print region info
+                        ApplicableRegionSet applicableRegionSet = WorldGuardManager.getLocalRegions(event.getClickedBlock().getLocation());
+                        if(applicableRegionSet.size() != 0) {
+                            RCMessaging.send(player, "| " + "---------------------------------------", false);
+                            RCMessaging.send(player, "| " + RCMessaging.green("WorldGuard Regions Informationen:"), false);
+                            for(ProtectedRegion region : applicableRegionSet) {
+                                RCMessaging.send(player, "| " + "---------------------------------------", false);
+                                RCMessaging.send(player, "| " + RCMessaging.green("ID: ") + ChatColor.GOLD + (region.getId()), false);
+                                if(region.getOwners().size() > 0) {
+                                    RCMessaging.send(player, "| " + RCMessaging.green("Owner: ") + RCMessaging.yellow(region.getOwners().toUserFriendlyString()), false);
+                                }
+                                if(region.getMembers().size() > 0) {
+                                RCMessaging.send(player, "| " + RCMessaging.green("Member: ") + RCMessaging.yellow(region.getMembers().toUserFriendlyString()), false);
+                                }
+                                    String flags = "";
+                                for(Map.Entry<Flag<?>, Object> flag : region.getFlags().entrySet()) {
+                                    if(flags.length() > 0)
+                                        flags += ChatColor.WHITE + ", ";
+                                    flags += ChatColor.GOLD + flag.getKey().getName() + ": " + ChatColor.YELLOW + flag.getValue().toString();
+                                }
+                                if(flags.length() > 0) {
+                                    RCMessaging.send(player, "| " + RCMessaging.green("Flags: ") + flags, false);
+                                }
+                            }
+                            RCMessaging.send(player, "| " + "---------------------------------------", false);
+                        }
                     }
                 }
             }
