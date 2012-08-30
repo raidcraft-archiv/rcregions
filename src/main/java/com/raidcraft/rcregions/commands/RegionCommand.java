@@ -15,6 +15,7 @@ import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import com.silthus.raidcraft.util.databases.logblock.LogBlock;
+import com.silthus.raidcraft.util.databases.logblock.LogblockPlayer;
 import com.sk89q.worldedit.BlockVector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -258,8 +259,13 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
             RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                         + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
+            String lastLogin = "";
+            LogblockPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
+            if(logblockPlayer != null) {
+                lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
+            }
             RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner())
-                    + " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(LogBlock.getInstance().getPlayer(region.getOwner()).getLastlogin()), false);
+                    + lastLogin, false);
             RCMessaging.send(player, "| " + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"), false);
             RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
