@@ -1,7 +1,6 @@
 package com.raidcraft.rcregions.database;
 
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
-import com.raidcraft.rcregions.config.MainConfig;
 import com.silthus.raidcraft.database.RCDatabase;
 
 /**
@@ -9,12 +8,8 @@ import com.silthus.raidcraft.database.RCDatabase;
  */
 public class RegionsDatabase extends RCDatabase {
 
-	private static final String PREFIX = "rcr";
+	private static final String PREFIX = "rcr_";
     private static RegionsDatabase _self;
-    
-    public static void init() {
-        get();
-    }
     
     public static RegionsDatabase get() {
         if (_self == null) {
@@ -25,7 +20,7 @@ public class RegionsDatabase extends RCDatabase {
     }
 
     private RegionsDatabase() {
-        super(RegionsPlugin.get(), "rcr");
+        super(RegionsPlugin.get(), PREFIX);
         addTable(new RegionsTable(this));
     }
 }

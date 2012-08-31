@@ -41,7 +41,7 @@ public class RegionsPlugin extends BukkitBasePlugin {
 	    getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
-        RegionsDatabase.init();
+        RegionsDatabase.get();
 	    // register achievements
 	    registerAchievements();
     }
