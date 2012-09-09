@@ -325,7 +325,7 @@ public class RegionCommand implements CommandExecutor {
 
     private void dropRegion(Region region) {
         Player player = cmd.getPlayerOfSender(sender);
-        if (region.getOwner().equalsIgnoreCase(player.getName()) || sender.hasPermission("rcregions.admin")) {
+        if ((region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) || sender.hasPermission("rcregions.admin")) {
             try {
                 RegionManager.get().dropRegion(player, region);
                 RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
