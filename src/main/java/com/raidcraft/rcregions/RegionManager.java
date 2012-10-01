@@ -14,6 +14,7 @@ import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -139,7 +140,12 @@ public final class RegionManager {
 
             if (!(owner == null) && !(owner.equals(""))) {
                 economy.add(region.getOwner(), price);
-                RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+                if(Bukkit.getPlayer(region.getOwner()) != null) {
+                    RCMessaging.send(Bukkit.getPlayer(region.getOwner())
+                            , ChatColor.GREEN + "[RCRegions] " 
+                            + ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + price + "c abgekauft!");
+                }
+                RegionsDatabase.get().getTable(LogTable.class).logAction(region.getOwner()
                         , region.getName()
                         , Enums.Action.SELL
                         , price
