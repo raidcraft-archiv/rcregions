@@ -37,9 +37,9 @@ public class LogTable extends RCTable<LogTable> {
                 "INSERT INTO " + getName() + "(player, region, action, price, tax, time) VALUES (" +
                         "'" + player + "'," +
                         "'" + region + "'," +
-                        "'" + action.name() + "'" +
-                        "'" + price + "'" +
-                        "'" + tax + "'" +
+                        "'" + action.name() + "'," +
+                        "'" + price + "'," +
+                        "'" + tax + "'," +
                         "'" + df.format(new Date()) + "'" +
                         ");"
         );
