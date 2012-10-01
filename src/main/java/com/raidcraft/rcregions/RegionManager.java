@@ -2,10 +2,13 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.database.LogTable;
+import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.util.Enums;
 import com.silthus.raidcraft.util.RCEconomy;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -133,9 +136,20 @@ public final class RegionManager {
                 throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
             }
             economy.substract(player, (price + tax));
+
             if (!(owner == null) && !(owner.equals(""))) {
                 economy.add(region.getOwner(), price);
+                RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+                        , region.getName()
+                        , Enums.Action.SELL
+                        , price
+                        , 0);
             }
+            RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+                    , region.getName()
+                    , Enums.Action.BUY
+                    , price
+                    , tax);
             boolean droped = false;
             for (District d : DistrictManager.get().getDistricts().values()) {
                 if (d.dropOnChange()) {

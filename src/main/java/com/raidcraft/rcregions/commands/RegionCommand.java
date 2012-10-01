@@ -5,11 +5,14 @@ import com.raidcraft.rcregions.DistrictManager;
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.database.LogTable;
+import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.spout.SpoutRegionBuy;
 import com.raidcraft.rcregions.spout.SpoutRegionInfo;
+import com.raidcraft.rcregions.util.Enums;
 import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -328,8 +331,14 @@ public class RegionCommand implements CommandExecutor {
         if ((region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) || sender.hasPermission("rcregions.admin")) {
             try {
                 RegionManager.get().dropRegion(player, region);
+                double refund = RegionManager.get().getRefundValue(region);
                 RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
-                        RCMessaging.yellow(RegionManager.get().getRefundValue(region) + "") + " Coins an den Server verkauft.");
+                        RCMessaging.yellow(refund + "") + " Coins an den Server verkauft.");
+                RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+                        , region.getName()
+                        , Enums.Action.DROP
+                        , refund
+                        , 0);
             } catch (RegionException e) {
                 RCMessaging.warn(sender, e.getMessage());
             }

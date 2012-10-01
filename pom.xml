@@ -9,21 +9,25 @@
     <version>1.5-SNAPSHOT</version>
     <name>RCRegions</name>
     <description>Module for selling, buying and trading WorldGuard regions via signs.</description>
-
-    <parent>
-        <groupId>de.raidcraft</groupId>
-        <artifactId>masterpom</artifactId>
-        <version>1.4</version>
-    </parent>
-
     <properties>
-        <project.parent.enable>true</project.parent.enable>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.raid-craft.de</url>
+    </ciManagement>
+
     <scm>
-        <developerConnection>scm:git:ssh://git@localhost:15973/${project.artifactId}.git</developerConnection>
-        <tag>HEAD</tag>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/raidcraft/rcregions.git</developerConnection>
     </scm>
+
+    <repositories>
+        <repository>
+            <id>raidcraft</id>
+            <url>http://nexus.raid-craft.de/content/groups/public/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- RaidCraft Core API -->
@@ -33,6 +37,13 @@
             <version>1.7-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Bukkit API -->
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.3.1-R1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- WorldGuard -->
         <dependency>
             <groupId>com.sk89q</groupId>
@@ -40,13 +51,14 @@
             <version>5.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spout -->
+        <!-- Vault -->
         <dependency>
-            <groupId>org.getspout</groupId>
-            <artifactId>spoutpluginapi</artifactId>
-            <version>1.2.5-R1.0</version>
+            <groupId>net.milkbowl</groupId>
+            <artifactId>vault</artifactId>
+            <version>1.2.13</version>
+            <scope>provided</scope>
         </dependency>
-        <!-- achievements -->
+        <!-- RCAchievements API -->
         <dependency>
             <groupId>de.raidcraft</groupId>
             <artifactId>rcachievements-api</artifactId>
@@ -55,4 +67,93 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
+
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>spoutplugin.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>defaults/</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>config.yml</include>
+                    <include>districts.yml</include>
+                    <include>regions.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- Plugins -->
+        <plugins>
+            <!-- Compile plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <!-- JAR creation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>true</addMavenDescriptor>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Assembly -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-2</version>
+                <configuration>
+                    <descriptor>${basedir}/src/main/assembly/default.xml</descriptor>
+                </configuration>
+            </plugin>
+
+            <!-- Release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+                <configuration>
+                    <preparationGoals>assembly:assembly</preparationGoals>
+                    <goals>assembly:assembly</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
+            <!-- Exclude non-tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/TestOfflinePermissible.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

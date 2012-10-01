@@ -21,6 +21,6 @@ public class RegionsDatabase extends RCDatabase {
 
     private RegionsDatabase() {
         super(RegionsPlugin.get(), PREFIX);
-        addTable(new RegionsTable(this));
+        addTable(new LogTable(this));
     }
 }
