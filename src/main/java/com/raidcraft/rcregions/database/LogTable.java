@@ -25,7 +25,7 @@ public class LogTable extends RCTable<LogTable> {
                         "`action` VARCHAR( 32 ) NULL ," +
                         "`price` DOUBLE NULL ," +
                         "`tax` DOUBLE NULL ," +
-                        "`time` VARCHAR( 32 ) NULL ," +
+                        "`time` VARCHAR( 32 ) NULL " +
                         ") ENGINE = InnoDB;"
         );
         getDatabase().executeUpdate(prepare);
