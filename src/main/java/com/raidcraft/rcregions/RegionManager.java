@@ -145,17 +145,17 @@ public final class RegionManager {
                             , ChatColor.GREEN + "[RCRegions] " 
                             + ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + price + "c abgekauft!");
                 }
-                RegionsDatabase.get().getTable(LogTable.class).logAction(region.getOwner()
+                RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
                         , region.getName()
                         , Enums.Action.SELL
                         , price
-                        , 0);
+                        , 0));
             }
-            RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+            RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(player.getName()
                     , region.getName()
                     , Enums.Action.BUY
                     , price
-                    , tax);
+                    , tax));
             boolean droped = false;
             for (District d : DistrictManager.get().getDistricts().values()) {
                 if (d.dropOnChange()) {

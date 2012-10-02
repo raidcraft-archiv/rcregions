@@ -1,9 +1,6 @@
 package com.raidcraft.rcregions.commands;
 
-import com.raidcraft.rcregions.District;
-import com.raidcraft.rcregions.DistrictManager;
-import com.raidcraft.rcregions.Region;
-import com.raidcraft.rcregions.RegionManager;
+import com.raidcraft.rcregions.*;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.database.LogTable;
 import com.raidcraft.rcregions.database.RegionsDatabase;
@@ -17,8 +14,8 @@ import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
+import com.silthus.raidcraft.util.databases.logblock.LBPlayer;
 import com.silthus.raidcraft.util.databases.logblock.LogBlock;
-import com.silthus.raidcraft.util.databases.logblock.LogblockPlayer;
 import com.sk89q.worldedit.BlockVector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -263,7 +260,7 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                         + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
             String lastLogin = "";
-            LogblockPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
+            LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
             if(logblockPlayer != null) {
                 lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
             }
@@ -273,6 +270,21 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
+            List<RegionLog> regionHistory = RegionsDatabase.get().getTable(LogTable.class).getHistory(region.getName());
+            if(regionHistory.size() > 0) {
+                RCMessaging.send(player, "| " + RCMessaging.green("Grundstücks-Historie:"),false);
+                for(RegionLog log : regionHistory) {
+                    RCMessaging.send(player, "| " 
+                            + RCMessaging.yellow(log.getPlayer()) 
+                            + RCMessaging.green(" - ")
+                            + RCMessaging.yellow(log.getAction())
+                            + RCMessaging.green(" - ")
+                            + RCMessaging.yellow(log.getPrice() + "c + " + log.getTax() + "c")
+                            + RCMessaging.green(" - ")
+                            + RCMessaging.yellow(log.getTime())
+                            ,false);
+                }
+            }
         }
     }
 
@@ -334,11 +346,11 @@ public class RegionCommand implements CommandExecutor {
                 double refund = RegionManager.get().getRefundValue(region);
                 RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
                         RCMessaging.yellow(refund + "") + " Coins an den Server verkauft.");
-                RegionsDatabase.get().getTable(LogTable.class).logAction(player.getName()
+                RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(player.getName()
                         , region.getName()
                         , Enums.Action.DROP
                         , refund
-                        , 0);
+                        , 0));
             } catch (RegionException e) {
                 RCMessaging.warn(sender, e.getMessage());
             }

@@ -1,12 +1,15 @@
 package com.raidcraft.rcregions.database;
 
-import com.raidcraft.rcregions.util.Enums;
+import com.raidcraft.rcregions.RegionLog;
 import com.silthus.raidcraft.database.Database;
 import com.silthus.raidcraft.database.RCTable;
+import com.silthus.raidcraft.util.RCLogger;
 
 import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogTable extends RCTable<LogTable> {
     
@@ -31,18 +34,45 @@ public class LogTable extends RCTable<LogTable> {
         getDatabase().executeUpdate(prepare);
     }
 
-    public void logAction(String player, String region, Enums.Action action, double price, double tax) {
-        SimpleDateFormat df = new SimpleDateFormat( "dd-MM-yyy HH:mm:ss" );
+    public void logAction(RegionLog log) {
+        
         PreparedStatement statement = getDatabase().prepare(
                 "INSERT INTO " + getName() + "(player, region, action, price, tax, time) VALUES (" +
-                        "'" + player + "'," +
-                        "'" + region + "'," +
-                        "'" + action.name() + "'," +
-                        "'" + price + "'," +
-                        "'" + tax + "'," +
-                        "'" + df.format(new Date()) + "'" +
+                        "'" + log.getPlayer() + "'," +
+                        "'" + log.getRegion() + "'," +
+                        "'" + log.getAction() + "'," +
+                        "'" + log.getPrice() + "'," +
+                        "'" + log.getTax() + "'," +
+                        "'" + log.getTime() + "'" +
                         ");"
         );
         getDatabase().executeUpdate(statement);
+    }
+
+    public List<RegionLog> getHistory(String region) {
+        PreparedStatement statement = getDatabase().prepare(
+                "SELECT * FROM " + getName() + " WHERE region = '" + region + "' ORDER BY id DESC LIMIT 0, 3;"
+        );
+        ResultSet resultSet = getDatabase().executeQuery(statement);
+        List<RegionLog> regionHistory = new ArrayList<RegionLog>();
+        try {
+            RegionLog regionLog;
+            if (resultSet.next()) {
+                do {
+                    regionLog = new RegionLog(
+                            resultSet.getString("player"),
+                            resultSet.getString("region"),
+                            resultSet.getString("action"),
+                            resultSet.getDouble("price"),
+                            resultSet.getDouble("tax"),
+                            resultSet.getString("time")
+                            );
+                    regionHistory.add(regionLog);
+                } while (resultSet.next());
+            }
+        } catch (SQLException e) {
+            RCLogger.warning(e.getMessage());
+        }
+        return regionHistory;
     }
 }

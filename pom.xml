@@ -7,7 +7,6 @@
     <groupId>de.raidcraft</groupId>
     <artifactId>rcregions</artifactId>
     <version>1.5-SNAPSHOT</version>
-    <name>RCRegions</name>
     <description>Module for selling, buying and trading WorldGuard regions via signs.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,7 +18,7 @@
     </ciManagement>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/raidcraft/rcregions.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@raid-craft:15973/rcregions.git</developerConnection>
     </scm>
 
     <repositories>
