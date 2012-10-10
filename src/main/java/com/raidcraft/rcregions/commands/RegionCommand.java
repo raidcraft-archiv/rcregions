@@ -18,6 +18,7 @@ import com.silthus.raidcraft.util.databases.logblock.LBPlayer;
 import com.silthus.raidcraft.util.databases.logblock.LogBlock;
 import com.sk89q.worldedit.BlockVector;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -199,6 +200,7 @@ public class RegionCommand implements CommandExecutor {
         } else if (sender instanceof Player) {
             showPlayerInfo((Player) sender);
         }
+        RCMessaging.send(sender, ChatColor.RED + "[RCRegion] Der Parameter kann nicht zugewiesen werden! Verschrieben?");
         return true;
     }
 
