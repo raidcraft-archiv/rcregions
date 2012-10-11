@@ -2,10 +2,8 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.config.RegionsConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
-import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.silthus.raidcraft.util.RCLogger;
+import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -15,6 +13,11 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -30,7 +33,7 @@ public class Region {
     private double price;
     private District district;
     private boolean buyable;
-    private boolean warned;
+	private Map<Integer, RegionWarning> warnings;
     
     public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
@@ -67,11 +70,8 @@ public class Region {
         } else {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
-        if (RegionsConfig.get().getRegions().contains(getName())) {
-            this.warned = (Boolean) RegionsConfig.get().getRegion(getName()).getFlag("warned");
-        } else {
-            this.warned = false;
-        }
+	    // load the warning list
+	    warnings = RegionManager.getInstance().getRegionWarnings(this);
     }
 
     /* All Getters and Setters go here */
@@ -132,15 +132,6 @@ public class Region {
         save();
     }
 
-    public boolean isWarned() {
-        return warned;
-    }
-
-    public void setWarned(boolean warned) {
-        this.warned = warned;
-        RegionsConfig.get().getRegion(getName()).setFlag("warned", warned);
-    }
-
     public District getDistrict() {
         return district;
     }
@@ -178,6 +169,25 @@ public class Region {
         }
         return MainConfig.get().getDistrict(district.getName()).getMinPrice();
     }
+
+	public RegionWarning addWarning(String msg) {
+		RegionWarning warning = new RegionWarning(this, msg);
+		RCPlayerListener.addWarning(warning);
+		warnings.put(warning.getId(), warning);
+		return warning;
+	}
+
+	public Collection<RegionWarning> getWarnings() {
+		return warnings.values();
+	}
+
+	public boolean hasWarnings() {
+		return warnings.size() > 0;
+	}
+
+	public void removeWarning(RegionWarning warning) {
+		warnings.remove(warning.getId());
+	}
     
     public String toString() {
         return getName();

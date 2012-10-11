@@ -1,13 +1,11 @@
 package com.raidcraft.rcregions.achievements;
 
-import com.raidcraft.rcregions.District;
 import com.raidcraft.rcregions.DistrictManager;
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
 import de.raidcraft.rcachievements.api.player.AchievementPlayer;
 import de.raidcraft.rcachievements.api.plugin.ClassName;
 import de.raidcraft.rcachievements.api.plugin.TaggedAchievement;
-import org.getspout.commons.entity.Player;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +25,7 @@ public class RegionAchievements implements TaggedAchievement {
 
 	@MethodName("region-count")
 	public static int getRegionCount(AchievementPlayer player) {
-		return RegionManager.get().getPlayerRegionCount(player.getPlayer());
+		return RegionManager.getInstance().getPlayerRegionCount(player.getPlayer());
 	}
 
 	@MethodName("district-count")
@@ -37,7 +35,7 @@ public class RegionAchievements implements TaggedAchievement {
 
 	@MethodName("districts")
 	public static Collection getDistricts(AchievementPlayer player) {
-		List<Region> regions = RegionManager.get().getPlayerRegions(player.getPlayer());
+		List<Region> regions = RegionManager.getInstance().getPlayerRegions(player.getPlayer());
 		Set<String> uniqueDistricts = new HashSet<String>();
 		for (Region region : regions) {
 			uniqueDistricts.add(region.getDistrict().getName());
@@ -47,6 +45,6 @@ public class RegionAchievements implements TaggedAchievement {
 
 	@MethodName("regions")
 	public static Collection getRegions(AchievementPlayer player) {
-		return RegionManager.get().getPlayerRegions(player.getPlayer());
+		return RegionManager.getInstance().getPlayerRegions(player.getPlayer());
 	}
 }

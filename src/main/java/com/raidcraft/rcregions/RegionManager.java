@@ -24,6 +24,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 17.12.11 - 11:49
@@ -45,10 +46,10 @@ public final class RegionManager {
     }
     
     public static void init() {
-        get();
+        getInstance();
     }
 
-    public static RegionManager get() {
+    public static RegionManager getInstance() {
         if (_self == null) {
             _self = new RegionManager();
         }
@@ -145,13 +146,13 @@ public final class RegionManager {
                             , ChatColor.GREEN + "[RCRegions] " 
                             + ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + price + "c abgekauft!");
                 }
-                RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
+                RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
                         , region.getName()
                         , Enums.Action.SELL
                         , price
                         , 0));
             }
-            RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(player.getName()
+            RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(player.getName()
                     , region.getName()
                     , Enums.Action.BUY
                     , price
@@ -271,22 +272,10 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
+	    for (RegionWarning warning : region.getWarnings()) {
+		    warning.remove();
+	    }
         RegionsPlugin.get().getEconomy().add(player, getRefundValue(region));
-    }
-
-    public boolean hasWarnedRegions(Player player) {
-        List<Region> regions = getWarnedRegions(player);
-        return regions.size() > 0;
-    }
-
-    public List<Region> getWarnedRegions(Player player) {
-        List<Region> regions = getPlayerRegions(player);
-        for (Region region : getPlayerRegions(player)) {
-            if (!region.isWarned()) {
-                regions.remove(region);
-            }
-        }
-        return regions;
     }
 
     public double getRefundValue(Region region) {
@@ -296,4 +285,19 @@ public final class RegionManager {
     public double getRefundPercentage(Region region) {
         return MainConfig.get().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
+
+	public Map<Integer, RegionWarning> getRegionWarnings(Region region) {
+
+		return RegionsDatabase.getRegionWarnings(region.getName());
+	}
+
+	public List<RegionWarning> getAllRegionWarnings() {
+
+		return RegionsDatabase.getAllRegionWarnings();
+	}
+
+	public RegionWarning getRegionWarning(int id) throws UnknownRegionException {
+
+		return RegionsDatabase.getRegionWarning(id);
+	}
 }

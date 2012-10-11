@@ -8,7 +8,7 @@ import com.silthus.raidcraft.spout.RCLabel;
 import com.silthus.raidcraft.spout.SpoutPlayerPopup;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
-import org.getspout.spoutapi.gui.*;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 /**
@@ -57,7 +57,7 @@ public class SpoutRegionInfo extends SpoutPlayerPopup{
         //-> Refund Labels
         RCLabel lbl_refund = new RCLabel("Erstattung:").textColor(yellow).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(50)
                 .shiftX(-this.getWidth()-20).shiftY(-(player.getMainScreen().getHeight()/2) + 110).dirty(true);
-        RCLabel lbl_refundVar = new RCLabel(""+RegionManager.get().getRefundPercentage(region)*100 + "% ").textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
+        RCLabel lbl_refundVar = new RCLabel(""+RegionManager.getInstance().getRefundPercentage(region)*100 + "% ").textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
                 .shiftX(40).shiftY(-(player.getMainScreen().getHeight()/2) + 110).dirty(true);
         //<- Refund Labels
 
@@ -78,7 +78,7 @@ public class SpoutRegionInfo extends SpoutPlayerPopup{
         //-> Refundvalue Labels
         RCLabel lbl_refundValue = new RCLabel("Rückzahlung:").textColor(yellow).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(50)
                 .shiftX(-this.getWidth()-20).shiftY(-(player.getMainScreen().getHeight()/2) + 170).dirty(true);
-        RCLabel lbl_refundValueVar = new RCLabel(""+RegionManager.get().getRefundValue(region)).textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
+        RCLabel lbl_refundValueVar = new RCLabel(""+RegionManager.getInstance().getRefundValue(region)).textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
                 .shiftX(40).shiftY(-(player.getMainScreen().getHeight()/2) + 170).dirty(true);
         //<- Refundvalue Labels
 

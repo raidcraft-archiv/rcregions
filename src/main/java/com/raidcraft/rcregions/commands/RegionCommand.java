@@ -10,6 +10,7 @@ import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.spout.SpoutRegionBuy;
 import com.raidcraft.rcregions.spout.SpoutRegionInfo;
 import com.raidcraft.rcregions.util.Enums;
+import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCCommandManager;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
@@ -51,7 +52,7 @@ public class RegionCommand implements CommandExecutor {
                     if (RegionsPlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
                         if (args.length > 1) {
                             try {
-                                Region region = RegionManager.get().getRegion(args[1]);
+                                Region region = RegionManager.getInstance().getRegion(args[1]);
                                 new SpoutRegionBuy((Player)sender, region);
                             } catch (UnknownRegionException e) {
                                 RCLogger.error(e);
@@ -59,8 +60,8 @@ public class RegionCommand implements CommandExecutor {
                         }
                         else {
                             try {
-                                Region region = RegionManager.get().getRegion(((SpoutPlayer) sender).getLocation());
-                                SpoutRegionBuy s = new SpoutRegionBuy((Player)sender, region);
+                                Region region = RegionManager.getInstance().getRegion(((SpoutPlayer) sender).getLocation());
+                                new SpoutRegionBuy((Player)sender, region);
                             } catch (UnknownRegionException e) {
                                 RCLogger.error(e);
                             }
@@ -96,26 +97,23 @@ public class RegionCommand implements CommandExecutor {
             if (cmd.is(label, "warn")) {
                 if (sender.hasPermission("rcregions.warn")) {
                     try {
-                        Region region = null;
-                        if (args.length > 1) {
-                            region = RegionManager.get().getRegion(args[1]);
-                        } else if (args.length == 1 && sender instanceof Player) {
-                            region = RegionManager.get().getRegion(cmd.getPlayerOfSender(sender).getLocation());
+                        Region region;
+                        if (args.length > 2) {
+                            region = RegionManager.getInstance().getRegion(args[1]);
+                        } else {
+                            RCMessaging.warn(sender, "Syntax: /rcr warn <region> <warning>");
+	                        return true;
                         }
                         if (region != null) {
-                            Player player = Bukkit.getPlayer(region.getOwner());
-                            if (region.isWarned()) {
-                                region.setWarned(false);
-                                RCMessaging.send(sender, "Die Verwarnung der Region " + region.getName() + " wurde aufgehoben.");
-                                if (player != null)
-                                RCMessaging.send(player, "Die Verwarnung deiner Region " + region.getName() + " wurde aufgehoben.");
-                            } else {
-                                region.setWarned(true);
-                                RCMessaging.send(sender, "Die Region " + region.getName() + " wurde verwarnt.");
-                                if (player != null)
-                                RCMessaging.send(player, "Deine Region " + region.getName() + " wurde verwarnt.");
-                            }
-                            return true;
+	                        String msg = "";
+	                        for (int i = 2; i < args.length; i++) {
+		                        msg += args[i] + " ";
+	                        }
+	                        RegionWarning warning =  region.addWarning(msg);
+	                        RCMessaging.send(sender,
+			                        "Die Region " + region.getName() + " wurde verwarnt: ");
+					        RCMessaging.send(sender, ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+					                        ChatColor.RED + warning.getMessage());
                         }
                     } catch (UnknownRegionException e) {
                         RCMessaging.warn(sender, e.getMessage());
@@ -126,6 +124,45 @@ public class RegionCommand implements CommandExecutor {
                 }
                 return true;
             }
+	        if (cmd.is(label, "listwarnings")) {
+		        if (sender.hasPermission("rcregions.warn.list")) {
+			        List<RegionWarning> warnings = RegionManager.getInstance().getAllRegionWarnings();
+			        if (warnings.size() > 0) {
+				        for (RegionWarning warning : warnings) {
+					        sender.sendMessage(
+							        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
+									        "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+									        ChatColor.GREEN + " - " + ChatColor.YELLOW +
+									        RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
+									        + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
+				        }
+			        } else {
+				        sender.sendMessage(ChatColor.RED + "Es gibt momentan keine verwarnten Regionen.");
+			        }
+		        } else {
+			        RCMessaging.noPermission(sender);
+		        }
+		        return true;
+	        }
+	        if (cmd.is(label, "removewarning")) {
+		        if (sender.hasPermission("rcregions.warn")) {
+			        if (args.length > 1) {
+				        try {
+					        int id = Integer.parseInt(args[1]);
+					        RegionManager.getInstance().getRegionWarning(id).remove();
+				        } catch (NumberFormatException e) {
+							RCMessaging.warn(sender, "Bitte die ID der Verwarnung angeben.");
+				        } catch (UnknownRegionException e) {
+							RCMessaging.warn(sender, e.getMessage());
+				        }
+			        } else {
+						RCMessaging.warn(sender, "Syntax: /rcr removewarning <id>");
+			        }
+		        } else {
+			        RCMessaging.noPermission(sender);
+		        }
+		        return true;
+	        }
             // gets region information about the player
             // [/rcr -p <player>]
             if (cmd.is(label, "player", "-p")) {
@@ -159,7 +196,7 @@ public class RegionCommand implements CommandExecutor {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     for (District district : DistrictManager.get().getDistricts().values()) {
-                        double taxes = RegionManager.get().getTaxes(player, district);
+                        double taxes = RegionManager.getInstance().getTaxes(player, district);
                         if (taxes > 0) {
                             RCMessaging.send(sender, district + ": "
                                     + RCMessaging.yellow(taxes * 100 + "%"));
@@ -186,8 +223,8 @@ public class RegionCommand implements CommandExecutor {
                 if (sender.hasPermission("rcregions.info")) {
                     if (sender instanceof Player && args.length == 1) {
                         try {
-                            Region region = RegionManager.get().getRegion(((Player) sender).getLocation());
-                            if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
+                            Region region = RegionManager.getInstance().getRegion(((Player) sender).getLocation());
+                            if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
                                 new SpoutRegionInfo((Player)sender, region);
                             }
                             else
@@ -214,7 +251,7 @@ public class RegionCommand implements CommandExecutor {
 
     private void warp(Player player, String strRegion) {
         try {
-            Region region = RegionManager.get().getRegion(strRegion);
+            Region region = RegionManager.getInstance().getRegion(strRegion);
             BlockVector maximumPoint = region.getRegion().getMaximumPoint();
             Location location = new Location(player.getWorld(), maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ());
             player.teleport(location);
@@ -226,7 +263,7 @@ public class RegionCommand implements CommandExecutor {
     }
 
     private void showPlayerInfo(Player player) {
-        List<Region> regions = RegionManager.get().getPlayerRegions(player);
+        List<Region> regions = RegionManager.getInstance().getPlayerRegions(player);
         Set<District> uniqueDistricts = new HashSet<District>();
         Map<String,District> districts = DistrictManager.get().getDistricts();
         for (Region region : regions) {
@@ -237,8 +274,8 @@ public class RegionCommand implements CommandExecutor {
                 + RCMessaging.green("Distrikte: ") + RCMessaging.yellow(uniqueDistricts.size() + "/" + districts.size()),false);
         for (District district : uniqueDistricts) {
             ArrayList<String> list = new ArrayList<String>();
-            for (Region region : RegionManager.get().getPlayerRegions(player, district)) {
-                if (region.isWarned()) {
+            for (Region region : RegionManager.getInstance().getPlayerRegions(player, district)) {
+                if (region.hasWarnings()) {
                     list.add(RCMessaging.red(region.toString()));
                     continue;
                 }
@@ -252,35 +289,45 @@ public class RegionCommand implements CommandExecutor {
     private void showRegionInfo(String strRegion) {
         try {
             if (sender instanceof Player)
-            showRegionInfo((Player)sender, RegionManager.get().getRegion(strRegion));
+            showRegionInfo((Player)sender, RegionManager.getInstance().getRegion(strRegion));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
     }
 
     public static void  showRegionInfo(Player player, Region region) {
-        RegionManager regionManager = RegionManager.get();
-        if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
-            SpoutRegionInfo s = new SpoutRegionInfo(player, region);
-        }
-        else
-        {
+        RegionManager regionManager = RegionManager.getInstance();
+        if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
+            new SpoutRegionInfo(player, region);
+        }  else {
             District district = region.getDistrict();
             RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
             RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                         + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
             String lastLogin = "";
             LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
+
             if(logblockPlayer != null) {
                 lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
             }
+
             RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner())
                     + lastLogin, false);
             RCMessaging.send(player, "| " + RCMessaging.green("Refund: ") + RCMessaging.yellow(regionManager.getRefundPercentage(region) * 100 + "%"), false);
             RCMessaging.send(player, "| " + RCMessaging.green("Aktueller Preis: ") + RCMessaging.yellow(region.getPrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Basis Preis: ") + RCMessaging.yellow(region.getBasePrice() + ""),false);
             RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
-            List<RegionLog> regionHistory = RegionsDatabase.get().getTable(LogTable.class).getHistory(region.getName());
+
+	        if (region.hasWarnings()) {
+		        RCMessaging.send(player, "| " + RCMessaging.green("Verwarnungen: "), false);
+		        Collection<RegionWarning> warnings = region.getWarnings();
+		        for (RegionWarning warning : warnings) {
+			        RCMessaging.send(player, ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+							        ChatColor.RED + warning.getMessage(), false);
+		        }
+	        }
+
+            List<RegionLog> regionHistory = RegionsDatabase.getInstance().getTable(LogTable.class).getHistory(region.getName());
             if(regionHistory.size() > 0) {
                 RCMessaging.send(player, "| " + RCMessaging.green("Grundstücks-Historie:"),false);
                 for(RegionLog log : regionHistory) {
@@ -300,7 +347,7 @@ public class RegionCommand implements CommandExecutor {
 
     private void buyRegion(String region) {
         try {
-            buyRegion(RegionManager.get().getRegion(region));
+            buyRegion(RegionManager.getInstance().getRegion(region));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
@@ -310,7 +357,7 @@ public class RegionCommand implements CommandExecutor {
         try {
             Player player = cmd.getPlayerOfSender(sender);
             Location location = player.getLocation();
-            buyRegion(RegionManager.get().getRegion(location));
+            buyRegion(RegionManager.getInstance().getRegion(location));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
@@ -319,7 +366,7 @@ public class RegionCommand implements CommandExecutor {
     private void buyRegion(Region region) {
         try {
             Player player = cmd.getPlayerOfSender(sender);
-            RegionManager regionManager = RegionManager.get();
+            RegionManager regionManager = RegionManager.getInstance();
             regionManager.buyRegion(player, region);
             if (!((SpoutPlayer)player).isSpoutCraftEnabled())
                 RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
@@ -332,7 +379,7 @@ public class RegionCommand implements CommandExecutor {
 
     private void dropRegion(String region) {
         try {
-            dropRegion(RegionManager.get().getRegion(region));
+            dropRegion(RegionManager.getInstance().getRegion(region));
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         }
@@ -341,7 +388,7 @@ public class RegionCommand implements CommandExecutor {
     private void dropRegion() {
         try {
             Player player = cmd.getPlayerOfSender(sender);
-            Region region = RegionManager.get().getRegion(player.getLocation());
+            Region region = RegionManager.getInstance().getRegion(player.getLocation());
             dropRegion(region);
         } catch (UnknownRegionException e) {
             RCMessaging.warn(sender, e.getMessage());
@@ -352,11 +399,11 @@ public class RegionCommand implements CommandExecutor {
         Player player = cmd.getPlayerOfSender(sender);
         if ((region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) || sender.hasPermission("rcregions.admin")) {
             try {
-                RegionManager.get().dropRegion(player, region);
-                double refund = RegionManager.get().getRefundValue(region);
+                RegionManager.getInstance().dropRegion(player, region);
+                double refund = RegionManager.getInstance().getRefundValue(region);
                 RCMessaging.send(sender, "Deine Region " + region.getName() + " wurde für " +
                         RCMessaging.yellow(refund + "") + " Coins an den Server verkauft.");
-                RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(player.getName()
+                RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(player.getName()
                         , region.getName()
                         , Enums.Action.DROP
                         , refund

@@ -6,7 +6,6 @@ import com.raidcraft.rcregions.achievements.RegionAchievements;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.config.RegionsConfig;
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
@@ -41,9 +40,11 @@ public class RegionsPlugin extends BukkitBasePlugin {
 	    getServer().getPluginManager().registerEvents(new RCPlayerListener(), this);
         initializeManagers();
         registerCommand("rcr", new RegionCommand());
-        RegionsDatabase.get();
+        RegionsDatabase.getInstance();
 	    // register achievements
 	    registerAchievements();
+	    // start the warning task
+	    RCPlayerListener.startWarningTask();
     }
 
 	private void registerAchievements() {
@@ -57,7 +58,6 @@ public class RegionsPlugin extends BukkitBasePlugin {
 	private void loadConfigs() {
 		MainConfig.init(this);
 		DistrictConfig.init(this);
-		RegionsConfig.init(this);
 	}
 
     private void initializeManagers() {
@@ -67,7 +67,6 @@ public class RegionsPlugin extends BukkitBasePlugin {
     
     public void reload() {
         MainConfig.get().reload();
-        RegionsConfig.get().reload();
         DistrictConfig.get().reload();
         DistrictManager.reload();
         RegionManager.reload();
