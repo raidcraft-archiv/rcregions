@@ -13,7 +13,6 @@ import com.raidcraft.rcregions.spout.SpoutRegionBuy;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.SignUtils;
-import com.silthus.raidcraft.util.Task;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -30,7 +29,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

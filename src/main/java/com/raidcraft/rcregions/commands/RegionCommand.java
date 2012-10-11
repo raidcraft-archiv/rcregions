@@ -61,7 +61,7 @@ public class RegionCommand implements CommandExecutor {
                         else {
                             try {
                                 Region region = RegionManager.getInstance().getRegion(((SpoutPlayer) sender).getLocation());
-                                SpoutRegionBuy s = new SpoutRegionBuy((Player)sender, region);
+                                new SpoutRegionBuy((Player)sender, region);
                             } catch (UnknownRegionException e) {
                                 RCLogger.error(e);
                             }
