@@ -7,6 +7,7 @@ import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.spout.SpoutRegionBuy;
 import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
@@ -177,6 +178,14 @@ public class RCPlayerListener implements Listener {
 		    public void run() {
 			    Set<Map.Entry<Player, List<RegionWarning>>> entries =
 					    new HashSet<Map.Entry<Player, List<RegionWarning>>>(warnedPlayers.entrySet());
+			    if (entries.size() > 0) {
+				    for (Player player : Bukkit.getOnlinePlayers()) {
+					    if (player.hasPermission("rcregions.warn.list")) {
+						    player.sendMessage(ChatColor.GRAY + "Aktuell stehen " + RegionsDatabase.getWarningCount() + " Regions " +
+								    "Verwarnungen aus. (" + ChatColor.ITALIC + "/rcr listwarnings" + ChatColor.RESET + ChatColor.GRAY + ")");
+					    }
+				    }
+			    }
 			    for (Map.Entry<Player, List<RegionWarning>> entry : entries) {
 				    if (entry.getKey() != null && entry.getKey().isOnline()) {
 					    entry.getKey().sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");

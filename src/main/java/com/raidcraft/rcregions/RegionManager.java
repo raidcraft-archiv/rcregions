@@ -291,4 +291,9 @@ public final class RegionManager {
 
 		return RegionsDatabase.getAllRegionWarnings();
 	}
+
+	public RegionWarning getRegionWarning(int id) throws UnknownRegionException {
+
+		return RegionsDatabase.getRegionWarning(id);
+	}
 }

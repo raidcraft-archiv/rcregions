@@ -38,6 +38,10 @@ public class RegionWarning {
 		RegionsDatabase.saveWarning(this);
 	}
 
+	public void remove() {
+		RegionsDatabase.removeWarning(this);
+	}
+
 	public int getId() {
 		return id;
 	}

@@ -43,4 +43,16 @@ public class RegionsDatabase extends RCDatabase {
 	public static int getNextWarningId() {
 		return getInstance().getTable(WarningTable.class).getNextWarningId();
 	}
+
+	public static int getWarningCount() {
+		return getInstance().getTable(WarningTable.class).getWarningCount();
+	}
+
+	public static RegionWarning getRegionWarning(int id) throws UnknownRegionException {
+		return getInstance().getTable(WarningTable.class).getRegionWarning(id);
+	}
+
+	public static void removeWarning(RegionWarning warning) {
+		getInstance().getTable(WarningTable.class).removeWarning(warning);
+	}
 }

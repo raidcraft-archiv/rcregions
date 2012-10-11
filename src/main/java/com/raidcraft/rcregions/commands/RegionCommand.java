@@ -132,7 +132,29 @@ public class RegionCommand implements CommandExecutor {
 								        RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
 								        + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
 			        }
+		        } else {
+			        RCMessaging.noPermission(sender);
 		        }
+		        return true;
+	        }
+	        if (cmd.is(label, "removewarning")) {
+		        if (sender.hasPermission("rcregions.warn")) {
+			        if (args.length > 1) {
+				        try {
+					        int id = Integer.parseInt(args[1]);
+					        RegionManager.getInstance().getRegionWarning(id).remove();
+				        } catch (NumberFormatException e) {
+							RCMessaging.warn(sender, "Bitte die ID der Verwarnung angeben.");
+				        } catch (UnknownRegionException e) {
+							RCMessaging.warn(sender, e.getMessage());
+				        }
+			        } else {
+						RCMessaging.warn(sender, "Syntax: /rcr removewarning <id>");
+			        }
+		        } else {
+			        RCMessaging.noPermission(sender);
+		        }
+		        return true;
 	        }
             // gets region information about the player
             // [/rcr -p <player>]

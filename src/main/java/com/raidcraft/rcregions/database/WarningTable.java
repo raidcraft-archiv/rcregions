@@ -49,6 +49,19 @@ public class WarningTable extends RCTable<WarningTable> {
 		return 1;
 	}
 
+	public int getWarningCount() {
+
+		try {
+			ResultSet resultSet = getDatabase().executeQuery("SELECT COUNT(*) as count FROM `" + getName() + "`");
+			while (resultSet.next()) {
+				return resultSet.getInt("count");
+			}
+		} catch (SQLException e) {
+			RCLogger.error(e);
+		}
+		return 0;
+	}
+
 	public List<RegionWarning> getRegionWarning(String region) {
 
 		List<RegionWarning> warnings = new ArrayList<RegionWarning>();
@@ -86,6 +99,25 @@ public class WarningTable extends RCTable<WarningTable> {
 
 		getDatabase().executeUpdate("INSERT INTO `" + getName() + "` (region, message, time) " +
 				"VALUES ('" + warning.getRegion().getName() + "', '" + warning.getMessage() + "', " + warning.getTime());
+	}
+
+	public void removeWarning(RegionWarning warning) {
+
+		getDatabase().executeUpdate("REMOVE FROM `" + getName() + "` WHERE id=" + warning.getId());
+	}
+
+	public RegionWarning getRegionWarning(int id) throws UnknownRegionException {
+		try {
+			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` WHERE id=" + id);
+			while (resultSet.next()) {
+				return new RegionWarning(new Data(resultSet.getString("region"), resultSet));
+			}
+		} catch (SQLException e) {
+			RCLogger.error(e);
+		} catch (UnknownRegionException e) {
+			RCLogger.error(e);
+		}
+		throw new UnknownRegionException("Es gibt keine Verwarnung mit der ID: " + id);
 	}
 
 	public static class Data {
