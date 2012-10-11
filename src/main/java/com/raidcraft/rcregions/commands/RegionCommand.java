@@ -313,8 +313,9 @@ public class RegionCommand implements CommandExecutor {
 	        if (region.hasWarnings()) {
 		        RCMessaging.send(player, "| " + RCMessaging.green("Verwarnungen: "));
 		        List<RegionWarning> warnings = region.getWarnings();
-		        for (int i = 0; i < warnings.size(); i++) {
-			        RCMessaging.send(player, ChatColor.RED + "" + i + ". " + warnings.get(i).getMessage());
+		        for (RegionWarning warning : warnings) {
+			        player.sendMessage(ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+							        ChatColor.RED + warning.getMessage());
 		        }
 	        }
 
