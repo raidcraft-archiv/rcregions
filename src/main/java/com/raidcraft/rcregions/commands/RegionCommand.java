@@ -77,6 +77,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             // sells to region to the server
             // [/rcr drop <region>]
@@ -90,6 +91,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             if (cmd.is(label, "warn")) {
                 if (sender.hasPermission("rcregions.warn")) {
@@ -122,6 +124,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             // gets region information about the player
             // [/rcr -p <player>]
@@ -138,6 +141,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             // warps the player to the max point of the region
             // [/rcr warp <region>]
@@ -147,6 +151,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             // displays the diffrent taxes for the districts
             // [/rcr tax]
@@ -173,6 +178,7 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
             // gives information about the region
             // [/rcr -i <region>]
@@ -196,9 +202,11 @@ public class RegionCommand implements CommandExecutor {
                 } else {
                     RCMessaging.noPermission(sender);
                 }
+                return true;
             }
         } else if (sender instanceof Player) {
             showPlayerInfo((Player) sender);
+            return true;
         }
         RCMessaging.send(sender, ChatColor.RED + "[RCRegion] Parameter konnte nicht zugeordnet werden!", false);
         return true;
