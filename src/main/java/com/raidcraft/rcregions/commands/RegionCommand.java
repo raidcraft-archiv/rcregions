@@ -124,13 +124,17 @@ public class RegionCommand implements CommandExecutor {
 	        if (cmd.is(label, "listwarnings")) {
 		        if (sender.hasPermission("rcregions.warn.list")) {
 			        List<RegionWarning> warnings = RegionManager.getInstance().getAllRegionWarnings();
-			        for (RegionWarning warning : warnings) {
-				        sender.sendMessage(
-						        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
-								        "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
-								        ChatColor.GREEN + " - " + ChatColor.YELLOW +
-								        RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
-								        + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
+			        if (warnings.size() > 0) {
+				        for (RegionWarning warning : warnings) {
+					        sender.sendMessage(
+							        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
+									        "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+									        ChatColor.GREEN + " - " + ChatColor.YELLOW +
+									        RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
+									        + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
+				        }
+			        } else {
+				        sender.sendMessage(ChatColor.RED + "Es gibt momentan keine verwarnten Regionen.");
 			        }
 		        } else {
 			        RCMessaging.noPermission(sender);
