@@ -311,11 +311,11 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "| " + RCMessaging.green("Rückzahlung: ") + RCMessaging.yellow(regionManager.getRefundValue(region) + ""),false);
 
 	        if (region.hasWarnings()) {
-		        RCMessaging.send(player, "| " + RCMessaging.green("Verwarnungen: "));
+		        RCMessaging.send(player, "| " + RCMessaging.green("Verwarnungen: "), false);
 		        List<RegionWarning> warnings = region.getWarnings();
 		        for (RegionWarning warning : warnings) {
-			        player.sendMessage(ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
-							        ChatColor.RED + warning.getMessage());
+			        RCMessaging.send(player, ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+							        ChatColor.RED + warning.getMessage(), false);
 		        }
 	        }
 

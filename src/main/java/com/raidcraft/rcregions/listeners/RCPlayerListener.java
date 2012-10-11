@@ -170,9 +170,10 @@ public class RCPlayerListener implements Listener {
 
 		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
 		if (player != null && player.isOnline()) {
-			if (warnedPlayers.containsKey(player.getName())) {
-				warnedPlayers.get(player.getName()).add(warning);
+			if (!warnedPlayers.containsKey(player.getName())) {
+				warnedPlayers.put(player.getName(), new ArrayList<RegionWarning>());
 			}
+			warnedPlayers.get(player.getName()).add(warning);
 		}
 	}
 
@@ -202,8 +203,10 @@ public class RCPlayerListener implements Listener {
 			    if (entries.size() > 0) {
 				    for (Player player : Bukkit.getOnlinePlayers()) {
 					    if (player.hasPermission("rcregions.warn.list")) {
-						    player.sendMessage(ChatColor.GRAY + "Aktuell stehen " + RegionsDatabase.getWarningCount() + " Regions " +
-								    "Verwarnungen aus. (" + ChatColor.ITALIC + "/rcr listwarnings" + ChatColor.RESET + ChatColor.GRAY + ")");
+						    player.sendMessage(ChatColor.RED + "Aktuell stehen " + ChatColor.AQUA + RegionsDatabase.getWarningCount() +
+								    ChatColor.RED + " Regions Verwarnungen aus.");
+						    player.sendMessage(ChatColor.GRAY + "(" + ChatColor.ITALIC + "/rcr listwarnings" +
+								    ChatColor.RESET + ChatColor.GRAY + ")");
 					    }
 				    }
 			    }
