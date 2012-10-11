@@ -174,6 +174,9 @@ public class RCPlayerListener implements Listener {
 				warnedPlayers.put(player.getName(), new ArrayList<RegionWarning>());
 			}
 			warnedPlayers.get(player.getName()).add(warning);
+			// tell the player
+			player.sendMessage(
+					ChatColor.RED + "Deine Region " + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde verwarnt.");
 		}
 	}
 
@@ -187,6 +190,10 @@ public class RCPlayerListener implements Listener {
 			if (warnedPlayers.get(player.getName()).size() < 1) {
 				warnedPlayers.remove(player.getName());
 			}
+			// tell the player
+			player.sendMessage(
+					ChatColor.RED + "Die Verwarnung von" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde " +
+							"aufgehoben.");
 		}
 	}
 

@@ -271,6 +271,9 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
+	    for (RegionWarning warning : region.getWarnings()) {
+		    warning.remove();
+	    }
         RegionsPlugin.get().getEconomy().add(player, getRefundValue(region));
     }
 
