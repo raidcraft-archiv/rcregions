@@ -146,8 +146,8 @@ public class RCPlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (warnedPlayers.containsKey(player)) {
-            warnedPlayers.remove(player);
+        if (warnedPlayers.containsKey(player.getName())) {
+            warnedPlayers.remove(player.getName());
         }
     }
 
@@ -192,7 +192,7 @@ public class RCPlayerListener implements Listener {
 			}
 			// tell the player
 			player.sendMessage(
-					ChatColor.RED + "Die Verwarnung von" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde " +
+					ChatColor.RED + "Die Verwarnung von " + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde " +
 							"aufgehoben.");
 		}
 	}
