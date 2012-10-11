@@ -66,10 +66,10 @@ public class WarningTable extends RCTable<WarningTable> {
 
 		List<RegionWarning> warnings = new ArrayList<RegionWarning>();
 		try {
-			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` WHERE region='" + region + "' ORDER BY " +
-					"time asc");
+			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` WHERE region='" + region + "' " +
+					"ORDER BY time asc");
 			while (resultSet.next()) {
-				warnings.add(new RegionWarning(new Data(region, resultSet)));
+				warnings.add(new RegionWarning(new Data(resultSet)));
 			}
 		} catch (SQLException e) {
 			RCLogger.error(e);
@@ -85,7 +85,7 @@ public class WarningTable extends RCTable<WarningTable> {
 		try {
 			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` ORDER BY time asc");
 			while (resultSet.next()) {
-				warnings.add(new RegionWarning(new Data(resultSet.getString("region"), resultSet)));
+				warnings.add(new RegionWarning(new Data(resultSet)));
 			}
 		} catch (SQLException e) {
 			RCLogger.error(e);
@@ -110,7 +110,7 @@ public class WarningTable extends RCTable<WarningTable> {
 		try {
 			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` WHERE id=" + id);
 			while (resultSet.next()) {
-				return new RegionWarning(new Data(resultSet.getString("region"), resultSet));
+				return new RegionWarning(new Data(resultSet));
 			}
 		} catch (SQLException e) {
 			RCLogger.error(e);
@@ -124,14 +124,14 @@ public class WarningTable extends RCTable<WarningTable> {
 
 		public final int id;
 		public final String message;
-		public final Region region;
+		public final String region;
 		public final long time;
 
-		public Data(String region, ResultSet resultSet) throws SQLException, UnknownRegionException {
+		public Data(ResultSet resultSet) throws SQLException, UnknownRegionException {
 
 			this.id = resultSet.getInt("id");
 			this.message = resultSet.getString("message");
-			this.region = RegionManager.getInstance().getRegion(region);
+			this.region = resultSet.getString("region");
 			this.time = resultSet.getLong("time");
 		}
 	}

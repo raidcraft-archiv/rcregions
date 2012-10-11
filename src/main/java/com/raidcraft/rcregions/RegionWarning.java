@@ -2,7 +2,9 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.database.WarningTable;
+import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
+import com.silthus.raidcraft.util.RCLogger;
 
 import java.text.SimpleDateFormat;
 
@@ -14,14 +16,14 @@ public class RegionWarning {
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 	private final int id;
-	private final Region region;
+	private final String region;
 	private final String message;
 	private final long time;
 
 	protected RegionWarning(Region region, String message) {
 
 		this.id = RegionsDatabase.getNextWarningId();
-		this.region = region;
+		this.region = region.getName();
 		this.message = message;
 		this.time = System.currentTimeMillis();
 		save();
@@ -49,7 +51,13 @@ public class RegionWarning {
 	}
 
 	public Region getRegion() {
-		return region;
+		try {
+			return RegionManager.getInstance().getRegion(region);
+		} catch (UnknownRegionException e) {
+			// should never ever be thrown
+			RCLogger.error(e);
+		}
+		return null;
 	}
 
 	public String getMessage() {
