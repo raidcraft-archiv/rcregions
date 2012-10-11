@@ -103,7 +103,7 @@ public class WarningTable extends RCTable<WarningTable> {
 
 	public void removeWarning(RegionWarning warning) {
 
-		getDatabase().executeUpdate("REMOVE FROM `" + getName() + "` WHERE id=" + warning.getId());
+		getDatabase().executeUpdate("DELETE FROM `" + getName() + "` WHERE id=" + warning.getId());
 	}
 
 	public RegionWarning getRegionWarning(int id) throws UnknownRegionException {
