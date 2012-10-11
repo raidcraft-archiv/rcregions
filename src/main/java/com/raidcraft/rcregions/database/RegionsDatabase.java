@@ -26,6 +26,7 @@ public class RegionsDatabase extends RCDatabase {
     private RegionsDatabase() {
         super(RegionsPlugin.get(), PREFIX);
         addTable(new LogTable(this));
+	    addTable(new WarningTable(this));
     }
 
 	public static List<RegionWarning> getRegionWarnings(String region) {
