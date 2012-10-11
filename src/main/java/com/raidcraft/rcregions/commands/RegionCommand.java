@@ -108,7 +108,10 @@ public class RegionCommand implements CommandExecutor {
 		                        msg += args[i];
 	                        }
 	                        RegionWarning warning =  region.addWarning(msg);
-	                        RCMessaging.send(sender, "Die Region " + region.getName() + " wurde verwarnt: " + ChatColor.RED + warning.getMessage());
+	                        RCMessaging.send(sender,
+			                        "Die Region " + region.getName() + " wurde verwarnt: " +
+					                        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+					                        ChatColor.RED + warning.getMessage());
                         }
                     } catch (UnknownRegionException e) {
                         RCMessaging.warn(sender, e.getMessage());
@@ -118,6 +121,19 @@ public class RegionCommand implements CommandExecutor {
                     RCMessaging.noPermission(sender);
                 }
             }
+	        if (cmd.is(label, "listwarnings")) {
+		        if (sender.hasPermission("rcregions.warn.list")) {
+			        List<RegionWarning> warnings = RegionManager.getInstance().getAllRegionWarnings();
+			        for (RegionWarning warning : warnings) {
+				        sender.sendMessage(
+						        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
+								        "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+								        ChatColor.GREEN + " - " + ChatColor.YELLOW +
+								        RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
+								        + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
+			        }
+		        }
+	        }
             // gets region information about the player
             // [/rcr -p <player>]
             if (cmd.is(label, "player", "-p")) {
@@ -176,7 +192,7 @@ public class RegionCommand implements CommandExecutor {
                     if (sender instanceof Player && args.length == 1) {
                         try {
                             Region region = RegionManager.getInstance().getRegion(((Player) sender).getLocation());
-                            if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
+                            if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
                                 new SpoutRegionInfo((Player)sender, region);
                             }
                             else

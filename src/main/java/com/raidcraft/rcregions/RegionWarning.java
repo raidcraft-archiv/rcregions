@@ -3,17 +3,23 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.database.WarningTable;
 
+import java.text.SimpleDateFormat;
+
 /**
  * @author Silthus
  */
 public class RegionWarning {
 
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+	private final int id;
 	private final Region region;
 	private final String message;
 	private final long time;
 
 	protected RegionWarning(Region region, String message) {
 
+		this.id = RegionsDatabase.getNextWarningId();
 		this.region = region;
 		this.message = message;
 		this.time = System.currentTimeMillis();
@@ -22,6 +28,7 @@ public class RegionWarning {
 
 	public RegionWarning(WarningTable.Data data) {
 
+		this.id = data.id;
 		this.region = data.region;
 		this.message = data.message;
 		this.time = data.time;
@@ -29,6 +36,10 @@ public class RegionWarning {
 
 	private void save() {
 		RegionsDatabase.saveWarning(this);
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public Region getRegion() {

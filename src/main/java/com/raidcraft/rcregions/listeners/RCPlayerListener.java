@@ -39,7 +39,6 @@ import java.util.*;
  */
 public class RCPlayerListener implements Listener {
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 	private static Map<Player, List<RegionWarning>> warnedPlayers = new HashMap<Player, List<RegionWarning>>();
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
@@ -183,8 +182,10 @@ public class RCPlayerListener implements Listener {
 					    entry.getKey().sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
 					    for (RegionWarning warning : entry.getValue()) {
 						    entry.getKey().sendMessage(
-								    ChatColor.YELLOW + "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
-										    ChatColor.GREEN + " - " + ChatColor.YELLOW + DATE_FORMAT.format(new Date(warning.getTime()))
+								    ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
+								    "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+										    ChatColor.GREEN + " - " + ChatColor.YELLOW +
+										    RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
 										    + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
 					    }
 				    }

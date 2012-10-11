@@ -35,4 +35,12 @@ public class RegionsDatabase extends RCDatabase {
 	public static void saveWarning(RegionWarning warning) {
 		getInstance().getTable(WarningTable.class).saveWarning(warning);
 	}
+
+	public static List<RegionWarning> getAllRegionWarnings() {
+		return getInstance().getTable(WarningTable.class).getAllWarnings();
+	}
+
+	public static int getNextWarningId() {
+		return getInstance().getTable(WarningTable.class).getNextWarningId();
+	}
 }

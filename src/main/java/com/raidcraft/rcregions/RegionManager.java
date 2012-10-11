@@ -286,4 +286,9 @@ public final class RegionManager {
 
 		return RegionsDatabase.getRegionWarnings(region.getName());
 	}
+
+	public List<RegionWarning> getAllRegionWarnings() {
+
+		return RegionsDatabase.getAllRegionWarnings();
+	}
 }
