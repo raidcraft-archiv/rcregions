@@ -211,6 +211,7 @@ public class RegionCommand implements CommandExecutor {
         } else if (sender instanceof Player) {
             showPlayerInfo((Player) sender);
         }
+        RCMessaging.send(sender, ChatColor.RED + "[RCRegion] Parameter konnte nicht zugeordnet werden!", false);
         return true;
     }
 
