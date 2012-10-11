@@ -210,10 +210,11 @@ public class RCPlayerListener implements Listener {
 		    public void run() {
 
 			    Set<Map.Entry<String, List<Integer>>> entries = warnedPlayers.entrySet();
-			    if (entries.size() > 0) {
+			    int warningCount = RegionsDatabase.getWarningCount();
+			    if (warningCount > 0) {
 				    for (Player player : Bukkit.getOnlinePlayers()) {
 					    if (player.hasPermission("rcregions.warn.list")) {
-						    player.sendMessage(ChatColor.RED + "Aktuell stehen " + ChatColor.AQUA + RegionsDatabase.getWarningCount() +
+						    player.sendMessage(ChatColor.RED + "Aktuell stehen " + ChatColor.AQUA + warningCount +
 								    ChatColor.RED + " Regions Verwarnungen aus.");
 						    player.sendMessage(ChatColor.GRAY + "(" + ChatColor.ITALIC + "/rcr listwarnings" +
 								    ChatColor.RESET + ChatColor.GRAY + ")");
