@@ -1,19 +1,19 @@
 package com.raidcraft.rcregions.spout;
 
-import com.silthus.raidcraft.spout.RCButton;
-import com.silthus.raidcraft.spout.RCLabel;
-import com.silthus.raidcraft.spout.SpoutPlayerPopup;
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
+import com.silthus.raidcraft.spout.RCButton;
+import com.silthus.raidcraft.spout.RCLabel;
+import com.silthus.raidcraft.spout.SpoutPlayerPopup;
 import com.silthus.raidcraft.util.RCMessaging;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
-import org.getspout.spoutapi.gui.*;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 /**
@@ -74,14 +74,14 @@ public class SpoutRegionBuy extends SpoutPlayerPopup{
         //-> Taxprice Labels
         RCLabel lbl_taxPrice = new RCLabel("Steuern:").textColor(yellow).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(50)
                 .shiftX(-this.getWidth()-20).shiftY(-(player.getMainScreen().getHeight()/2) + 150).dirty(true);
-        RCLabel lbl_taxPriceVar = new RCLabel(""+ RegionManager.get().getTaxes(player, region.getDistrict())*100 + "% ").textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
+        RCLabel lbl_taxPriceVar = new RCLabel(""+ RegionManager.getInstance().getTaxes(player, region.getDistrict())*100 + "% ").textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
                 .shiftX(40).shiftY(-(player.getMainScreen().getHeight()/2) + 150).dirty(true);
         //<- Taxprice Labels
 
         //-> Taxprice Labels
         RCLabel lbl_endPrice = new RCLabel("Endpreis:").textColor(yellow).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(50)
                 .shiftX(-this.getWidth()-20).shiftY(-(player.getMainScreen().getHeight()/2) + 170).dirty(true);
-        RCLabel lbl_endPriceVar = new RCLabel(""+RegionManager.get().getFullPrice(player, region)).textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
+        RCLabel lbl_endPriceVar = new RCLabel(""+RegionManager.getInstance().getFullPrice(player, region)).textColor(green).anchor(WidgetAnchor.CENTER_CENTER).auto(true).height(10).width(region.getName().length()*10)
                 .shiftX(40).shiftY(-(player.getMainScreen().getHeight()/2) + 170).dirty(true);
         //<- Taxprice Labels
 
@@ -95,7 +95,7 @@ public class SpoutRegionBuy extends SpoutPlayerPopup{
             @Override
             public void onButtonClick(ButtonClickEvent event) {
                 try {
-                    RegionManager.get().buyRegion(player, region);
+                    RegionManager.getInstance().buyRegion(player, region);
                     player.sendNotification(ChatColor.GREEN + "Grundstück erworben:", ChatColor.YELLOW + region.getName(), Material.PAPER);
                     hide();
                 } catch (PlayerException e){

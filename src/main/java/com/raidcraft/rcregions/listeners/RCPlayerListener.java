@@ -2,18 +2,21 @@ package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
+import com.raidcraft.rcregions.RegionWarning;
 import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.spout.SpoutRegionBuy;
+import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.SignUtils;
 import com.silthus.raidcraft.util.Task;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
@@ -26,9 +29,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 21.01.12 - 19:09
@@ -37,24 +39,21 @@ import java.util.Set;
  */
 public class RCPlayerListener implements Listener {
 
-    private static Set<Player> warnedPlayers = new HashSet<Player>();
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	private static Map<Player, List<RegionWarning>> warnedPlayers = new HashMap<Player, List<RegionWarning>>();
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
-    // 20 ticks is one second and we want a five minute interval
-    private static long INTERVAL;
-    private static boolean taskIsRunning = false;
+	private static boolean taskIsRunning = false;
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getPlayer().getItemInHand().getType().getId() == MainConfig.get().getToolId()) {
                 if (player.hasPermission("rcregions.info")) {
                     try {
-                        Region region = RegionManager.get().getRegion(event.getClickedBlock().getLocation());
+                        Region region = RegionManager.getInstance().getRegion(event.getClickedBlock().getLocation());
                         RegionCommand.showRegionInfo(player, region);
                     } catch (UnknownRegionException e) {
                         RCMessaging.warn(player, e.getMessage());
@@ -91,7 +90,7 @@ public class RCPlayerListener implements Listener {
                 Sign sign = SignUtils.getSign(event.getClickedBlock());
                 if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.get().getSignIdentifier() + "]")) {
                     try {
-                        Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                        Region region = RegionManager.getInstance().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                         String owner = region.getOwner();
                         if (owner == null) owner = "";
                         if (!(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
@@ -108,7 +107,7 @@ public class RCPlayerListener implements Listener {
                                 region.setBuyable(true);
                                 RCMessaging.send(player, "Die Region kann nun gekauft werden.");
                             }
-                            RegionManager.get().updateSign(sign, region);
+                            RegionManager.getInstance().updateSign(sign, region);
                         } else {
                             RCMessaging.noPermission(player);
                         }
@@ -124,19 +123,19 @@ public class RCPlayerListener implements Listener {
                     event.setCancelled(true);
                 }
                 try {
-                    Region region = RegionManager.get().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
-                    RegionManager.get().updateSign(sign, region);
+                    Region region = RegionManager.getInstance().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                    RegionManager.getInstance().updateSign(sign, region);
                     if (region.isBuyable()) {
-                        if (RegionsPlugin.get().isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
+                        if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
                             new SpoutRegionBuy(player, region);
                         }
                         else
                         {
-                        double price = RegionManager.get().getFullPrice(player, region);
+                        double price = RegionManager.getInstance().getFullPrice(player, region);
                         RCMessaging.send(player, "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
                         RCMessaging.send(player, "Grundpreis: " + region.getBasePrice());
                         RCMessaging.send(player, "Preis inkl. Steuern("
-                                + RCMessaging.green(RegionManager.get().getTaxes(player, region) * 100 + "%") + "): " + price);
+                                + RCMessaging.green(RegionManager.getInstance().getTaxes(player, region) * 100 + "%") + "): " + price);
                         }
                     }
                 } catch (UnknownRegionException e) {
@@ -146,51 +145,52 @@ public class RCPlayerListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        RCPlayerListener.startWarningTask();
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (RegionManager.get().hasWarnedRegions(player) && !warnedPlayers.contains(player)) {
-            warnedPlayers.add(player);
-        } else if (warnedPlayers.contains(player)) {
+        if (warnedPlayers.containsKey(player)) {
             warnedPlayers.remove(player);
         }
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (warnedPlayers.contains(player)) {
-            warnedPlayers.remove(player);
-        }
-    }
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+
+		Player player = event.getPlayer();
+		List<RegionWarning> warnings = new ArrayList<RegionWarning>();
+		for (Region region : RegionManager.getInstance().getPlayerRegions(player)) {
+			if (region.hasWarnings()) {
+				warnings.addAll(region.getWarnings());
+			}
+		}
+		if (warnings.size() > 0) {
+			warnedPlayers.put(player, warnings);
+		}
+	}
 
     public static void startWarningTask() {
         if (taskIsRunning) {
             return;
         }
-        INTERVAL = 20 * MainConfig.get().getWarnInterval();
-        Task task = new Task(RegionsPlugin.get(), new Warning()) {
-
-            @Override
-            public void run() {
-                Warning warning = (Warning) getArg(0);
-                warning.issue();
-            }
-        };
-        task.startRepeating(DELAY, INTERVAL, false);
+	    long interval = 20 * MainConfig.get().getWarnInterval();
+	    Bukkit.getScheduler().scheduleSyncRepeatingTask(RegionsPlugin.get(), new Runnable() {
+		    @Override
+		    public void run() {
+			    Set<Map.Entry<Player, List<RegionWarning>>> entries =
+					    new HashSet<Map.Entry<Player, List<RegionWarning>>>(warnedPlayers.entrySet());
+			    for (Map.Entry<Player, List<RegionWarning>> entry : entries) {
+				    if (entry.getKey() != null && entry.getKey().isOnline()) {
+					    entry.getKey().sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
+					    for (RegionWarning warning : entry.getValue()) {
+						    entry.getKey().sendMessage(
+								    ChatColor.YELLOW + "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+										    ChatColor.GREEN + " - " + ChatColor.YELLOW + DATE_FORMAT.format(new Date(warning.getTime()))
+										    + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
+					    }
+				    }
+			    }
+		    }
+	    }, DELAY, interval);
         taskIsRunning = true;
-    }
-
-    public static class Warning {
-
-        public Warning() {
-        }
-        
-        public synchronized void issue() {
-            for (Player player : warnedPlayers) {
-                RCMessaging.warn(player, "Ein Grundstück von dir wurde verwarnt! Gebe /rcr für Details ein.");
-            }
-        }
     }
 }

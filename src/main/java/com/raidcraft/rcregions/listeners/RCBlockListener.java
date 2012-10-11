@@ -34,9 +34,9 @@ public class RCBlockListener implements Listener {
                 try {
                     Region region;
                     if (!(event.getLine(1) == null) && !(event.getLine(1).equals(""))) {
-                        region = RegionManager.get().getRegion(event.getLine(1));
+                        region = RegionManager.getInstance().getRegion(event.getLine(1));
                     } else {
-                        region = RegionManager.get().getRegion(event.getBlock().getLocation());
+                        region = RegionManager.getInstance().getRegion(event.getBlock().getLocation());
                     }
                     if (!(player.getName().equalsIgnoreCase(region.getOwner()))) {
                         RCMessaging.send(player, "Du bist nicht der Besitzer dieser Region.");
@@ -49,7 +49,7 @@ public class RCBlockListener implements Listener {
                         }
                         region.setPrice(price);
                     }
-                    RegionManager.get().updateSign(event, region);
+                    RegionManager.getInstance().updateSign(event, region);
                 } catch (WrongSignFormat e) {
                     RCMessaging.warn(player, e.getMessage());
                     event.setCancelled(true);

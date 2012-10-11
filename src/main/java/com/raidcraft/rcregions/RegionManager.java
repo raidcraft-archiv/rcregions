@@ -45,10 +45,10 @@ public final class RegionManager {
     }
     
     public static void init() {
-        get();
+        getInstance();
     }
 
-    public static RegionManager get() {
+    public static RegionManager getInstance() {
         if (_self == null) {
             _self = new RegionManager();
         }
@@ -145,13 +145,13 @@ public final class RegionManager {
                             , ChatColor.GREEN + "[RCRegions] " 
                             + ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + price + "c abgekauft!");
                 }
-                RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
+                RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
                         , region.getName()
                         , Enums.Action.SELL
                         , price
                         , 0));
             }
-            RegionsDatabase.get().getTable(LogTable.class).logAction(new RegionLog(player.getName()
+            RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(player.getName()
                     , region.getName()
                     , Enums.Action.BUY
                     , price
@@ -274,21 +274,6 @@ public final class RegionManager {
         RegionsPlugin.get().getEconomy().add(player, getRefundValue(region));
     }
 
-    public boolean hasWarnedRegions(Player player) {
-        List<Region> regions = getWarnedRegions(player);
-        return regions.size() > 0;
-    }
-
-    public List<Region> getWarnedRegions(Player player) {
-        List<Region> regions = getPlayerRegions(player);
-        for (Region region : getPlayerRegions(player)) {
-            if (!region.isWarned()) {
-                regions.remove(region);
-            }
-        }
-        return regions;
-    }
-
     public double getRefundValue(Region region) {
         return region.getBasePrice() * getRefundPercentage(region);
     }
@@ -296,4 +281,9 @@ public final class RegionManager {
     public double getRefundPercentage(Region region) {
         return MainConfig.get().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
+
+	public List<RegionWarning> getRegionWarnings(Region region) {
+
+		return RegionsDatabase.getRegionWarnings(region.getName());
+	}
 }
