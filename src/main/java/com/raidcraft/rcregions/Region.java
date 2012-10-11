@@ -14,7 +14,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -30,7 +33,7 @@ public class Region {
     private double price;
     private District district;
     private boolean buyable;
-	private List<RegionWarning> warnings;
+	private Map<Integer, RegionWarning> warnings;
     
     public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
@@ -170,16 +173,20 @@ public class Region {
 	public RegionWarning addWarning(String msg) {
 		RegionWarning warning = new RegionWarning(this, msg);
 		RCPlayerListener.addWarning(warning);
-		warnings.add(warning);
+		warnings.put(warning.getId(), warning);
 		return warning;
 	}
 
-	public List<RegionWarning> getWarnings() {
-		return warnings;
+	public Collection<RegionWarning> getWarnings() {
+		return warnings.values();
 	}
 
 	public boolean hasWarnings() {
 		return warnings.size() > 0;
+	}
+
+	public void removeWarning(RegionWarning warning) {
+		warnings.remove(warning.getId());
 	}
     
     public String toString() {

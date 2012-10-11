@@ -6,6 +6,7 @@ import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.silthus.raidcraft.database.RCDatabase;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Silthus
@@ -29,7 +30,7 @@ public class RegionsDatabase extends RCDatabase {
 	    addTable(new WarningTable(this));
     }
 
-	public static List<RegionWarning> getRegionWarnings(String region) {
+	public static Map<Integer, RegionWarning> getRegionWarnings(String region) {
 		return getInstance().getTable(WarningTable.class).getRegionWarning(region);
 	}
 

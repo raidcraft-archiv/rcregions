@@ -42,6 +42,7 @@ public class RegionWarning {
 	}
 
 	public void remove() {
+		getRegion().removeWarning(this);
 		RegionsDatabase.removeWarning(this);
 		RCPlayerListener.removeWarning(this);
 	}

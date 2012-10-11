@@ -24,6 +24,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 17.12.11 - 11:49
@@ -285,7 +286,7 @@ public final class RegionManager {
         return MainConfig.get().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
 
-	public List<RegionWarning> getRegionWarnings(Region region) {
+	public Map<Integer, RegionWarning> getRegionWarnings(Region region) {
 
 		return RegionsDatabase.getRegionWarnings(region.getName());
 	}

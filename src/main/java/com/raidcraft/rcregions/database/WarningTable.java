@@ -12,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Silthus
@@ -62,14 +64,14 @@ public class WarningTable extends RCTable<WarningTable> {
 		return 0;
 	}
 
-	public List<RegionWarning> getRegionWarning(String region) {
+	public Map<Integer, RegionWarning> getRegionWarning(String region) {
 
-		List<RegionWarning> warnings = new ArrayList<RegionWarning>();
+		Map<Integer, RegionWarning> warnings = new LinkedHashMap<Integer, RegionWarning>();
 		try {
 			ResultSet resultSet = getDatabase().executeQuery("SELECT * FROM `" + getName() + "` WHERE region='" + region + "' " +
 					"ORDER BY time asc");
 			while (resultSet.next()) {
-				warnings.add(new RegionWarning(new Data(resultSet)));
+				warnings.put(resultSet.getInt("id"), new RegionWarning(new Data(resultSet)));
 			}
 		} catch (SQLException e) {
 			RCLogger.error(e);
