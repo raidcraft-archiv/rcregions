@@ -39,7 +39,7 @@ import java.util.*;
  */
 public class RCPlayerListener implements Listener {
 
-	private static Map<String, List<Integer>> warnedPlayers = new HashMap<String, List<Integer>>();
+	private static Map<String, Set<Integer>> warnedPlayers = new HashMap<String, Set<Integer>>();
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
 	private static boolean taskIsRunning = false;
@@ -156,7 +156,7 @@ public class RCPlayerListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 
 		Player player = event.getPlayer();
-		List<Integer> warnings = new ArrayList<Integer>();
+		Set<Integer> warnings = new LinkedHashSet<Integer>();
 		for (Region region : RegionManager.getInstance().getPlayerRegions(player)) {
 			if (region.hasWarnings()) {
 				for (RegionWarning warning : region.getWarnings()) {
@@ -174,7 +174,7 @@ public class RCPlayerListener implements Listener {
 		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
 		if (player != null && player.isOnline()) {
 			if (!warnedPlayers.containsKey(player.getName())) {
-				warnedPlayers.put(player.getName(), new ArrayList<Integer>());
+				warnedPlayers.put(player.getName(), new LinkedHashSet<Integer>());
 			}
 			warnedPlayers.get(player.getName()).add(warning.getId());
 			// tell the player
@@ -209,7 +209,7 @@ public class RCPlayerListener implements Listener {
 		    @Override
 		    public void run() {
 
-			    Set<Map.Entry<String, List<Integer>>> entries = warnedPlayers.entrySet();
+			    Set<Map.Entry<String, Set<Integer>>> entries = warnedPlayers.entrySet();
 			    int warningCount = RegionsDatabase.getWarningCount();
 			    if (warningCount > 0) {
 				    for (Player player : Bukkit.getOnlinePlayers()) {
@@ -221,7 +221,7 @@ public class RCPlayerListener implements Listener {
 					    }
 				    }
 			    }
-			    for (Map.Entry<String, List<Integer>> entry : entries) {
+			    for (Map.Entry<String, Set<Integer>> entry : entries) {
 				    Player player = Bukkit.getPlayer(entry.getKey());
 				    if (player != null && player.isOnline()) {
 					    player.sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
