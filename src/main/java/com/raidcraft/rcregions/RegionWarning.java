@@ -2,6 +2,7 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.database.WarningTable;
+import com.raidcraft.rcregions.listeners.RCPlayerListener;
 
 import java.text.SimpleDateFormat;
 
@@ -40,6 +41,7 @@ public class RegionWarning {
 
 	public void remove() {
 		RegionsDatabase.removeWarning(this);
+		RCPlayerListener.removeWarning(this);
 	}
 
 	public int getId() {

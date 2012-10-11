@@ -98,7 +98,7 @@ public class WarningTable extends RCTable<WarningTable> {
 	public void saveWarning(RegionWarning warning) {
 
 		getDatabase().executeUpdate("INSERT INTO `" + getName() + "` (region, message, time) " +
-				"VALUES ('" + warning.getRegion().getName() + "', '" + warning.getMessage() + "', " + warning.getTime());
+				"VALUES ('" + warning.getRegion().getName() + "', '" + warning.getMessage() + "', " + warning.getTime() + ")");
 	}
 
 	public void removeWarning(RegionWarning warning) {

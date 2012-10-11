@@ -3,6 +3,7 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -168,6 +169,7 @@ public class Region {
 
 	public RegionWarning addWarning(String msg) {
 		RegionWarning warning = new RegionWarning(this, msg);
+		RCPlayerListener.addWarning(warning);
 		warnings.add(warning);
 		return warning;
 	}

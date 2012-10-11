@@ -105,12 +105,12 @@ public class RegionCommand implements CommandExecutor {
                         if (region != null) {
 	                        String msg = "";
 	                        for (int i = 2; i < args.length; i++) {
-		                        msg += args[i];
+		                        msg += args[i] + " ";
 	                        }
 	                        RegionWarning warning =  region.addWarning(msg);
 	                        RCMessaging.send(sender,
-			                        "Die Region " + region.getName() + " wurde verwarnt: " +
-					                        ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
+			                        "Die Region " + region.getName() + " wurde verwarnt: ");
+					        RCMessaging.send(sender, ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "] " +
 					                        ChatColor.RED + warning.getMessage());
                         }
                     } catch (UnknownRegionException e) {

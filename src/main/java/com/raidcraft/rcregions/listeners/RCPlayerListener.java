@@ -38,7 +38,7 @@ import java.util.*;
  */
 public class RCPlayerListener implements Listener {
 
-	private static Map<Player, List<RegionWarning>> warnedPlayers = new HashMap<Player, List<RegionWarning>>();
+	private static Map<String, List<RegionWarning>> warnedPlayers = new HashMap<String, List<RegionWarning>>();
     // 20 ticks is one second and we want a 10 second delay
     private static final long DELAY = 20 * 10;
 	private static boolean taskIsRunning = false;
@@ -162,7 +162,30 @@ public class RCPlayerListener implements Listener {
 			}
 		}
 		if (warnings.size() > 0) {
-			warnedPlayers.put(player, warnings);
+			warnedPlayers.put(player.getName(), warnings);
+		}
+	}
+
+	public static void addWarning(RegionWarning warning) {
+
+		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
+		if (player != null && player.isOnline()) {
+			if (warnedPlayers.containsKey(player.getName())) {
+				warnedPlayers.get(player.getName()).add(warning);
+			}
+		}
+	}
+
+	public static void removeWarning(RegionWarning warning) {
+
+		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
+		if (player != null && player.isOnline()) {
+			if (warnedPlayers.containsKey(player.getName())) {
+				warnedPlayers.get(player.getName()).remove(warning);
+			}
+			if (warnedPlayers.get(player.getName()).size() < 1) {
+				warnedPlayers.remove(player.getName());
+			}
 		}
 	}
 
@@ -174,8 +197,8 @@ public class RCPlayerListener implements Listener {
 	    Bukkit.getScheduler().scheduleSyncRepeatingTask(RegionsPlugin.get(), new Runnable() {
 		    @Override
 		    public void run() {
-			    Set<Map.Entry<Player, List<RegionWarning>>> entries =
-					    new HashSet<Map.Entry<Player, List<RegionWarning>>>(warnedPlayers.entrySet());
+			    Set<Map.Entry<String, List<RegionWarning>>> entries =
+					    new HashSet<Map.Entry<String, List<RegionWarning>>>(warnedPlayers.entrySet());
 			    if (entries.size() > 0) {
 				    for (Player player : Bukkit.getOnlinePlayers()) {
 					    if (player.hasPermission("rcregions.warn.list")) {
@@ -184,13 +207,14 @@ public class RCPlayerListener implements Listener {
 					    }
 				    }
 			    }
-			    for (Map.Entry<Player, List<RegionWarning>> entry : entries) {
-				    if (entry.getKey() != null && entry.getKey().isOnline()) {
-					    entry.getKey().sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
+			    for (Map.Entry<String, List<RegionWarning>> entry : entries) {
+				    Player player = Bukkit.getPlayer(entry.getKey());
+				    if (player != null && player.isOnline()) {
+					    player.sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
 					    for (RegionWarning warning : entry.getValue()) {
-						    entry.getKey().sendMessage(
+						    player.sendMessage(
 								    ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
-								    "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
+										    "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
 										    ChatColor.GREEN + " - " + ChatColor.YELLOW +
 										    RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
 										    + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
