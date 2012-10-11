@@ -225,7 +225,7 @@ public class RCPlayerListener implements Listener {
 				    Player player = Bukkit.getPlayer(entry.getKey());
 				    if (player != null && player.isOnline()) {
 					    player.sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
-					    for (Integer warningId : entry.getValue()) {
+					    for (int warningId : entry.getValue()) {
 						    try {
 							    RegionWarning warning = RegionManager.getInstance().getRegionWarning(warningId);
 							    player.sendMessage(
