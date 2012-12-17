@@ -43,6 +43,10 @@ public class MainConfig extends RCConfig {
         return get().getConfig().getInt("tool-id");
     }
 
+    public boolean useLogblock() {
+        return get().getConfig().getBoolean("useLogblock", false);
+    }
+
     public Set<String> getDistricts() {
         return DistrictConfig.get().getDistricts();
     }
@@ -50,4 +54,6 @@ public class MainConfig extends RCConfig {
     public DistrictConfig.SingleDistrictConfig getDistrict(String district) {
         return DistrictConfig.get().getDistrict(district);
     }
+
+
 }

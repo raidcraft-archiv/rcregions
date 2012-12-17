@@ -2,6 +2,7 @@ package com.raidcraft.rcregions.commands;
 
 import com.raidcraft.rcregions.*;
 import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.database.LogTable;
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
@@ -304,11 +305,14 @@ public class RegionCommand implements CommandExecutor {
             RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
             RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
                         + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
-            String lastLogin = "";
-            LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
 
-            if(logblockPlayer != null) {
-                lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
+            String lastLogin = "";
+
+            if(MainConfig.get().useLogblock()) {
+                LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
+                if(logblockPlayer != null) {
+                    lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
+                }
             }
 
             RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner())

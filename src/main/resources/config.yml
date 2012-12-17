@@ -3,3 +3,5 @@ signIdentifier: 'region'
 warn-interval: 300
 # tool to lookup region info
 tool-id: 268
+# use logblock from core lib
+useLogblock: true
