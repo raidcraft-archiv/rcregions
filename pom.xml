@@ -70,7 +70,6 @@
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>spoutplugin.yml</include>
                 </includes>
             </resource>
             <resource>

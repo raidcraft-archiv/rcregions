@@ -9,8 +9,6 @@ import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.raidcraft.rcregions.spout.SpoutRegionBuy;
-import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.SignUtils;
@@ -28,7 +26,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 import java.util.*;
 
@@ -125,17 +122,11 @@ public class RCPlayerListener implements Listener {
                     Region region = RegionManager.getInstance().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                     RegionManager.getInstance().updateSign(sign, region);
                     if (region.isBuyable()) {
-                        if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
-                            new SpoutRegionBuy(player, region);
-                        }
-                        else
-                        {
                         double price = RegionManager.getInstance().getFullPrice(player, region);
                         RCMessaging.send(player, "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
                         RCMessaging.send(player, "Grundpreis: " + region.getBasePrice());
                         RCMessaging.send(player, "Preis inkl. Steuern("
                                 + RCMessaging.green(RegionManager.getInstance().getTaxes(player, region) * 100 + "%") + "): " + price);
-                        }
                     }
                 } catch (UnknownRegionException e) {
                     RCMessaging.warn(player, e.getMessage());

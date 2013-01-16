@@ -8,12 +8,8 @@ import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.raidcraft.rcregions.spout.SpoutRegionBuy;
-import com.raidcraft.rcregions.spout.SpoutRegionInfo;
 import com.raidcraft.rcregions.util.Enums;
-import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
 import com.silthus.raidcraft.util.RCCommandManager;
-import com.silthus.raidcraft.util.RCLogger;
 import com.silthus.raidcraft.util.RCMessaging;
 import com.silthus.raidcraft.util.RCUtils;
 import com.silthus.raidcraft.util.databases.logblock.LBPlayer;
@@ -26,7 +22,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 import java.util.*;
 
@@ -50,31 +45,10 @@ public class RegionCommand implements CommandExecutor {
             // [/rcr claim <region>]
             if (cmd.is(label, "buy", "claim", "-b")) {
                 if (sender.hasPermission("rcregions.region.buy") && sender instanceof Player) {
-                    if (RegionsPlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
-                        if (args.length > 1) {
-                            try {
-                                Region region = RegionManager.getInstance().getRegion(args[1]);
-                                new SpoutRegionBuy((Player)sender, region);
-                            } catch (UnknownRegionException e) {
-                                RCLogger.error(e);
-                            }
-                        }
-                        else {
-                            try {
-                                Region region = RegionManager.getInstance().getRegion(((SpoutPlayer) sender).getLocation());
-                                new SpoutRegionBuy((Player)sender, region);
-                            } catch (UnknownRegionException e) {
-                                RCLogger.error(e);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (args.length > 1) {
-                            buyRegion(args[1]);
-                        } else {
-                            buyRegion();
-                        }
+                    if (args.length > 1) {
+                        buyRegion(args[1]);
+                    } else {
+                        buyRegion();
                     }
                 } else {
                     RCMessaging.noPermission(sender);
@@ -225,11 +199,7 @@ public class RegionCommand implements CommandExecutor {
                     if (sender instanceof Player && args.length == 1) {
                         try {
                             Region region = RegionManager.getInstance().getRegion(((Player) sender).getLocation());
-                            if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)sender).isSpoutCraftEnabled()){
-                                new SpoutRegionInfo((Player)sender, region);
-                            }
-                            else
-                                showRegionInfo((Player)sender, region);
+                            showRegionInfo((Player)sender, region);
                         } catch (UnknownRegionException e) {
                             RCMessaging.warn(sender, e.getMessage());
                         }
@@ -298,21 +268,17 @@ public class RegionCommand implements CommandExecutor {
 
     public static void  showRegionInfo(Player player, Region region) {
         RegionManager regionManager = RegionManager.getInstance();
-        if (BukkitBasePlugin.isSpoutEnabled() && ((SpoutPlayer)player).isSpoutCraftEnabled()){
-            new SpoutRegionInfo(player, region);
-        }  else {
-            District district = region.getDistrict();
-            RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
-            RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
-                        + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
+        District district = region.getDistrict();
+        RCMessaging.send(player, "|---------- " + RCMessaging.green("Raid-Craft.de") + " -----------|",false);
+        RCMessaging.send(player, "| " + RCMessaging.green("Region: ") + RCMessaging.yellow(region.toString()) + " | "
+                    + RCMessaging.green("Distrikt: ") + RCMessaging.yellow(district.toString()),false);
 
-            String lastLogin = "";
+        String lastLogin = "";
 
-            if(MainConfig.get().useLogblock()) {
-                LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
-                if(logblockPlayer != null) {
-                    lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
-                }
+        if(MainConfig.get().useLogblock()) {
+            LBPlayer logblockPlayer = LogBlock.getInstance().getPlayer(region.getOwner());
+            if(logblockPlayer != null) {
+                lastLogin += " | " + RCMessaging.green("Lastlogin: ") + RCMessaging.yellow(logblockPlayer.getLastlogin());
             }
 
             RCMessaging.send(player, "| " + RCMessaging.green("Besitzer: ") + RCMessaging.yellow(region.getOwner())
@@ -372,8 +338,7 @@ public class RegionCommand implements CommandExecutor {
             Player player = cmd.getPlayerOfSender(sender);
             RegionManager regionManager = RegionManager.getInstance();
             regionManager.buyRegion(player, region);
-            if (!((SpoutPlayer)player).isSpoutCraftEnabled())
-                RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
+            RCMessaging.send(sender, "Neues Grundstück erworben: " + region.getName());
         } catch (RegionException e) {
             RCMessaging.warn(sender, e.getMessage());
         } catch (PlayerException e) {
