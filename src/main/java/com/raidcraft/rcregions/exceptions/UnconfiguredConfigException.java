@@ -17,6 +17,7 @@ public class UnconfiguredConfigException extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public UnconfiguredConfigException() {
+
         super("There seems to be a problem with your config. Please check...");
     }
 
@@ -32,6 +33,7 @@ public class UnconfiguredConfigException extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public UnconfiguredConfigException(String message) {
+
         super(message);
     }
 }

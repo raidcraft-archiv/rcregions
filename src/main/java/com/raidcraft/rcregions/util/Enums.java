@@ -6,6 +6,7 @@ package com.raidcraft.rcregions.util;
  * Description:
  */
 public class Enums {
+
     public enum Action {
         BUY,
         SELL,

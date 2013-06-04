@@ -14,26 +14,27 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
- *
  * 17.12.11 - 11:54
+ *
  * @author Silthus
  */
 public class Region {
 
     private final String name;
     private final ProtectedRegion region;
-    
+
     private String owner;
     private double price;
     private District district;
     private boolean buyable;
-    
+
     public Region(ProtectedRegion region) throws UnknownDistrictException {
+
         this.name = region.getId();
         this.region = region;
         load();
     }
-    
+
     private void load() throws UnknownDistrictException {
         // get the district
         String district = getName().replaceAll("\\d*$", "");
@@ -67,14 +68,17 @@ public class Region {
 
     /* All Getters and Setters go here */
     public String getName() {
+
         return name;
     }
 
     public String getOwner() {
+
         return owner;
     }
 
     public double getPrice() {
+
         if (district.useVolume() && price < getBasePrice()) {
             setPrice(getBasePrice());
         }
@@ -82,14 +86,17 @@ public class Region {
     }
 
     public boolean isBuyable() {
+
         return buyable;
     }
 
     public ProtectedRegion getRegion() {
+
         return region;
     }
 
     public void setOwner(String player) {
+
         this.owner = player;
         DefaultDomain domain = new DefaultDomain();
         if (!(player == null) && !player.equals("")) {
@@ -100,6 +107,7 @@ public class Region {
     }
 
     public void setPrice(double price) {
+
         if (district.useVolume()) {
             if (price < getBasePrice()) {
                 this.price = getBasePrice();
@@ -118,20 +126,24 @@ public class Region {
     }
 
     public void setBuyable(boolean sell) {
+
         this.buyable = sell;
         region.setFlag(DefaultFlag.BUYABLE, sell);
         save();
     }
 
     public District getDistrict() {
+
         return district;
     }
 
     private void save() {
+
         WorldGuardManager.save();
     }
 
     public void setAccessFlags(boolean denyAccess) {
+
         getRegion().setFlag(DefaultFlag.CHEST_ACCESS, (denyAccess ? StateFlag.State.ALLOW : null));
         getRegion().setFlag(DefaultFlag.USE, (denyAccess ? StateFlag.State.ALLOW : null));
         getRegion().setFlag(DefaultFlag.BUILD, (denyAccess ? StateFlag.State.DENY : null));
@@ -139,6 +151,7 @@ public class Region {
     }
 
     public double getBasePrice() {
+
         if (region instanceof ProtectedCuboidRegion) {
             DistrictConfig.SingleDistrictConfig district = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(this.district.getName());
             BlockVector max = region.getMaximumPoint();
@@ -160,8 +173,9 @@ public class Region {
         }
         return RaidCraft.getComponent(RegionsPlugin.class).getDistrictConfig().getDistrict(district.getName()).getMinPrice();
     }
-    
+
     public String toString() {
+
         return getName();
     }
 }

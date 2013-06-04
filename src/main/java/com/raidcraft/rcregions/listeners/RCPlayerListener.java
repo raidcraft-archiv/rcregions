@@ -44,25 +44,25 @@ public class RCPlayerListener implements Listener {
                         player.sendMessage(ChatColor.RED + e.getMessage());
                         //print region info
                         ApplicableRegionSet applicableRegionSet = WorldGuardManager.getLocalRegions(event.getClickedBlock().getLocation());
-                        if(applicableRegionSet.size() != 0) {
+                        if (applicableRegionSet.size() != 0) {
                             player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
                             player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "WorldGuard Regions Informationen:");
-                            for(ProtectedRegion region : applicableRegionSet) {
+                            for (ProtectedRegion region : applicableRegionSet) {
                                 player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
                                 player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "ID: " + ChatColor.GOLD + (region.getId()));
-                                if(region.getOwners().size() > 0) {
+                                if (region.getOwners().size() > 0) {
                                     player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + region.getOwners().toUserFriendlyString());
                                 }
-                                if(region.getMembers().size() > 0) {
+                                if (region.getMembers().size() > 0) {
                                     player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Member: " + ChatColor.YELLOW + region.getMembers().toUserFriendlyString());
                                 }
-                                    String flags = "";
-                                for(Map.Entry<Flag<?>, Object> flag : region.getFlags().entrySet()) {
-                                    if(flags.length() > 0)
+                                String flags = "";
+                                for (Map.Entry<Flag<?>, Object> flag : region.getFlags().entrySet()) {
+                                    if (flags.length() > 0)
                                         flags += ChatColor.WHITE + ", ";
                                     flags += ChatColor.GOLD + flag.getKey().getName() + ": " + ChatColor.YELLOW + flag.getValue().toString();
                                 }
-                                if(flags.length() > 0) {
+                                if (flags.length() > 0) {
                                     player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Flags: " + ChatColor.YELLOW + flags);
                                 }
                             }

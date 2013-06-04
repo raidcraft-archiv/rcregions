@@ -7,8 +7,8 @@ import de.raidcraft.api.config.Setting;
 import java.util.Set;
 
 /**
- *
  * 17.12.11 - 11:27
+ *
  * @author Silthus
  */
 public class MainConfig extends ConfigurationBase<RegionsPlugin> {

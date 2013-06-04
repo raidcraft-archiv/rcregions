@@ -36,13 +36,14 @@ public final class RegionManager implements Component {
         this.plugin = plugin;
         RaidCraft.registerComponent(RegionManager.class, this);
     }
-    
+
     public void reload() {
 
         regions.clear();
     }
 
     public Region getRegion(String name) throws UnknownRegionException {
+
         if (regions.containsKey(name)) {
             return regions.get(name);
         } else {
@@ -61,6 +62,7 @@ public final class RegionManager implements Component {
     }
 
     public Region getRegion(Location location) throws UnknownRegionException {
+
         ApplicableRegionSet localRegions = WorldGuardManager.getLocalRegions(location);
         for (ProtectedRegion region : localRegions) {
             String name = region.getId();
@@ -79,9 +81,10 @@ public final class RegionManager implements Component {
     }
 
     public boolean isAllowedRegion(ProtectedRegion region) {
+
         String id = region.getId();
         boolean matches = false;
-        for (String district :plugin.getDistrictConfig().getDistricts()) {
+        for (String district : plugin.getDistrictConfig().getDistricts()) {
             if (id.matches("^" + plugin.getDistrictConfig().getDistrict(district).getIdentifier() + "\\d*")) {
                 matches = true;
                 break;
@@ -91,6 +94,7 @@ public final class RegionManager implements Component {
     }
 
     public boolean isBuyableRegion(Player player, Region region) throws PlayerException, RegionException {
+
         String owner = region.getOwner();
         if (!(owner == null) && owner.equalsIgnoreCase(player.getName())) {
             throw new PlayerException("Du bist bereits der Besitzer dieser Region.");
@@ -154,26 +158,32 @@ public final class RegionManager implements Component {
     }
 
     public double getTaxes(Player player, Region region) {
+
         return getTaxes(player, region.getDistrict());
     }
 
     public double getTaxes(Player player, District district) {
+
         return district.getTaxes(getPlayerRegionCount(player, district));
     }
 
     public double getFullPrice(Player player, Region region) {
+
         return Math.round(region.getBasePrice() * getTaxes(player, region)) + region.getPrice();
     }
 
     public int getPlayerRegionCount(Player player, District district) {
+
         return getPlayerRegions(player, district).size();
     }
 
     public int getPlayerRegionCount(Player player) {
+
         return getPlayerRegions(player).size();
     }
 
     public List<Region> getPlayerRegions(Player player) {
+
         List<Region> playerRegions = new ArrayList<Region>();
         for (String region : WorldGuardManager.getPlayerRegions(player).keySet()) {
             try {
@@ -186,6 +196,7 @@ public final class RegionManager implements Component {
     }
 
     public List<Region> getPlayerRegions(Player player, District district) {
+
         List<Region> playerRegions = new ArrayList<Region>();
         for (Region region : getPlayerRegions(player)) {
             if (region.getDistrict().equals(district)) {
@@ -196,6 +207,7 @@ public final class RegionManager implements Component {
     }
 
     public void updateSign(Sign sign, Region region) {
+
         double price = region.getPrice();
         if (price > 0.0) {
             sign.setLine(0, RaidCraft.getEconomy().getFormattedAmount(price));
@@ -217,6 +229,7 @@ public final class RegionManager implements Component {
     }
 
     public void updateSign(SignChangeEvent sign, Region region) {
+
         double price = region.getPrice();
         if (price > 0.0) {
             sign.setLine(0, RaidCraft.getEconomy().getFormattedAmount(price));
@@ -237,6 +250,7 @@ public final class RegionManager implements Component {
     }
 
     public void dropRegion(Player player, Region region) throws RegionException {
+
         if (!region.getDistrict().isDropable()) {
             throw new RegionException("Du kannst diese Region nicht an den Server abgeben.");
         }
@@ -247,6 +261,7 @@ public final class RegionManager implements Component {
     }
 
     public void clearRegion(Player player, Region region) {
+
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
@@ -254,10 +269,12 @@ public final class RegionManager implements Component {
     }
 
     public double getRefundValue(Region region) {
+
         return region.getBasePrice() * getRefundPercentage(region);
     }
 
     public double getRefundPercentage(Region region) {
+
         return plugin.getMainConfig().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
 }

@@ -9,8 +9,8 @@ import de.raidcraft.api.BasePlugin;
 
 
 /**
- *
  * 17.12.11 - 11:26
+ *
  * @author Silthus
  */
 public class RegionsPlugin extends BasePlugin {
@@ -32,10 +32,8 @@ public class RegionsPlugin extends BasePlugin {
 
         registerEvents(new RCBlockListener());
         registerEvents(new RCPlayerListener());
+
         registerCommands(RegionCommand.class);
-        RegionsDatabase.getInstance();
-        // start the warning task
-        RCPlayerListener.startWarningTask();
     }
 
     @Override

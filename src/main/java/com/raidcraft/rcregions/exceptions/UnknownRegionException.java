@@ -16,6 +16,7 @@ public class UnknownRegionException extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public UnknownRegionException() {
+
         super("Die Region ist dem System nicht bekannt!");
     }
 
@@ -31,6 +32,7 @@ public class UnknownRegionException extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public UnknownRegionException(String message) {
+
         super(message);
     }
 }

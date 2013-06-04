@@ -6,6 +6,7 @@ package com.raidcraft.rcregions.exceptions;
  * @author Silthus
  */
 public class PlayerException extends Throwable {
+
     /**
      * Constructs a new throwable with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
@@ -15,6 +16,7 @@ public class PlayerException extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public PlayerException() {
+
         super("Es ist ein Fehler mit dem Spieler Object aufgetreten. Bitte kontaktiere einen Admin deines Vertrauens.");
     }
 
@@ -30,6 +32,7 @@ public class PlayerException extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public PlayerException(String message) {
+
         super(message);
     }
 }

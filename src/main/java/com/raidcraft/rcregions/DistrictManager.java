@@ -23,14 +23,14 @@ public final class DistrictManager implements Component {
         RaidCraft.registerComponent(DistrictManager.class, this);
         load();
     }
-    
+
     private void load() {
 
         for (String district : plugin.getDistrictConfig().getDistricts()) {
             districts.put(district, new District(district));
         }
     }
-    
+
     public void reload() {
 
         districts.clear();
@@ -38,6 +38,7 @@ public final class DistrictManager implements Component {
     }
 
     public District getDistrict(String name) throws UnknownDistrictException {
+
         if (districts.containsKey(name)) {
             return districts.get(name);
         }
@@ -48,8 +49,9 @@ public final class DistrictManager implements Component {
         }
         throw new UnknownDistrictException("The district with the name " + name + " is not configured!");
     }
-    
+
     public District getDistrictFromIdentifier(String identifier) {
+
         for (District district : districts.values()) {
             if (district.getIdentifier().equalsIgnoreCase(identifier)) {
                 return district;
@@ -57,8 +59,9 @@ public final class DistrictManager implements Component {
         }
         return null;
     }
-    
+
     public Map<String, District> getDistricts() {
+
         return districts;
     }
 }

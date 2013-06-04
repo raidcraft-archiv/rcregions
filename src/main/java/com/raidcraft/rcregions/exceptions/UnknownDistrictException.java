@@ -16,6 +16,7 @@ public class UnknownDistrictException extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public UnknownDistrictException() {
+
         super("The district you are looking for is not registered. Please check your config...");
     }
 
@@ -31,6 +32,7 @@ public class UnknownDistrictException extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public UnknownDistrictException(String message) {
+
         super(message);
     }
 }

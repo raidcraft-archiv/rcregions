@@ -11,6 +11,7 @@ import java.util.Date;
  * Description:
  */
 public class RegionLog {
+
     private String player;
     private String region;
     private String action;
@@ -19,16 +20,18 @@ public class RegionLog {
     private String time;
 
     public RegionLog(String player, String region, Enums.Action action, double price, double tax) {
+
         this.player = player;
         this.region = region;
         this.action = action.name();
         this.price = price;
         this.tax = tax;
-        SimpleDateFormat df = new SimpleDateFormat( "dd-MM-yyy HH:mm:ss" );
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyy HH:mm:ss");
         this.time = df.format((new Date()));
     }
 
     public RegionLog(String player, String region, String action, double price, double tax, String time) {
+
         this.player = player;
         this.region = region;
         this.action = action;
@@ -38,26 +41,32 @@ public class RegionLog {
     }
 
     public String getPlayer() {
+
         return player;
     }
 
     public String getRegion() {
+
         return region;
     }
 
     public String getAction() {
+
         return action;
     }
 
     public double getPrice() {
+
         return price;
     }
 
     public double getTax() {
+
         return tax;
     }
 
     public String getTime() {
+
         return time;
     }
 }

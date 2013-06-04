@@ -57,6 +57,7 @@ public class LogTable extends Table {
     }
 
     public List<RegionLog> getHistory(String region) {
+
         List<RegionLog> regionHistory = new ArrayList<>();
         try {
             ResultSet resultSet = getConnection().prepareStatement(

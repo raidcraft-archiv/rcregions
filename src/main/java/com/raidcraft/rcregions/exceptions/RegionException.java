@@ -16,6 +16,7 @@ public class RegionException extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public RegionException() {
+
         super("Es ist ein Regions Fehler aufgetreten. Bitte kontaktiere einen Admin deines Vertrauens.");
     }
 
@@ -31,6 +32,7 @@ public class RegionException extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public RegionException(String message) {
+
         super(message);
     }
 }

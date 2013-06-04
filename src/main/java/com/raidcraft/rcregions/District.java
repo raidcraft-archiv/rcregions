@@ -7,8 +7,8 @@ import de.raidcraft.RaidCraft;
 import javax.annotation.concurrent.Immutable;
 
 /**
- *
  * 21.01.12 - 10:16
+ *
  * @author Silthus
  */
 @Immutable
@@ -26,13 +26,15 @@ public class District {
     private int scheduledTaxesCount;
     private int scheduledTaxesInterval;
     private double scheduledTaxesAmount;
-    
+
     public District(String name) {
+
         this.name = name;
         load();
     }
-    
+
     private void load() {
+
         DistrictConfig.SingleDistrictConfig district = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(getName());
         this.identifier = district.getIdentifier();
         this.minPrice = district.getMinPrice();
@@ -52,67 +54,81 @@ public class District {
             RaidCraft.LOGGER.info("Interval taxes for the District " + getName() + " not loaded.");
         }
     }
-    
+
     public String getName() {
+
         return name;
     }
 
     public String getIdentifier() {
+
         return identifier;
     }
 
     public double getMinPrice() {
+
         return minPrice;
     }
 
     public boolean isDropable() {
+
         return dropable;
     }
 
     public boolean useVolume() {
+
         return useVolume;
     }
-    
+
     public boolean dropOnChange() {
+
         return dropOnChange;
     }
 
     public int getMaxRegions() {
+
         return maxRegions;
     }
 
     public boolean getNeedsPermission() {
+
         return needsPermission;
     }
-    
+
     public double getTaxes(int count) {
+
         return RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(getName()).getTaxes(count);
     }
-    
+
     public boolean scheduleTaxes() {
+
         return scheduleTaxes;
     }
 
     public int getScheduledTaxesCount() {
+
         return scheduledTaxesCount;
     }
 
     public int getScheduledTaxesInterval() {
+
         return scheduledTaxesInterval;
     }
 
     public double getScheduledTaxesAmount() {
+
         return scheduledTaxesAmount;
     }
-    
+
     public boolean equals(Object district) {
+
         if (district instanceof District) {
             District d = (District) district;
             return d.getIdentifier().equalsIgnoreCase(getIdentifier());
         }
         return false;
     }
-    
+
     public String toString() {
 
         return getName() + "[" + getIdentifier() + "]";

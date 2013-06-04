@@ -13,14 +13,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 /**
- *
  * 31.12.11 - 11:15
+ *
  * @author Silthus
  */
 public class RCBlockListener implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
+
         if (event.isCancelled()) {
             return;
         }

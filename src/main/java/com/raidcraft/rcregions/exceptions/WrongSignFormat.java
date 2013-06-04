@@ -16,6 +16,7 @@ public class WrongSignFormat extends Throwable {
      * the stack trace data in the newly created throwable.
      */
     public WrongSignFormat() {
+
         super("Falsche Schild Formatierung!");
     }
 
@@ -31,6 +32,7 @@ public class WrongSignFormat extends Throwable {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public WrongSignFormat(String message) {
+
         super(message);
     }
 }
