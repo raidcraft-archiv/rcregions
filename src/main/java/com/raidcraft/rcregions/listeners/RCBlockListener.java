@@ -1,12 +1,11 @@
 package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.Region;
-import com.raidcraft.rcregions.RegionManager;
-import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.exceptions.WrongSignFormat;
-import com.silthus.raidcraft.util.RCMessaging;
-import com.silthus.raidcraft.util.RCUtils;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.util.BlockUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,21 +24,22 @@ public class RCBlockListener implements Listener {
         if (event.isCancelled()) {
             return;
         }
-        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + MainConfig.get().getSignIdentifier() + "]"))) {
-            RCMessaging.warn(event.getPlayer(), "Nene Freundchen, erstell mal lieber nen richtiges Schild!");
+        RegionsPlugin plugin = RaidCraft.getComponent(RegionsPlugin.class);
+        Player player = event.getPlayer();
+        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + plugin.getMainConfig().sign_identitifer + "]"))) {
+            player.sendMessage(ChatColor.RED + "Nene Freundchen, erstell mal lieber nen richtiges Schild!");
             event.setCancelled(true);
-        } else if (event.getLine(0).equalsIgnoreCase("[" + MainConfig.get().getSignIdentifier() + "]")) {
-            Player player = event.getPlayer();
+        } else if (event.getLine(0).equalsIgnoreCase("[" + plugin.getMainConfig().sign_identitifer + "]")) {
             if (player.hasPermission("rcregions.sign.place")) {
                 try {
                     Region region;
                     if (!(event.getLine(1) == null) && !(event.getLine(1).equals(""))) {
-                        region = RegionManager.getInstance().getRegion(event.getLine(1));
+                        region = plugin.getRegionManager().getRegion(event.getLine(1));
                     } else {
-                        region = RegionManager.getInstance().getRegion(event.getBlock().getLocation());
+                        region = plugin.getRegionManager().getRegion(event.getBlock().getLocation());
                     }
                     if (!(player.getName().equalsIgnoreCase(region.getOwner()))) {
-                        RCMessaging.send(player, "Du bist nicht der Besitzer dieser Region.");
+                        player.sendMessage(ChatColor.RED + "Du bist nicht der Besitzer dieser Region.");
                     }
                     if (!(event.getLine(2) == null) && !(event.getLine(2).equals(""))) {
                         double price = Double.parseDouble(event.getLine(2));
@@ -49,24 +49,21 @@ public class RCBlockListener implements Listener {
                         }
                         region.setPrice(price);
                     }
-                    RegionManager.getInstance().updateSign(event, region);
-                } catch (WrongSignFormat e) {
-                    RCMessaging.warn(player, e.getMessage());
-                    event.setCancelled(true);
-                } catch (UnknownRegionException e) {
-                    RCMessaging.warn(player, e.getMessage());
+                    plugin.getRegionManager().updateSign(event, region);
+                } catch (WrongSignFormat | UnknownRegionException e) {
+                    player.sendMessage(ChatColor.RED + e.getMessage());
                     event.setCancelled(true);
                 } catch (NumberFormatException e) {
-                    RCMessaging.warn(player, "Bitte in Zeile 3 einen Preis oder nichts angeben.");
+                    player.sendMessage(ChatColor.RED + "Bitte in Zeile 3 einen Preis oder nichts angeben.");
                     event.setCancelled(true);
                 }
             } else {
-                RCMessaging.noPermission(player);
+                player.sendMessage(ChatColor.RED + "Du hast dafür keine Rechte.");
                 event.setCancelled(true);
             }
         }
         if (event.isCancelled()) {
-            RCUtils.destroyBlock(event.getBlock());
+            BlockUtil.destroyBlock(event.getBlock());
         }
     }
 }

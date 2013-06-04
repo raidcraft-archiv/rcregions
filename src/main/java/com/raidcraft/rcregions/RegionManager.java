@@ -1,19 +1,15 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
-import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.database.LogTable;
-import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.raidcraft.rcregions.util.Enums;
-import com.silthus.raidcraft.util.RCEconomy;
-import com.silthus.raidcraft.util.RCLogger;
-import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.api.Component;
+import de.raidcraft.api.economy.BalanceSource;
+import de.raidcraft.api.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,50 +20,40 @@ import org.bukkit.event.block.SignChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 17.12.11 - 11:49
  *
  * @author Silthus
  */
-public final class RegionManager {
+public final class RegionManager implements Component {
 
-    private static RegionManager _self;
-    private final HashMap<String, Region> _regions;
+    private final RegionsPlugin plugin;
+    private final HashMap<String, Region> regions = new HashMap<>();
 
-    private RegionManager() {
-        _regions = new HashMap<String, Region>();
+    protected RegionManager(RegionsPlugin plugin) {
+
+        this.plugin = plugin;
+        RaidCraft.registerComponent(RegionManager.class, this);
     }
     
-    public synchronized static void reload() {
-        _self = null;
-        _self = new RegionManager();
-    }
-    
-    public static void init() {
-        getInstance();
-    }
+    public void reload() {
 
-    public static RegionManager getInstance() {
-        if (_self == null) {
-            _self = new RegionManager();
-        }
-        return _self;
+        regions.clear();
     }
 
     public Region getRegion(String name) throws UnknownRegionException {
-        if (_regions.containsKey(name)) {
-            return _regions.get(name);
+        if (regions.containsKey(name)) {
+            return regions.get(name);
         } else {
             ProtectedRegion region = WorldGuardManager.getRegion(name);
             if (region != null && isAllowedRegion(region)) {
                 try {
                     Region rcRegion = new Region(region);
-                    _regions.put(name, rcRegion);
+                    regions.put(name, rcRegion);
                     return rcRegion;
                 } catch (UnknownDistrictException e) {
-                    RCLogger.warning(e.getMessage());
+                    plugin.getLogger().warning(e.getMessage());
                 }
             }
         }
@@ -78,14 +64,14 @@ public final class RegionManager {
         ApplicableRegionSet localRegions = WorldGuardManager.getLocalRegions(location);
         for (ProtectedRegion region : localRegions) {
             String name = region.getId();
-            if (_regions.containsKey(name)) {
-                return _regions.get(name);
+            if (regions.containsKey(name)) {
+                return regions.get(name);
             } else if (isAllowedRegion(region)) {
                 try {
-                    _regions.put(name, new Region(region));
+                    regions.put(name, new Region(region));
                     return getRegion(name);
                 } catch (UnknownDistrictException e) {
-                    RCLogger.warning(e.getMessage());
+                    plugin.getLogger().warning(e.getMessage());
                 }
             }
         }
@@ -95,8 +81,8 @@ public final class RegionManager {
     public boolean isAllowedRegion(ProtectedRegion region) {
         String id = region.getId();
         boolean matches = false;
-        for (String district : MainConfig.get().getDistricts()) {
-            if (id.matches("^" + MainConfig.get().getDistrict(district).getIdentifier() + "\\d*")) {
+        for (String district :plugin.getDistrictConfig().getDistricts()) {
+            if (id.matches("^" + plugin.getDistrictConfig().getDistrict(district).getIdentifier() + "\\d*")) {
                 matches = true;
                 break;
             }
@@ -126,49 +112,41 @@ public final class RegionManager {
     }
 
     public void buyRegion(Player player, Region region) throws PlayerException, RegionException {
+
         if (isBuyableRegion(player, region)) {
-            RCEconomy economy = RegionsPlugin.get().getEconomy();
+            Economy economy = RaidCraft.getEconomy();
             String owner = region.getOwner();
             double price = region.getPrice();
-            if (!economy.has(player.getName(), price)) {
+
+            if (!economy.hasEnough(player.getName(), price)) {
                 throw new PlayerException("Nicht genug Geld für das Grundstück: " + price);
             }
+
             double tax = region.getBasePrice() * getTaxes(player, region);
-            if (!economy.hasEnough(player, (price + tax))) {
+            if (!economy.hasEnough(player.getName(), (price + tax))) {
                 throw new PlayerException("Nicht genug Geld! Grundstück: " + price + " + Steuern: " + tax);
             }
-            economy.substract(player, (price + tax));
+            economy.modify(player.getName(), -(price + tax), BalanceSource.BUY_REGION, "Kauf von " + region.getName());
 
             if (!(owner == null) && !(owner.equals(""))) {
-                economy.add(region.getOwner(), price);
-                if(Bukkit.getPlayer(region.getOwner()) != null) {
-                    RCMessaging.send(Bukkit.getPlayer(region.getOwner())
-                            , ChatColor.GREEN + "[RCRegions] " 
-                            + ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + price + "c abgekauft!");
+                economy.modify(region.getOwner(), price, BalanceSource.SELL_REGION, "Verkauf von " + region.getName());
+                Player playerOwner = Bukkit.getPlayer(region.getOwner());
+                if (playerOwner != null) {
+                    playerOwner.sendMessage(ChatColor.YELLOW + "Dein Grundstück " + region.getName() + " wurde von " + player.getName() + " für " + economy.getFormattedAmount(price) + " abgekauft!");
                 }
-                RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(region.getOwner()
-                        , region.getName()
-                        , Enums.Action.SELL
-                        , price
-                        , 0));
             }
-            RegionsDatabase.getInstance().getTable(LogTable.class).logAction(new RegionLog(player.getName()
-                    , region.getName()
-                    , Enums.Action.BUY
-                    , price
-                    , tax));
             boolean droped = false;
-            for (District d : DistrictManager.get().getDistricts().values()) {
+            for (District d : plugin.getDistrictManager().getDistricts().values()) {
                 if (d.dropOnChange()) {
                     for (Region r : getPlayerRegions(player, d)) {
                         clearRegion(player, r);
-                        RCMessaging.send(player, "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
+                        player.sendMessage(ChatColor.RED + "Dein altes Grundstück " + r.getName() + " wurde aufgelöst.");
                         droped = true;
                     }
                 }
             }
             if (droped)
-                RCMessaging.send(player, "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
+                player.sendMessage(ChatColor.GRAY + "Du kannst weiterhin auf deine Kisten zugreifen, jedoch nicht bauen.");
             region.setOwner(player.getName());
             region.setBuyable(false);
             region.setAccessFlags(false);
@@ -220,7 +198,7 @@ public final class RegionManager {
     public void updateSign(Sign sign, Region region) {
         double price = region.getPrice();
         if (price > 0.0) {
-            sign.setLine(0, "" + ChatColor.GREEN + price + ChatColor.YELLOW + "c");
+            sign.setLine(0, RaidCraft.getEconomy().getFormattedAmount(price));
         } else {
             sign.setLine(0, ChatColor.GREEN + "Kostenlos");
         }
@@ -231,9 +209,9 @@ public final class RegionManager {
         }
         sign.setLine(2, ChatColor.WHITE + owner);
         if (region.isBuyable()) {
-            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.GREEN + plugin.getMainConfig().sign_identitifer.toUpperCase() + ChatColor.BLACK + "]");
         } else {
-            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.DARK_RED + plugin.getMainConfig().sign_identitifer.toUpperCase() + ChatColor.BLACK + "]");
         }
         sign.update();
     }
@@ -241,7 +219,7 @@ public final class RegionManager {
     public void updateSign(SignChangeEvent sign, Region region) {
         double price = region.getPrice();
         if (price > 0.0) {
-            sign.setLine(0, "" + ChatColor.GREEN + price + ChatColor.YELLOW + "c");
+            sign.setLine(0, RaidCraft.getEconomy().getFormattedAmount(price));
         } else {
             sign.setLine(0, ChatColor.GREEN + "Kostenlos");
         }
@@ -252,9 +230,9 @@ public final class RegionManager {
         }
         sign.setLine(2, ChatColor.WHITE + owner);
         if (region.isBuyable()) {
-            sign.setLine(3, "[" + ChatColor.GREEN + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.GREEN + plugin.getMainConfig().sign_identitifer.toUpperCase() + ChatColor.BLACK + "]");
         } else {
-            sign.setLine(3, "[" + ChatColor.DARK_RED + MainConfig.get().getSignIdentifier().toUpperCase() + ChatColor.BLACK + "]");
+            sign.setLine(3, "[" + ChatColor.DARK_RED + plugin.getMainConfig().sign_identitifer.toUpperCase() + ChatColor.BLACK + "]");
         }
     }
 
@@ -272,10 +250,7 @@ public final class RegionManager {
         region.setOwner(null);
         region.setBuyable(true);
         region.setAccessFlags(true);
-	    for (RegionWarning warning : region.getWarnings()) {
-		    warning.remove();
-	    }
-        RegionsPlugin.get().getEconomy().add(player, getRefundValue(region));
+        RaidCraft.getEconomy().modify(player.getName(), getRefundValue(region), BalanceSource.SELL_REGION, "Verkauf von " + region.getName() + " an Server");
     }
 
     public double getRefundValue(Region region) {
@@ -283,21 +258,6 @@ public final class RegionManager {
     }
 
     public double getRefundPercentage(Region region) {
-        return MainConfig.get().getDistrict(region.getDistrict().getName()).getRefundPercentage();
+        return plugin.getMainConfig().getDistrict(region.getDistrict().getName()).getRefundPercentage();
     }
-
-	public Map<Integer, RegionWarning> getRegionWarnings(Region region) {
-
-		return RegionsDatabase.getRegionWarnings(region.getName());
-	}
-
-	public List<RegionWarning> getAllRegionWarnings() {
-
-		return RegionsDatabase.getAllRegionWarnings();
-	}
-
-	public RegionWarning getRegionWarning(int id) throws UnknownRegionException {
-
-		return RegionsDatabase.getRegionWarning(id);
-	}
 }

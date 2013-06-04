@@ -1,10 +1,8 @@
 package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.config.DistrictConfig;
-import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
-import com.silthus.raidcraft.util.RCLogger;
-import com.silthus.raidcraft.util.RCMessaging;
+import de.raidcraft.RaidCraft;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -35,7 +33,7 @@ public class District {
     }
     
     private void load() {
-        DistrictConfig.SingleDistrictConfig district = MainConfig.get().getDistrict(getName());
+        DistrictConfig.SingleDistrictConfig district = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(getName());
         this.identifier = district.getIdentifier();
         this.minPrice = district.getMinPrice();
         this.dropable = district.isDropable();
@@ -51,7 +49,7 @@ public class District {
             this.scheduleTaxes = true;
         } catch (UnconfiguredConfigException e) {
             scheduleTaxes = false;
-            RCLogger.debug("Interval taxes for the District " + getName() + " not loaded.");
+            RaidCraft.LOGGER.info("Interval taxes for the District " + getName() + " not loaded.");
         }
     }
     
@@ -88,7 +86,7 @@ public class District {
     }
     
     public double getTaxes(int count) {
-        return MainConfig.get().getDistrict(getName()).getTaxes(count);
+        return RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(getName()).getTaxes(count);
     }
     
     public boolean scheduleTaxes() {
@@ -116,6 +114,7 @@ public class District {
     }
     
     public String toString() {
-        return RCMessaging.green(getName()) + "[" + RCMessaging.yellow(getIdentifier()) + "]";
+
+        return getName() + "[" + getIdentifier() + "]";
     }
 }

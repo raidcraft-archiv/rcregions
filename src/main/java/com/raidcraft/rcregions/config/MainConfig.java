@@ -1,8 +1,8 @@
 package com.raidcraft.rcregions.config;
 
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
-import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import com.silthus.raidcraft.config.RCConfig;
+import com.raidcraft.rcregions.RegionsPlugin;
+import de.raidcraft.api.config.ConfigurationBase;
+import de.raidcraft.api.config.Setting;
 
 import java.util.Set;
 
@@ -11,48 +11,28 @@ import java.util.Set;
  * 17.12.11 - 11:27
  * @author Silthus
  */
-public class MainConfig extends RCConfig {
+public class MainConfig extends ConfigurationBase<RegionsPlugin> {
 
-    private static final String FILENAME = "config.yml";
-    private static MainConfig self;
+    public MainConfig(RegionsPlugin plugin) {
 
-    public MainConfig(BukkitBasePlugin plugin) {
-        super(plugin, FILENAME);
+        super(plugin, "config.yml");
     }
 
-	public static void init(BukkitBasePlugin plugin) {
-		self = new MainConfig(plugin);
-	}
-
-    public static MainConfig get() {
-        if (self == null) {
-            self = new MainConfig(RegionsPlugin.get());
-        }
-        return self;
-    }
-
-    public String getSignIdentifier() {
-        return get().getConfig().getString("signIdentifier");
-    }
-
-    public long getWarnInterval() {
-        return get().getConfig().getLong("warn-interval", 300);
-    }
-    
-    public int getToolId() {
-        return get().getConfig().getInt("tool-id");
-    }
-
-    public boolean useLogblock() {
-        return get().getConfig().getBoolean("useLogblock", false);
-    }
+    @Setting("signIdentifier")
+    public String sign_identitifer = "Region";
+    @Setting("warn-interval")
+    public int warn_interval = 300;
+    @Setting("tool-id")
+    public int tool_id = 340;
 
     public Set<String> getDistricts() {
-        return DistrictConfig.get().getDistricts();
+
+        return getPlugin().getDistrictConfig().getDistricts();
     }
 
     public DistrictConfig.SingleDistrictConfig getDistrict(String district) {
-        return DistrictConfig.get().getDistrict(district);
+
+        return getPlugin().getDistrictConfig().getDistrict(district);
     }
 
 

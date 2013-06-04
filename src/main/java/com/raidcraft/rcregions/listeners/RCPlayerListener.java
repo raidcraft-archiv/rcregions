@@ -2,20 +2,15 @@ package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionManager;
-import com.raidcraft.rcregions.RegionWarning;
+import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.WorldGuardManager;
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
 import com.raidcraft.rcregions.commands.RegionCommand;
-import com.raidcraft.rcregions.config.MainConfig;
-import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.silthus.raidcraft.util.RCLogger;
-import com.silthus.raidcraft.util.RCMessaging;
-import com.silthus.raidcraft.util.SignUtils;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Bukkit;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.util.SignUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
@@ -24,10 +19,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * 21.01.12 - 19:09
@@ -36,36 +29,32 @@ import java.util.*;
  */
 public class RCPlayerListener implements Listener {
 
-	private static Map<String, Set<Integer>> warnedPlayers = new HashMap<String, Set<Integer>>();
-    // 20 ticks is one second and we want a 10 second delay
-    private static final long DELAY = 20 * 10;
-	private static boolean taskIsRunning = false;
-    
     @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();
+        RegionsPlugin plugin = RaidCraft.getComponent(RegionsPlugin.class);
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getPlayer().getItemInHand().getType().getId() == MainConfig.get().getToolId()) {
+            if (event.getPlayer().getItemInHand().getType().getId() == plugin.getMainConfig().tool_id) {
                 if (player.hasPermission("rcregions.info")) {
                     try {
-                        Region region = RegionManager.getInstance().getRegion(event.getClickedBlock().getLocation());
+                        Region region = RaidCraft.getComponent(RegionManager.class).getRegion(event.getClickedBlock().getLocation());
                         RegionCommand.showRegionInfo(player, region);
                     } catch (UnknownRegionException e) {
-                        RCMessaging.warn(player, e.getMessage());
+                        player.sendMessage(ChatColor.RED + e.getMessage());
                         //print region info
                         ApplicableRegionSet applicableRegionSet = WorldGuardManager.getLocalRegions(event.getClickedBlock().getLocation());
                         if(applicableRegionSet.size() != 0) {
-                            RCMessaging.send(player, "| " + "---------------------------------------", false);
-                            RCMessaging.send(player, "| " + RCMessaging.green("WorldGuard Regions Informationen:"), false);
+                            player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
+                            player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "WorldGuard Regions Informationen:");
                             for(ProtectedRegion region : applicableRegionSet) {
-                                RCMessaging.send(player, "| " + "---------------------------------------", false);
-                                RCMessaging.send(player, "| " + RCMessaging.green("ID: ") + ChatColor.GOLD + (region.getId()), false);
+                                player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
+                                player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "ID: " + ChatColor.GOLD + (region.getId()));
                                 if(region.getOwners().size() > 0) {
-                                    RCMessaging.send(player, "| " + RCMessaging.green("Owner: ") + RCMessaging.yellow(region.getOwners().toUserFriendlyString()), false);
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + region.getOwners().toUserFriendlyString());
                                 }
                                 if(region.getMembers().size() > 0) {
-                                RCMessaging.send(player, "| " + RCMessaging.green("Member: ") + RCMessaging.yellow(region.getMembers().toUserFriendlyString()), false);
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Member: " + ChatColor.YELLOW + region.getMembers().toUserFriendlyString());
                                 }
                                     String flags = "";
                                 for(Map.Entry<Flag<?>, Object> flag : region.getFlags().entrySet()) {
@@ -74,23 +63,23 @@ public class RCPlayerListener implements Listener {
                                     flags += ChatColor.GOLD + flag.getKey().getName() + ": " + ChatColor.YELLOW + flag.getValue().toString();
                                 }
                                 if(flags.length() > 0) {
-                                    RCMessaging.send(player, "| " + RCMessaging.green("Flags: ") + flags, false);
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Flags: " + ChatColor.YELLOW + flags);
                                 }
                             }
-                            RCMessaging.send(player, "| " + "---------------------------------------", false);
+                            player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
                         }
                     }
                 }
             }
-            if (SignUtils.isSign(event.getClickedBlock())) {
-                Sign sign = SignUtils.getSign(event.getClickedBlock());
-                if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.get().getSignIdentifier() + "]")) {
+            if (SignUtil.isSign(event.getClickedBlock())) {
+                Sign sign = SignUtil.getSign(event.getClickedBlock());
+                if (SignUtil.isLineEqual(sign.getLine(3), "[" + plugin.getMainConfig().sign_identitifer + "]")) {
                     try {
-                        Region region = RegionManager.getInstance().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                        Region region = plugin.getRegionManager().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
                         String owner = region.getOwner();
                         if (owner == null) owner = "";
                         if (!(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
-                            RCMessaging.send(player, "Dieses Grundstück wird vom Server verwaltet.");
+                            player.sendMessage(ChatColor.RED + "Dieses Grundstück wird vom Server verwaltet.");
                             event.setCancelled(true);
                             return;
                         }
@@ -98,141 +87,40 @@ public class RCPlayerListener implements Listener {
                                 (player.hasPermission("rcregions.region.sell") && owner.equalsIgnoreCase(player.getName()))) {
                             if (region.isBuyable()) {
                                 region.setBuyable(false);
-                                RCMessaging.send(player, "Die Region kann nun nicht mehr gekauft werden.");
+                                player.sendMessage(ChatColor.YELLOW + "Die Region kann nun nicht mehr gekauft werden.");
                             } else {
                                 region.setBuyable(true);
-                                RCMessaging.send(player, "Die Region kann nun gekauft werden.");
+                                player.sendMessage(ChatColor.YELLOW + "Die Region kann nun gekauft werden.");
                             }
-                            RegionManager.getInstance().updateSign(sign, region);
+                            plugin.getRegionManager().updateSign(sign, region);
                         } else {
-                            RCMessaging.noPermission(player);
+                            player.sendMessage(ChatColor.RED + "Du hast dazu keine Rechte!");
                         }
                     } catch (UnknownRegionException e) {
-                        RCMessaging.warn(player, e.getMessage());
+                        player.sendMessage(ChatColor.RED + e.getMessage());
                     }
                 }
             }
-        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtils.isSign(event.getClickedBlock())) {
-            Sign sign = SignUtils.getSign(event.getClickedBlock());
-            if (SignUtils.equals(sign.getLine(3), "[" + MainConfig.get().getSignIdentifier() + "]")) {
+        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && SignUtil.isSign(event.getClickedBlock())) {
+            Sign sign = SignUtil.getSign(event.getClickedBlock());
+            if (SignUtil.isLineEqual(sign.getLine(3), "[" + plugin.getMainConfig().sign_identitifer + "]")) {
                 if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
                     event.setCancelled(true);
                 }
                 try {
-                    Region region = RegionManager.getInstance().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
-                    RegionManager.getInstance().updateSign(sign, region);
+                    Region region = plugin.getRegionManager().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                    plugin.getRegionManager().updateSign(sign, region);
                     if (region.isBuyable()) {
-                        double price = RegionManager.getInstance().getFullPrice(player, region);
-                        RCMessaging.send(player, "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
-                        RCMessaging.send(player, "Grundpreis: " + region.getBasePrice());
-                        RCMessaging.send(player, "Preis inkl. Steuern("
-                                + RCMessaging.green(RegionManager.getInstance().getTaxes(player, region) * 100 + "%") + "): " + price);
+                        double price = plugin.getRegionManager().getFullPrice(player, region);
+                        player.sendMessage(ChatColor.YELLOW + "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
+                        player.sendMessage(ChatColor.YELLOW + "Grundpreis: " + RaidCraft.getEconomy().getFormattedAmount(region.getBasePrice()));
+                        player.sendMessage(ChatColor.YELLOW + "Preis inkl. Steuern("
+                                + ChatColor.GREEN + plugin.getRegionManager().getTaxes(player, region) * 100 + "%" + ChatColor.YELLOW + "): " + RaidCraft.getEconomy().getFormattedAmount(price));
                     }
                 } catch (UnknownRegionException e) {
-                    RCMessaging.warn(player, e.getMessage());
+                    player.sendMessage(ChatColor.RED + e.getMessage());
                 }
             }
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (warnedPlayers.containsKey(player.getName())) {
-            warnedPlayers.remove(player.getName());
-        }
-    }
-
-	@EventHandler(ignoreCancelled = true)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-
-		Player player = event.getPlayer();
-		Set<Integer> warnings = new LinkedHashSet<Integer>();
-		for (Region region : RegionManager.getInstance().getPlayerRegions(player)) {
-			if (region.hasWarnings()) {
-				for (RegionWarning warning : region.getWarnings()) {
-					warnings.add(warning.getId());
-				}
-			}
-		}
-		if (warnings.size() > 0) {
-			warnedPlayers.put(player.getName(), warnings);
-		}
-	}
-
-	public static void addWarning(RegionWarning warning) {
-
-		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
-		if (player != null && player.isOnline()) {
-			if (!warnedPlayers.containsKey(player.getName())) {
-				warnedPlayers.put(player.getName(), new LinkedHashSet<Integer>());
-			}
-			warnedPlayers.get(player.getName()).add(warning.getId());
-			// tell the player
-			player.sendMessage(
-					ChatColor.RED + "Deine Region " + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde verwarnt.");
-		}
-	}
-
-	public static void removeWarning(RegionWarning warning) {
-
-		Player player = Bukkit.getPlayer(warning.getRegion().getOwner());
-		if (player != null && player.isOnline()) {
-			if (warnedPlayers.containsKey(player.getName())) {
-				warnedPlayers.get(player.getName()).remove(warning.getId());
-			}
-			if (warnedPlayers.get(player.getName()).size() < 1) {
-				warnedPlayers.remove(player.getName());
-			}
-			// tell the player
-			player.sendMessage(
-					ChatColor.RED + "Die Verwarnung von " + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.RED + " wurde " +
-							"aufgehoben.");
-		}
-	}
-
-    public static void startWarningTask() {
-        if (taskIsRunning) {
-            return;
-        }
-	    long interval = 20 * MainConfig.get().getWarnInterval();
-	    Bukkit.getScheduler().scheduleSyncRepeatingTask(RegionsPlugin.get(), new Runnable() {
-		    @Override
-		    public void run() {
-
-			    Set<Map.Entry<String, Set<Integer>>> entries = warnedPlayers.entrySet();
-			    int warningCount = RegionsDatabase.getWarningCount();
-			    if (warningCount > 0) {
-				    for (Player player : Bukkit.getOnlinePlayers()) {
-					    if (player.hasPermission("rcregions.warn.list")) {
-						    player.sendMessage(ChatColor.RED + "Aktuell stehen " + ChatColor.AQUA + warningCount +
-								    ChatColor.RED + " Regions Verwarnungen aus.");
-						    player.sendMessage(ChatColor.GRAY + "(" + ChatColor.ITALIC + "/rcr listwarnings" +
-								    ChatColor.RESET + ChatColor.GRAY + ")");
-					    }
-				    }
-			    }
-			    for (Map.Entry<String, Set<Integer>> entry : entries) {
-				    Player player = Bukkit.getPlayer(entry.getKey());
-				    if (player != null && player.isOnline()) {
-					    player.sendMessage(ChatColor.RED + "Folgende Regionen von dir wurden verwarnt:");
-					    for (int warningId : entry.getValue()) {
-						    try {
-							    RegionWarning warning = RegionManager.getInstance().getRegionWarning(warningId);
-							    player.sendMessage(
-									    ChatColor.YELLOW + "[" + ChatColor.GREEN + warning.getId() + ChatColor.YELLOW + "]" +
-											    "[" + ChatColor.AQUA + warning.getRegion().getName() + ChatColor.YELLOW + "]" +
-											    ChatColor.GREEN + " - " + ChatColor.YELLOW +
-											    RegionWarning.DATE_FORMAT.format(new Date(warning.getTime()))
-											    + ChatColor.GREEN + " - " + ChatColor.RED + warning.getMessage());
-						    } catch (UnknownRegionException e) {
-							    RCLogger.error(e);
-						    }
-					    }
-				    }
-			    }
-		    }
-	    }, DELAY, interval);
-        taskIsRunning = true;
     }
 }

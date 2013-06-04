@@ -1,23 +1,17 @@
 package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.config.DistrictConfig;
-import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
-import com.raidcraft.rcregions.listeners.RCPlayerListener;
-import com.silthus.raidcraft.util.RCMessaging;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.RaidCraft;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -33,7 +27,6 @@ public class Region {
     private double price;
     private District district;
     private boolean buyable;
-	private Map<Integer, RegionWarning> warnings;
     
     public Region(ProtectedRegion region) throws UnknownDistrictException {
         this.name = region.getId();
@@ -44,7 +37,7 @@ public class Region {
     private void load() throws UnknownDistrictException {
         // get the district
         String district = getName().replaceAll("\\d*$", "");
-        this.district = DistrictManager.get().getDistrictFromIdentifier(district);
+        this.district = RaidCraft.getComponent(DistrictManager.class).getDistrictFromIdentifier(district);
         // check for null
         if (district == null) {
             throw new UnknownDistrictException("The district of this region is not configured!");
@@ -70,8 +63,6 @@ public class Region {
         } else {
             this.price = region.getFlag(DefaultFlag.PRICE);
         }
-	    // load the warning list
-	    warnings = RegionManager.getInstance().getRegionWarnings(this);
     }
 
     /* All Getters and Setters go here */
@@ -149,7 +140,7 @@ public class Region {
 
     public double getBasePrice() {
         if (region instanceof ProtectedCuboidRegion) {
-            DistrictConfig.SingleDistrictConfig district = MainConfig.get().getDistrict(this.district.getName());
+            DistrictConfig.SingleDistrictConfig district = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(this.district.getName());
             BlockVector max = region.getMaximumPoint();
             BlockVector min = region.getMinimumPoint();
             int xLength = max.getBlockX() - min.getBlockX();
@@ -164,30 +155,11 @@ public class Region {
         }
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (player.hasPermission("rcregions.notify")) {
-                RCMessaging.warn(player, "Region " + region.getId() + " is a polygon! Please change it to a cuboid...");
+                player.sendMessage(ChatColor.RED + "Region " + region.getId() + " is a polygon! Please change it to a cuboid...");
             }
         }
-        return MainConfig.get().getDistrict(district.getName()).getMinPrice();
+        return RaidCraft.getComponent(RegionsPlugin.class).getDistrictConfig().getDistrict(district.getName()).getMinPrice();
     }
-
-	public RegionWarning addWarning(String msg) {
-		RegionWarning warning = new RegionWarning(this, msg);
-		RCPlayerListener.addWarning(warning);
-		warnings.put(warning.getId(), warning);
-		return warning;
-	}
-
-	public Collection<RegionWarning> getWarnings() {
-		return warnings.values();
-	}
-
-	public boolean hasWarnings() {
-		return warnings.size() > 0;
-	}
-
-	public void removeWarning(RegionWarning warning) {
-		warnings.remove(warning.getId());
-	}
     
     public String toString() {
         return getName();

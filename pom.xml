@@ -18,10 +18,9 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>de.raidcraft</groupId>
     <artifactId>rcregions</artifactId>
     <packaging>jar</packaging>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <name>RCRegions</name>
 
     <parent>
@@ -40,8 +39,8 @@
     <dependencies>
         <dependency>
             <groupId>de.raidcraft</groupId>
-            <artifactId>RaidCraftCore</artifactId>
-            <version>1.7-SNAPSHOT</version>
+            <artifactId>raidcraft-api</artifactId>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.raidcraft</groupId>

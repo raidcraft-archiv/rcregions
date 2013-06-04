@@ -1,7 +1,8 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.api.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,52 +12,45 @@ import java.util.Map;
  *
  * @author Silthus
  */
-public final class DistrictManager {
+public final class DistrictManager implements Component {
 
-    private static DistrictManager _self;
-    private final HashMap<String, District> _districts;
+    private final RegionsPlugin plugin;
+    private final HashMap<String, District> districts = new HashMap<>();
 
-    private DistrictManager() {
-        _districts = new HashMap<String, District>();
+    protected DistrictManager(RegionsPlugin plugin) {
+
+        this.plugin = plugin;
+        RaidCraft.registerComponent(DistrictManager.class, this);
         load();
     }
     
     private void load() {
-        for (String district : MainConfig.get().getDistricts()) {
-            _districts.put(district, new District(district));
+
+        for (String district : plugin.getDistrictConfig().getDistricts()) {
+            districts.put(district, new District(district));
         }
     }
     
-    public synchronized static void reload() {
-        _self = null;
-        _self = new DistrictManager();
-    }
-    
-    public static void init() {
-        get();
+    public void reload() {
+
+        districts.clear();
+        load();
     }
 
-    public static DistrictManager get() {
-        if (_self == null) {
-            _self = new DistrictManager();
-        }
-        return _self;
-    }
-    
     public District getDistrict(String name) throws UnknownDistrictException {
-        if (_districts.containsKey(name)) {
-            return _districts.get(name);
+        if (districts.containsKey(name)) {
+            return districts.get(name);
         }
-        if (MainConfig.get().getDistricts().contains(name)) {
+        if (plugin.getDistrictConfig().getDistricts().contains(name)) {
             District district = new District(name);
-            _districts.put(name, district);
+            districts.put(name, district);
             return district;
         }
         throw new UnknownDistrictException("The district with the name " + name + " is not configured!");
     }
     
     public District getDistrictFromIdentifier(String identifier) {
-        for (District district : _districts.values()) {
+        for (District district : districts.values()) {
             if (district.getIdentifier().equalsIgnoreCase(identifier)) {
                 return district;
             }
@@ -65,6 +59,6 @@ public final class DistrictManager {
     }
     
     public Map<String, District> getDistricts() {
-        return _districts;
+        return districts;
     }
 }

@@ -1,39 +1,81 @@
 package com.raidcraft.rcregions.commands;
 
-import com.raidcraft.rcregions.*;
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.District;
+import com.raidcraft.rcregions.DistrictManager;
+import com.raidcraft.rcregions.Region;
+import com.raidcraft.rcregions.RegionLog;
+import com.raidcraft.rcregions.RegionManager;
+import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.database.LogTable;
-import com.raidcraft.rcregions.database.RegionsDatabase;
 import com.raidcraft.rcregions.exceptions.PlayerException;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.util.Enums;
-import com.silthus.raidcraft.util.RCCommandManager;
-import com.silthus.raidcraft.util.RCMessaging;
-import com.silthus.raidcraft.util.RCUtils;
-import com.silthus.raidcraft.util.databases.logblock.LBPlayer;
-import com.silthus.raidcraft.util.databases.logblock.LogBlock;
+import com.sk89q.minecraft.util.commands.Command;
+import com.sk89q.minecraft.util.commands.CommandContext;
+import com.sk89q.minecraft.util.commands.CommandPermissions;
+import com.sk89q.minecraft.util.commands.NestedCommand;
 import com.sk89q.worldedit.BlockVector;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 17.12.11 - 11:30
  *
  * @author Silthus
  */
-public class RegionCommand implements CommandExecutor {
+public class RegionCommand {
 
-    private final RCCommandManager cmd = RCCommandManager.get();
-    private CommandSender sender;
+    private RegionsPlugin plugin;
+
+    public RegionCommand(RegionsPlugin plugin) {
+
+        this.plugin = plugin;
+    }
+
+    @Command(
+            aliases = {"rcr", "region"},
+            desc = "Region Commands"
+    )
+    @NestedCommand(NestedCommands.class)
+    public void nested(CommandContext args, CommandSender sender) {
+
+
+    }
+
+    public static class NestedCommands {
+
+        private final RegionsPlugin plugin;
+
+        public NestedCommands(RegionsPlugin plugin) {
+
+            this.plugin = plugin;
+        }
+
+        @Command(
+                aliases = {"buy", "claim"},
+                desc = "Buys the region"
+        )
+        @CommandPermissions("rcregions.region.buy")
+        public void buy(CommandContext args, CommandSender sender) {
+
+            if (args.argsLength() > 1) {
+                buyRe
+            }
+        }
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String cmdLabel, String[] args) {

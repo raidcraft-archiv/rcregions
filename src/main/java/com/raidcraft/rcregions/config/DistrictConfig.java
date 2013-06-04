@@ -1,9 +1,8 @@
 package com.raidcraft.rcregions.config;
 
-import com.raidcraft.rcregions.bukkit.RegionsPlugin;
+import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.exceptions.UnconfiguredConfigException;
-import com.silthus.raidcraft.bukkit.BukkitBasePlugin;
-import com.silthus.raidcraft.config.RCConfig;
+import de.raidcraft.api.config.ConfigurationBase;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Set;
@@ -11,31 +10,20 @@ import java.util.Set;
 /**
  * User: Silthus
  */
-public class DistrictConfig extends RCConfig {
+public class DistrictConfig extends ConfigurationBase<RegionsPlugin> {
 
-    private static final String FILENAME = "districts.yml";
-    private static DistrictConfig self;
+    public DistrictConfig(RegionsPlugin plugin) {
 
-    public DistrictConfig(BukkitBasePlugin plugin) {
-        super(plugin, FILENAME);
-    }
-
-	public static void init(BukkitBasePlugin plugin) {
-		self = new DistrictConfig(plugin);
-	}
-
-    public static DistrictConfig get() {
-        if (self == null) {
-            self = new DistrictConfig(RegionsPlugin.get());
-        }
-        return self;
+        super(plugin, "districts.yml");
     }
 
     public Set<String> getDistricts() {
-        return getConfig().getConfigurationSection("districts").getKeys(false);
+
+        return getSafeConfigSection("districts").getKeys(false);
     }
 
     public SingleDistrictConfig getDistrict(String district) {
+
         return new SingleDistrictConfig(district);
     }
 
@@ -45,7 +33,7 @@ public class DistrictConfig extends RCConfig {
         private final String name;
 
         public SingleDistrictConfig(String name) {
-            this.section = get().getConfig().getConfigurationSection("districts." + name);
+            this.section = getSafeConfigSection("districts." + name);
             this.name = name;
         }
 

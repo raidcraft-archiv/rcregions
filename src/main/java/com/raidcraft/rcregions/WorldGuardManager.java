@@ -1,12 +1,12 @@
 package com.raidcraft.rcregions;
 
-import com.silthus.raidcraft.util.RCLogger;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.RaidCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,7 +29,7 @@ public class WorldGuardManager {
     public static void load() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
         if ((plugin == null) || !(plugin instanceof WorldGuardPlugin)) {
-            RCLogger.warning("WorldGuard not found! Disabling RCRegions...");
+            RaidCraft.LOGGER.warning("WorldGuard not found! Disabling RCRegions...");
             Plugin rcRegions = Bukkit.getServer().getPluginManager().getPlugin("RCRegions");
             Bukkit.getServer().getPluginManager().disablePlugin(rcRegions);
             return;
@@ -114,7 +114,7 @@ public class WorldGuardManager {
             try {
                 getWorldGuard().getRegionManager(world).save();
             } catch (ProtectionDatabaseException e) {
-				RCLogger.warning(e.getMessage());
+				RaidCraft.LOGGER.warning(e.getMessage());
             }
         }
     }
