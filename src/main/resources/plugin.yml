@@ -3,15 +3,8 @@ version: 0.1
 author: Silthus
 website: www.raid-craft.de
 
-main: com.raidcraft.rcregions.bukkit.RegionsPlugin
-depend: [RaidCraftCore,WorldGuard]
-softdepend: [RCAchievements]
-
-commands:
-  rcr:
-    description: Gives acces to the RCRegions plugin.
-    usage: Please see the help with /<command> help.
-    aliases: [rcregion]
+main: com.raidcraft.rcregions.RegionsPlugin
+depend: [RaidCraft-API,WorldGuard]
 permissions:
   rcregions.user:
       description: Gives access to basic Region commands.
