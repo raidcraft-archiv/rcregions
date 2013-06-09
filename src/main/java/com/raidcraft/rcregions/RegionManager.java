@@ -184,7 +184,7 @@ public final class RegionManager implements Component {
 
     public List<Region> getPlayerRegions(Player player) {
 
-        List<Region> playerRegions = new ArrayList<Region>();
+        List<Region> playerRegions = new ArrayList<>();
         for (String region : WorldGuardManager.getPlayerRegions(player).keySet()) {
             try {
                 playerRegions.add(getRegion(region));
@@ -214,7 +214,7 @@ public final class RegionManager implements Component {
         } else {
             sign.setLine(0, ChatColor.GREEN + "Kostenlos");
         }
-        sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
+        sign.setLine(1, "Id: " + ChatColor.DARK_RED + region.getName());
         String owner = region.getOwner();
         if (owner == null || owner.equalsIgnoreCase("")) {
             owner = "Staff";
@@ -236,7 +236,7 @@ public final class RegionManager implements Component {
         } else {
             sign.setLine(0, ChatColor.GREEN + "Kostenlos");
         }
-        sign.setLine(1, "Region: " + ChatColor.DARK_RED + region.getName());
+        sign.setLine(1, "Id: " + ChatColor.DARK_RED + region.getName());
         String owner = region.getOwner();
         if (owner == null || owner.equalsIgnoreCase("")) {
             owner = "Staff";

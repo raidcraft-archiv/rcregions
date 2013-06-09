@@ -6,6 +6,7 @@ import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -75,7 +76,8 @@ public class RCPlayerListener implements Listener {
                 Sign sign = SignUtil.getSign(event.getClickedBlock());
                 if (SignUtil.isLineEqual(sign.getLine(3), "[" + plugin.getMainConfig().sign_identitifer + "]")) {
                     try {
-                        Region region = plugin.getRegionManager().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                        String regionName = RegionUtil.parseRegionName(sign);
+                        Region region = plugin.getRegionManager().getRegion(regionName);
                         String owner = region.getOwner();
                         if (owner == null) owner = "";
                         if (!(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
@@ -108,7 +110,8 @@ public class RCPlayerListener implements Listener {
                     event.setCancelled(true);
                 }
                 try {
-                    Region region = plugin.getRegionManager().getRegion(ChatColor.stripColor(sign.getLine(1).replaceAll("Region: ", "")));
+                    String regionName = RegionUtil.parseRegionName(sign);
+                    Region region = plugin.getRegionManager().getRegion(regionName);
                     plugin.getRegionManager().updateSign(sign, region);
                     if (region.isBuyable()) {
                         double price = plugin.getRegionManager().getFullPrice(player, region);
