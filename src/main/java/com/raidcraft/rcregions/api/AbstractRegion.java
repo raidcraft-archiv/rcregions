@@ -1,7 +1,7 @@
 package com.raidcraft.rcregions.api;
 
+import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.entity.Player;
 
@@ -28,7 +28,7 @@ public abstract class AbstractRegion implements Region {
         this.name = region.getId();
         this.district = district;
         this.region = region;
-        this.price = region.getFlag(DefaultFlag.PRICE);
+        this.price = RegionUtil.getPrice(region, district.getPricePerBlock());
         this.buyable = district.isDefaultBuyable();
 
         List<String> players = new ArrayList<>(region.getOwners().getPlayers());

@@ -3,6 +3,8 @@ package com.raidcraft.rcregions.util;
 import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
+import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.util.CustomItemUtil;
 import de.raidcraft.util.SignUtil;
@@ -84,5 +86,18 @@ public class RegionUtil {
         lines[3] = sb.toString();
 
         return lines;
+    }
+
+    public static double getPrice(ProtectedRegion region, double pricePerBlock) {
+
+        if (pricePerBlock > 0) {
+            BlockVector max = region.getMaximumPoint();
+            BlockVector min = region.getMinimumPoint();
+            int xLength = max.getBlockX() - min.getBlockX();
+            int zWidth = max.getBlockZ() - min.getBlockZ();
+            int volume = xLength * zWidth * (max.getBlockY() - min.getBlockY());
+            return volume * pricePerBlock;
+        }
+        return 0;
     }
 }
