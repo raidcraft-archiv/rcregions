@@ -127,6 +127,19 @@ public class RegionManager implements Component {
         if (region.getPrice() > 0) {
             // lets substract the cost
             RaidCraft.getEconomy().substract(player.getName(), region.getPrice(), BalanceSource.BUY_REGION, region.getName());
+            if (region.getOwner() != null) {
+                // give the old owner the money substracted the taxes
+                double amount = region.getPrice() - region.getPrice() * plugin.getMainConfig().taxes;
+                RaidCraft.getEconomy().add(region.getOwner(),
+                        amount,
+                        BalanceSource.SELL_REGION, region.getName()
+                );
+                Player oldOwner = Bukkit.getPlayer(region.getOwner());
+                if (oldOwner != null) {
+                    oldOwner.sendMessage(ChatColor.GREEN + "Deine Region " + ChatColor.AQUA + region.getName() + ChatColor.GREEN
+                            + " wurde erfolreich für " + RaidCraft.getEconomy().getFormattedAmount(amount) + " an " + player.getName() + " verkauft.");
+                }
+            }
         }
         region.claim(player);
         // lets check for command we need to execute

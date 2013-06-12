@@ -20,4 +20,6 @@ public class MainConfig extends ConfigurationBase<RegionsPlugin> {
     public String sign_identitifer = "Region";
     @Setting("tool-id")
     public int tool_id = 340;
+    @Setting("taxes")
+    public double taxes = 0.05;
 }
