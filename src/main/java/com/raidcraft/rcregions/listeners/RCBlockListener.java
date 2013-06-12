@@ -7,6 +7,7 @@ import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
 import com.raidcraft.rcregions.util.RegionUtil;
 import de.raidcraft.RaidCraft;
+import de.raidcraft.util.BlockUtil;
 import de.raidcraft.util.SignUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -38,6 +39,7 @@ public class RCBlockListener implements Listener {
         // lets check permissions
         if (!event.getPlayer().hasPermission("rcregions.sign.create")) {
             event.getPlayer().sendMessage(ChatColor.RED + "Du hast keine Rechte Regions Schilder aufzustellen.");
+            BlockUtil.destroyBlock(event.getBlock());
             event.setCancelled(true);
             return;
         }
@@ -51,6 +53,7 @@ public class RCBlockListener implements Listener {
             }
         } catch (WrongSignFormatException | UnknownDistrictException | UnknownRegionException e) {
             event.getPlayer().sendMessage(ChatColor.RED + e.getMessage());
+            BlockUtil.destroyBlock(event.getBlock());
             event.setCancelled(true);
         }
     }
