@@ -21,4 +21,6 @@ public interface District {
     public List<Region> getRegions();
 
     public double getPricePerBlock();
+
+    public boolean isDefaultBuyable();
 }

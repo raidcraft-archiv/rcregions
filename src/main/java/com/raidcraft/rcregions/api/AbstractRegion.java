@@ -19,7 +19,7 @@ public abstract class AbstractRegion implements Region {
     private final District district;
     private final ProtectedRegion region;
     private String owner = null;
-    private boolean buyable = true;
+    private boolean buyable;
     private double price;
 
     public AbstractRegion(int id, ProtectedRegion region, District district) {
@@ -29,6 +29,7 @@ public abstract class AbstractRegion implements Region {
         this.district = district;
         this.region = region;
         this.price = region.getFlag(DefaultFlag.PRICE);
+        this.buyable = district.isDefaultBuyable();
 
         List<String> players = new ArrayList<>(region.getOwners().getPlayers());
         if (players.size() == 1) {

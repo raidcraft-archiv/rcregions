@@ -16,6 +16,7 @@ public abstract class AbstractDistrict implements District {
     private final String description;
     private final Set<String> applicableWorlds = new HashSet<>();
     private final double pricePerBlock;
+    private final boolean defaultBuyable;
 
     public AbstractDistrict(String name, ConfigurationSection config) {
 
@@ -24,6 +25,7 @@ public abstract class AbstractDistrict implements District {
         this.identifier = config.getString("identifier", name.substring(0, 3));
         this.pricePerBlock = config.getDouble("price-per-block", 0.0);
         this.description = config.getString("description");
+        this.defaultBuyable = config.getBoolean("default-buyable", true);
         this.applicableWorlds.addAll(config.getStringList("worlds"));
     }
 
@@ -61,5 +63,11 @@ public abstract class AbstractDistrict implements District {
     public double getPricePerBlock() {
 
         return pricePerBlock;
+    }
+
+    @Override
+    public boolean isDefaultBuyable() {
+
+        return defaultBuyable;
     }
 }

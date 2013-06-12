@@ -59,7 +59,7 @@ public class RCPlayerListener implements Listener {
                 }
                 new QueuedCommand(player, this, "toggleRegionBuyableState", player, region, sign).run();
             } else if (!region.isBuyable()) {
-                player.sendMessage(ChatColor.RED + "Dieses Grunstück steht nicht zum Verkauf.");
+                player.sendMessage(ChatColor.RED + "Dieses Grundstück steht nicht zum Verkauf.");
             } else {
                 if (region.getPrice() > 0) {
                     if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {

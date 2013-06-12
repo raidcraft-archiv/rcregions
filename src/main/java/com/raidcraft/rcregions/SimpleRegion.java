@@ -17,7 +17,6 @@ public class SimpleRegion extends AbstractRegion {
                 WorldGuardManager.getRegion(region.getName()),
                 RaidCraft.getComponent(DistrictManager.class).getDistrict(region.getDistrict())
         );
-        setBuyable(region.isBuyable());
     }
 
     @Override
