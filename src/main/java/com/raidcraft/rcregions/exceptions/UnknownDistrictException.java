@@ -5,7 +5,7 @@ package com.raidcraft.rcregions.exceptions;
  *
  * @author Silthus
  */
-public class UnknownDistrictException extends Throwable {
+public class UnknownDistrictException extends RegionException {
 
     /**
      * Constructs a new throwable with {@code null} as its detail message.

@@ -1,13 +1,14 @@
 package com.raidcraft.rcregions.listeners;
 
-import com.raidcraft.rcregions.Region;
 import com.raidcraft.rcregions.RegionsPlugin;
+import com.raidcraft.rcregions.api.Region;
+import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
-import com.raidcraft.rcregions.exceptions.WrongSignFormat;
+import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
+import com.raidcraft.rcregions.util.RegionUtil;
 import de.raidcraft.RaidCraft;
-import de.raidcraft.util.BlockUtil;
+import de.raidcraft.util.SignUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
@@ -19,52 +20,38 @@ import org.bukkit.event.block.SignChangeEvent;
  */
 public class RCBlockListener implements Listener {
 
-    @EventHandler
+    private final RegionsPlugin plugin;
+
+    public RCBlockListener(RegionsPlugin plugin) {
+
+        this.plugin = plugin;
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
 
-        if (event.isCancelled()) {
+        // lets check the first and last line for the region identifier
+        if (!SignUtil.isLineEqual(event.getLine(0), RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer)
+                && !SignUtil.isLineEqual(event.getLine(3), RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer)) {
             return;
         }
-        RegionsPlugin plugin = RaidCraft.getComponent(RegionsPlugin.class);
-        Player player = event.getPlayer();
-        if (event.getLine(3).equalsIgnoreCase(ChatColor.stripColor("[" + plugin.getMainConfig().sign_identitifer + "]"))) {
-            player.sendMessage(ChatColor.RED + "Nene Freundchen, erstell mal lieber nen richtiges Schild!");
+        // lets check permissions
+        if (!event.getPlayer().hasPermission("rcregions.sign.create")) {
+            event.getPlayer().sendMessage(ChatColor.RED + "Du hast keine Rechte Regions Schilder aufzustellen.");
             event.setCancelled(true);
-        } else if (event.getLine(0).equalsIgnoreCase("[" + plugin.getMainConfig().sign_identitifer + "]")) {
-            if (player.hasPermission("rcregions.sign.place")) {
-                try {
-                    Region region;
-                    if (!(event.getLine(1) == null) && !(event.getLine(1).equals(""))) {
-                        region = plugin.getRegionManager().getRegion(event.getLine(1));
-                    } else {
-                        region = plugin.getRegionManager().getRegion(event.getBlock().getLocation());
-                    }
-                    if (!(player.getName().equalsIgnoreCase(region.getOwner()))) {
-                        player.sendMessage(ChatColor.RED + "Du bist nicht der Besitzer dieser Region.");
-                    }
-                    if (!(event.getLine(2) == null) && !(event.getLine(2).equals(""))) {
-                        double price = Double.parseDouble(event.getLine(2));
-                        if (price < region.getDistrict().getMinPrice()) {
-                            event.setCancelled(true);
-                            throw new WrongSignFormat("Preis ist unter dem Mindestpreis der Region!");
-                        }
-                        region.setPrice(price);
-                    }
-                    plugin.getRegionManager().updateSign(event, region);
-                } catch (WrongSignFormat | UnknownRegionException e) {
-                    player.sendMessage(ChatColor.RED + e.getMessage());
-                    event.setCancelled(true);
-                } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Bitte in Zeile 3 einen Preis oder nichts angeben.");
-                    event.setCancelled(true);
-                }
-            } else {
-                player.sendMessage(ChatColor.RED + "Du hast dafür keine Rechte.");
-                event.setCancelled(true);
-            }
+            return;
         }
-        if (event.isCancelled()) {
-            BlockUtil.destroyBlock(event.getBlock());
+        try {
+            String regionName = RegionUtil.parseRegionName(event.getLines());
+            Region region = plugin.getRegionManager().getRegion(regionName);
+            String[] lines = RegionUtil.formatSign(region);
+            // update the lines with the region information
+            for (int i = 0; i < 4; i++) {
+                event.setLine(i, lines[i]);
+            }
+        } catch (WrongSignFormatException | UnknownDistrictException | UnknownRegionException e) {
+            event.getPlayer().sendMessage(ChatColor.RED + e.getMessage());
+            event.setCancelled(true);
         }
     }
 }
