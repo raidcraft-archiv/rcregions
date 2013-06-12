@@ -1,6 +1,10 @@
 package com.raidcraft.rcregions.util;
 
-import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.RegionsPlugin;
+import com.raidcraft.rcregions.api.Region;
+import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
+import de.raidcraft.RaidCraft;
+import de.raidcraft.util.CustomItemUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 
@@ -15,14 +19,52 @@ public class RegionUtil {
     public static final int REGION_ID_LINE_INDEX = 1;
     public static final Pattern REGION_ID_PATTERN = Pattern.compile("^(Region|Id): ([a-zA-Z0-9]+)$");
 
-    public static String parseRegionName(Sign sign) throws UnknownRegionException {
+    public static String parseRegionName(Sign sign) throws WrongSignFormatException {
 
-        String line = ChatColor.stripColor(sign.getLine(REGION_ID_LINE_INDEX));
+        return parseRegionName(sign.getLines());
+    }
+
+    public static String parseRegionName(String[] lines) throws WrongSignFormatException {
+
+        String line = ChatColor.stripColor(lines[REGION_ID_LINE_INDEX]);
         Matcher matcher = REGION_ID_PATTERN.matcher(line);
         if (matcher.matches()) {
             return matcher.group(2);
         }
-        throw new UnknownRegionException("Das Schild an Position "
-                + sign.getX() + "," + sign.getY() + "," + sign.getZ() + " ist ungültig formattiert.");
+        throw new WrongSignFormatException("Das Schild ist ein ungültig formattiertes Regions Schild. Bitte setzte es neu!");
+    }
+
+    public static String[] formatSign(Region region) {
+
+        String[] lines = new String[4];
+        StringBuilder sb = new StringBuilder();
+        if (region.getPrice() > 0) {
+            sb.append(CustomItemUtil.getSellPriceString(region.getPrice()));
+        } else {
+            sb.append(ChatColor.GREEN).append("Kostenlos");
+        }
+        lines[0] = sb.toString();
+
+        sb = new StringBuilder("Id: ");
+        if (region.isBuyable()) {
+            sb.append(ChatColor.RED);
+        } else {
+            sb.append(ChatColor.GREEN);
+        }
+        sb.append(region.getName());
+        lines[1] = sb.toString();
+
+        sb = new StringBuilder("~ ");
+        if (region.hasOwner()) {
+            sb.append(region.getOwner());
+        } else {
+            sb.append("Server");
+        }
+        sb.append(" ~");
+        lines[2] = sb.toString();
+
+        lines[3] = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer;
+
+        return lines;
     }
 }

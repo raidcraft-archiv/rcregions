@@ -1,11 +1,13 @@
 package com.raidcraft.rcregions.exceptions;
 
+import de.raidcraft.api.RaidCraftException;
+
 /**
  * 02.01.12 - 16:37
  *
  * @author Silthus
  */
-public class RegionException extends Throwable {
+public class RegionException extends RaidCraftException {
 
     /**
      * Constructs a new throwable with {@code null} as its detail message.

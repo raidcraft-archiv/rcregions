@@ -5,7 +5,11 @@ import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
+import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.api.BasePlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,12 +30,12 @@ public class RegionsPlugin extends BasePlugin {
         // load all configs
         mainConfig = configure(new MainConfig(this), true);
         districtConfig = configure(new DistrictConfig(this), false);
-        // init our manager
-        regionManager = new RegionManager(this);
+        // we need to init the district manager first because this will load all of the regions
         districtManager = new DistrictManager(this);
+        regionManager = new RegionManager(this);
 
-        registerEvents(new RCBlockListener());
-        registerEvents(new RCPlayerListener());
+        registerEvents(new RCBlockListener(this));
+        registerEvents(new RCPlayerListener(this));
 
         registerCommands(RegionCommand.class);
     }
@@ -47,6 +51,14 @@ public class RegionsPlugin extends BasePlugin {
         getDistrictConfig().reload();
         getRegionManager().reload();
         getDistrictManager().reload();
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+
+        ArrayList<Class<?>> tables = new ArrayList<>();
+        tables.add(TRegion.class);
+        return tables;
     }
 
     public RegionManager getRegionManager() {

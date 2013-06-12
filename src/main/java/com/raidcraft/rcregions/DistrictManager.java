@@ -1,40 +1,45 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.api.District;
+import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
+import de.raidcraft.util.StringUtils;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 21.01.12 - 10:21
- *
  * @author Silthus
  */
-public final class DistrictManager implements Component {
+public class DistrictManager implements Component {
 
     private final RegionsPlugin plugin;
-    private final HashMap<String, District> districts = new HashMap<>();
+    private final Map<String, District> districts = new HashMap<>();
 
     protected DistrictManager(RegionsPlugin plugin) {
 
         this.plugin = plugin;
         RaidCraft.registerComponent(DistrictManager.class, this);
-        load();
-    }
-
-    private void load() {
-
-        for (String district : plugin.getDistrictConfig().getDistricts()) {
-            districts.put(district, new District(district));
-        }
+        loadDistricts();
     }
 
     public void reload() {
 
         districts.clear();
-        load();
+        loadDistricts();
+    }
+
+    private void loadDistricts() {
+
+        DistrictConfig config = plugin.getDistrictConfig();
+        for (String key : config.getKeys(false)) {
+            ConfigurationSection section = config.getConfigurationSection(key);
+            districts.put(key, new SimpleDistrict(key, section));
+            plugin.getLogger().info("Loaded district: " + key);
+        }
     }
 
     public District getDistrict(String name) throws UnknownDistrictException {
@@ -42,26 +47,18 @@ public final class DistrictManager implements Component {
         if (districts.containsKey(name)) {
             return districts.get(name);
         }
-        if (plugin.getDistrictConfig().getDistricts().contains(name)) {
-            District district = new District(name);
-            districts.put(name, district);
-            return district;
-        }
-        throw new UnknownDistrictException("The district with the name " + name + " is not configured!");
+        throw new UnknownDistrictException("District with the name " + name + " does not exist!");
     }
 
-    public District getDistrictFromIdentifier(String identifier) {
+    public District parseDistrict(String regionName) throws UnknownDistrictException {
 
+        regionName = StringUtils.formatName(regionName);
+        // lets go thru all districts and check if the region name has a registered identifier
         for (District district : districts.values()) {
-            if (district.getIdentifier().equalsIgnoreCase(identifier)) {
+            if (regionName.startsWith(district.getIdentifier())) {
                 return district;
             }
         }
-        return null;
-    }
-
-    public Map<String, District> getDistricts() {
-
-        return districts;
+        throw new UnknownDistrictException("Es gibt keinen Distrikt dem die Region " + regionName + " zugeordnet werden kann.");
     }
 }
