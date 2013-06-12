@@ -49,7 +49,7 @@ public class RCPlayerListener implements Listener {
             Region region = plugin.getRegionManager().getRegion(regionName);
             // lets check if the player already owns the region
             // if yes toggle the buyable status
-            if (region.getOwner().equalsIgnoreCase(player.getName())) {
+            if (region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) {
                 if (region.isBuyable()) {
                     player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück nicht mehr zum Verkauf anbieten willst?");

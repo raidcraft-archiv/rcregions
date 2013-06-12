@@ -113,7 +113,7 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
-                if (!region.isBuyable() || region.getOwner().equalsIgnoreCase(sender.getName())) {
+                if (!region.isBuyable() || (region.getOwner() != null && region.getOwner().equalsIgnoreCase(sender.getName()))) {
                     throw new CommandException("Du kannst diese Region nicht kaufen.");
                 }
                 if (region.getPrice() > 0 && !RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
