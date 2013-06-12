@@ -57,9 +57,9 @@ public class RCPlayerListener implements Listener {
                     player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück zum Verkauf anbieten willst?");
                 }
-                new QueuedCommand(player, this, "toggleRegionBuyableState", player, region).run();
+                new QueuedCommand(player, this, "toggleRegionBuyableState", player, region, sign).run();
             } else if (!region.isBuyable()) {
-                player.sendMessage(ChatColor.RED + "Du kannst dieses Grundstück nicht kaufen.");
+                player.sendMessage(ChatColor.RED + "Dieses Grunstück steht nicht zum Verkauf.");
             } else {
                 if (region.getPrice() > 0) {
                     if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
@@ -73,7 +73,7 @@ public class RCPlayerListener implements Listener {
                 } else {
                     player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück erwerben möchtest?");
                 }
-                new QueuedCommand(player, this, "buyRegion", player, region).run();
+                new QueuedCommand(player, this, "buyRegion", player, region, sign).run();
             }
         } catch (WrongSignFormatException e) {
             player.sendMessage(ChatColor.RED + e.getMessage());
@@ -89,15 +89,17 @@ public class RCPlayerListener implements Listener {
         }
     }
 
-    public void buyRegion(Player player, Region region) {
+    public void buyRegion(Player player, Region region, Sign sign) {
 
         // delegate
         plugin.getRegionManager().buyRegion(player, region);
+        RegionUtil.updateSign(sign, region);
     }
 
-    public void toggleRegionBuyableState(Player player, Region region) {
+    public void toggleRegionBuyableState(Player player, Region region, Sign sign) {
 
         // delegate
         plugin.getRegionManager().toggleRegionBuyableState(player, region);
+        RegionUtil.updateSign(sign, region);
     }
 }

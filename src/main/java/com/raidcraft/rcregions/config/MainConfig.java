@@ -16,7 +16,7 @@ public class MainConfig extends ConfigurationBase<RegionsPlugin> {
         super(plugin, "config.yml");
     }
 
-    @Setting("signIdentifier")
+    @Setting("sign-identifier")
     public String sign_identitifer = "Region";
     @Setting("tool-id")
     public int tool_id = 340;

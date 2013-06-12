@@ -37,6 +37,15 @@ public class RegionUtil {
         throw new WrongSignFormatException("Das Schild ist ein ungültig formattiertes Regions Schild. Bitte setzte es neu!");
     }
 
+    public static void updateSign(Sign sign, Region region) {
+
+        String[] lines = formatSign(region);
+        for (int i = 0; i < 4; i++) {
+            sign.setLine(i, lines[i]);
+        }
+        sign.update(true, false);
+    }
+
     public static String[] formatSign(Region region) {
 
         String[] lines = new String[4];
@@ -57,16 +66,22 @@ public class RegionUtil {
         sb.append(region.getName());
         lines[1] = sb.toString();
 
-        sb = new StringBuilder("~ ");
+        sb = new StringBuilder();
         if (region.hasOwner()) {
             sb.append(region.getOwner());
         } else {
             sb.append("Server");
         }
-        sb.append(" ~");
         lines[2] = sb.toString();
 
-        lines[3] = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer;
+        sb = new StringBuilder();
+        if (region.isBuyable()) {
+            sb.append(ChatColor.RED);
+        } else {
+            sb.append(ChatColor.GREEN);
+        }
+        sb.append(RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer);
+        lines[3] = sb.toString();
 
         return lines;
     }
