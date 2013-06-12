@@ -59,9 +59,9 @@ public class RegionUtil {
 
         sb = new StringBuilder("Id: ");
         if (region.isBuyable()) {
-            sb.append(ChatColor.RED);
-        } else {
             sb.append(ChatColor.GREEN);
+        } else {
+            sb.append(ChatColor.RED);
         }
         sb.append(region.getName());
         lines[1] = sb.toString();
@@ -76,9 +76,9 @@ public class RegionUtil {
 
         sb = new StringBuilder();
         if (region.isBuyable()) {
-            sb.append(ChatColor.RED);
-        } else {
             sb.append(ChatColor.GREEN);
+        } else {
+            sb.append(ChatColor.RED);
         }
         sb.append(RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer);
         lines[3] = sb.toString();
