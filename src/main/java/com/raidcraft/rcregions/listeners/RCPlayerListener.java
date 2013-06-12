@@ -57,7 +57,7 @@ public class RCPlayerListener implements Listener {
                     player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück zum Verkauf anbieten willst?");
                 }
-                new QueuedCommand(player, this, "toggleRegionBuyableState", player, region, sign).run();
+                new QueuedCommand(player, this, "toggleRegionBuyableState", player, region, sign);
             } else if (!region.isBuyable()) {
                 player.sendMessage(ChatColor.RED + "Dieses Grundstück steht nicht zum Verkauf.");
             } else {
@@ -73,7 +73,7 @@ public class RCPlayerListener implements Listener {
                 } else {
                     player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück erwerben möchtest?");
                 }
-                new QueuedCommand(player, this, "buyRegion", player, region, sign).run();
+                new QueuedCommand(player, this, "buyRegion", player, region, sign);
             }
         } catch (WrongSignFormatException e) {
             player.sendMessage(ChatColor.RED + e.getMessage());
