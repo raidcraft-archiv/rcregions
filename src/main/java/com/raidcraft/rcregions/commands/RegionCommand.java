@@ -54,6 +54,17 @@ public class RegionCommand {
         }
 
         @Command(
+                aliases = {"reload"},
+                desc = "Reloads the plugin"
+        )
+        @CommandPermissions("rcregions.reload")
+        public void reload(CommandContext args, CommandSender sender) {
+
+            plugin.reload();
+            sender.sendMessage(ChatColor.GREEN + "Es wurden alle Regionen und Distrikte erfolgreich neugeladen.");
+        }
+
+        @Command(
                 aliases = {"warp"},
                 desc = "Warps the region",
                 min = 1,
