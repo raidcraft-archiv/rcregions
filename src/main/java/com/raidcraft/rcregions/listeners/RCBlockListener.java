@@ -44,8 +44,14 @@ public class RCBlockListener implements Listener {
             return;
         }
         try {
+            Region region;
             String regionName = RegionUtil.parseRegionName(event.getLines());
-            Region region = plugin.getRegionManager().getRegion(regionName);
+            if (regionName == null || regionName.equals("")) {
+                // try to parse by location
+                region = plugin.getRegionManager().getRegion(event.getBlock().getLocation());
+            } else {
+                region = plugin.getRegionManager().getRegion(regionName);
+            }
             String[] lines = RegionUtil.formatSign(region);
             // update the lines with the region information
             for (int i = 0; i < 4; i++) {

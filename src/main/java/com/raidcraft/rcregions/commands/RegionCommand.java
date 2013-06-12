@@ -152,7 +152,8 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
-                if (region.getOwner() == null || !region.getOwner().equalsIgnoreCase(sender.getName())) {
+                if (!sender.hasPermission("rcregions.admin") &&
+                        (region.getOwner() == null || !region.getOwner().equalsIgnoreCase(sender.getName()))) {
                     throw new CommandException("Du bist nicht der Besitzer dieser Region.");
                 }
                 new QueuedCommand(player, this, "dropRegion", player, region);
