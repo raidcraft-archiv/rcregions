@@ -35,7 +35,6 @@ public class RegionManager implements Component {
 
         this.plugin = plugin;
         RaidCraft.registerComponent(RegionManager.class, this);
-        loadRegions();
     }
 
     public void reload() {

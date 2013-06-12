@@ -30,9 +30,9 @@ public class RegionsPlugin extends BasePlugin {
         // load all configs
         mainConfig = configure(new MainConfig(this), true);
         districtConfig = configure(new DistrictConfig(this), false);
-        // we need to init the district manager first because this will load all of the regions
-        districtManager = new DistrictManager(this);
+        // the region manager needs to init first because the district manager needs it
         regionManager = new RegionManager(this);
+        districtManager = new DistrictManager(this);
 
         registerEvents(new RCBlockListener(this));
         registerEvents(new RCPlayerListener(this));
