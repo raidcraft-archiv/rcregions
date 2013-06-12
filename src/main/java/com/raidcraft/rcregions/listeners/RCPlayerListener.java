@@ -1,11 +1,16 @@
 package com.raidcraft.rcregions.listeners;
 
 import com.raidcraft.rcregions.RegionsPlugin;
+import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.api.Region;
+import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
 import com.raidcraft.rcregions.util.RegionUtil;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
 import de.raidcraft.util.BlockUtil;
@@ -16,7 +21,10 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.Map;
 
 /**
  * 21.01.12 - 19:09
@@ -35,6 +43,48 @@ public class RCPlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
 
+        // lets check for the tool item
+        Player player = event.getPlayer();
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null && event.getItem().getTypeId() == plugin.getMainConfig().tool_id) {
+            // show the region information and worldguard stuff
+            if (player.hasPermission("rcregions.info")) {
+                try {
+                    Region region = plugin.getRegionManager().getRegion(event.getClickedBlock().getLocation());
+                    RegionCommand.showRegionInfo(player, region);
+                } catch (UnknownRegionException e) {
+                    player.sendMessage(ChatColor.RED + e.getMessage());
+                    if (player.hasPermission("rcregions.info.worldguard")) {
+                        //print region info
+                        ApplicableRegionSet applicableRegionSet = WorldGuardManager.getLocalRegions(event.getClickedBlock().getLocation());
+                        if (applicableRegionSet.size() != 0) {
+                            player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
+                            player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "WorldGuard Regions Informationen:");
+                            for (ProtectedRegion region : applicableRegionSet) {
+                                player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
+                                player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "ID: " + ChatColor.GOLD + (region.getId()));
+                                if (region.getOwners().size() > 0) {
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Owner: " + ChatColor.YELLOW + region.getOwners().toUserFriendlyString());
+                                }
+                                if (region.getMembers().size() > 0) {
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Member: " + ChatColor.YELLOW + region.getMembers().toUserFriendlyString());
+                                }
+                                String flags = "";
+                                for (Map.Entry<Flag<?>, Object> flag : region.getFlags().entrySet()) {
+                                    if (flags.length() > 0)
+                                        flags += ChatColor.WHITE + ", ";
+                                    flags += ChatColor.GOLD + flag.getKey().getName() + ": " + ChatColor.YELLOW + flag.getValue().toString();
+                                }
+                                if (flags.length() > 0) {
+                                    player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Flags: " + ChatColor.YELLOW + flags);
+                                }
+                            }
+                            player.sendMessage(ChatColor.YELLOW + "| " + "---------------------------------------");
+                        }
+                    }
+                }
+            }
+            return;
+        }
         if (!SignUtil.isSign(event.getClickedBlock())) {
             return;
         }
@@ -43,7 +93,6 @@ public class RCPlayerListener implements Listener {
         if (!SignUtil.isLineEqual(sign.getLine(3), plugin.getMainConfig().sign_identitifer)) {
             return;
         }
-        Player player = event.getPlayer();
         try {
             String regionName = RegionUtil.parseRegionName(sign);
             Region region = plugin.getRegionManager().getRegion(regionName);

@@ -29,5 +29,7 @@ public class SimpleRegion extends AbstractRegion {
         region.setPrice(getPrice());
         region.setBuyable(isBuyable());
         database.update(region);
+        // also save the worldguard stuff
+        WorldGuardManager.save();
     }
 }
