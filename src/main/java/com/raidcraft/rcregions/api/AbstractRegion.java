@@ -59,6 +59,7 @@ public abstract class AbstractRegion implements Region {
         region.setOwners(owners);
         // update our reference
         owner = player.getName();
+        buyable = false;
         save();
     }
 
