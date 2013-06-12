@@ -11,8 +11,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
 import de.raidcraft.util.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -118,7 +120,14 @@ public class RegionManager implements Component {
 
     public void buyRegion(Player player, Region region) {
 
-
+        region.buy(player);
+        // lets check for command we need to execute
+        ConfigurationSection section = plugin.getDistrictConfig().getConfigurationSection(region.getDistrict().getName());
+        if (section != null && section.isSet("command-on-claim")) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), section.getString("command-on-claim"));
+        }
+        player.sendMessage(ChatColor.GREEN + "Du hast das Grundstück "
+                + ChatColor.AQUA + region.getName() + ChatColor.GREEN + " erfolgreich erworben.");
     }
 
     public void toggleRegionBuyableState(Player player, Region region) {
