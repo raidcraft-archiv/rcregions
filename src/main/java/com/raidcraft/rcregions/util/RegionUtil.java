@@ -5,6 +5,7 @@ import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.util.CustomItemUtil;
+import de.raidcraft.util.SignUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 
@@ -30,6 +31,8 @@ public class RegionUtil {
         Matcher matcher = REGION_ID_PATTERN.matcher(line);
         if (matcher.matches()) {
             return matcher.group(2);
+        } else if (SignUtil.isLineEqual(lines[0], RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().sign_identitifer)) {
+            return line.toLowerCase();
         }
         throw new WrongSignFormatException("Das Schild ist ein ungültig formattiertes Regions Schild. Bitte setzte es neu!");
     }
