@@ -81,7 +81,14 @@ public class RCPlayerListener implements Listener {
                         String owner = region.getOwner();
                         if (owner == null) owner = "";
                         if (!(player.hasPermission("rcregions.admin")) && owner.equalsIgnoreCase("")) {
-                            player.sendMessage(ChatColor.RED + "Dieses Grundstück wird vom Server verwaltet.");
+                            plugin.getRegionManager().updateSign(sign, region);
+                            if (region.isBuyable()) {
+                                double price = plugin.getRegionManager().getFullPrice(player, region);
+                                player.sendMessage(ChatColor.YELLOW + "Gebe \"/rcr -b " + region.getName() + "\" ein um die Region zu kaufen.");
+                                player.sendMessage(ChatColor.YELLOW + "Grundpreis: " + RaidCraft.getEconomy().getFormattedAmount(region.getBasePrice()));
+                                player.sendMessage(ChatColor.YELLOW + "Preis inkl. Steuern("
+                                        + ChatColor.GREEN + plugin.getRegionManager().getTaxes(player, region) * 100 + "%" + ChatColor.YELLOW + "): " + RaidCraft.getEconomy().getFormattedAmount(price));
+                            }
                             event.setCancelled(true);
                             return;
                         }
