@@ -43,41 +43,48 @@ public class RCPlayerListener implements Listener {
         if (!SignUtil.isLineEqual(sign.getLine(3), plugin.getMainConfig().sign_identitifer)) {
             return;
         }
+        Player player = event.getPlayer();
         try {
             String regionName = RegionUtil.parseRegionName(sign);
             Region region = plugin.getRegionManager().getRegion(regionName);
             // lets check if the player already owns the region
             // if yes toggle the buyable status
-            if (region.getOwner().equalsIgnoreCase(event.getPlayer().getName())) {
+            if (region.getOwner().equalsIgnoreCase(player.getName())) {
                 if (region.isBuyable()) {
-                    event.getPlayer().sendMessage(ChatColor.RED
+                    player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück nicht mehr zum Verkauf anbieten willst?");
                 } else {
-                    event.getPlayer().sendMessage(ChatColor.RED
+                    player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück zum Verkauf anbieten willst?");
                 }
-                new QueuedCommand(event.getPlayer(), this, "toggleRegionBuyableState", event.getPlayer(), region).run();
+                new QueuedCommand(player, this, "toggleRegionBuyableState", player, region).run();
             } else if (!region.isBuyable()) {
-                event.getPlayer().sendMessage(ChatColor.RED + "Du kannst dieses Grundstück nicht kaufen.");
+                player.sendMessage(ChatColor.RED + "Du kannst dieses Grundstück nicht kaufen.");
             } else {
                 if (region.getPrice() > 0) {
-                    event.getPlayer().sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück für "
+                    if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
+                        player.sendMessage(ChatColor.RED + "Du hast nicht genug Geld um dises Grundstück zu kaufen. " +
+                                "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
+                        event.setCancelled(true);
+                        return;
+                    }
+                    player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück für "
                             + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()) + ChatColor.RED + " kaufen möchtest?");
                 } else {
-                    event.getPlayer().sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück erwerben möchtest?");
+                    player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück erwerben möchtest?");
                 }
-                new QueuedCommand(event.getPlayer(), this, "buyRegion", event.getPlayer(), region).run();
+                new QueuedCommand(player, this, "buyRegion", player, region).run();
             }
         } catch (WrongSignFormatException e) {
-            event.getPlayer().sendMessage(ChatColor.RED + e.getMessage());
+            player.sendMessage(ChatColor.RED + e.getMessage());
             BlockUtil.destroyBlock(sign.getBlock());
         } catch (UnknownDistrictException | UnknownRegionException e) {
-            event.getPlayer().sendMessage(ChatColor.RED + e.getMessage());
+            player.sendMessage(ChatColor.RED + e.getMessage());
         } catch (NoSuchMethodException e) {
             RaidCraft.LOGGER.warning(e.getMessage());
             e.printStackTrace();
         }
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE && !event.getPlayer().isSneaking()) {
+        if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
             event.setCancelled(true);
         }
     }

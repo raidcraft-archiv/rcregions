@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
+import de.raidcraft.api.economy.BalanceSource;
 import de.raidcraft.util.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -120,7 +121,11 @@ public class RegionManager implements Component {
 
     public void buyRegion(Player player, Region region) {
 
-        region.buy(player);
+        if (region.getPrice() > 0) {
+            // lets substract the cost
+            RaidCraft.getEconomy().substract(player.getName(), region.getPrice(), BalanceSource.BUY_REGION, region.getName());
+        }
+        region.claim(player);
         // lets check for command we need to execute
         ConfigurationSection section = plugin.getDistrictConfig().getConfigurationSection(region.getDistrict().getName());
         if (section != null && section.isSet("command-on-claim")) {

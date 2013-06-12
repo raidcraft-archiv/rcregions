@@ -29,7 +29,7 @@ public interface Region {
 
     public void setPrice(double price);
 
-    public void buy(Player player);
+    public void claim(Player player);
 
     public void save();
 }

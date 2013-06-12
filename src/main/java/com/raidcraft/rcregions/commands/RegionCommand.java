@@ -113,6 +113,13 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
+                if (!region.isBuyable() || region.getOwner().equalsIgnoreCase(sender.getName())) {
+                    throw new CommandException("Du kannst diese Region nicht kaufen.");
+                }
+                if (region.getPrice() > 0 && !RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
+                    throw new CommandException("Du hast nicht genug Geld um das Grundstück zu kaufen. " +
+                            "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
+                }
                 plugin.getRegionManager().buyRegion(player, region);
             } catch (RegionException e) {
                 throw new CommandException(e.getMessage());

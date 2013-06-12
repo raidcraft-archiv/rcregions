@@ -48,7 +48,7 @@ public abstract class AbstractRegion implements Region {
     }
 
     @Override
-    public void buy(Player player) {
+    public void claim(Player player) {
 
         // first lets clear out all owners and members
         region.setMembers(new DefaultDomain());
