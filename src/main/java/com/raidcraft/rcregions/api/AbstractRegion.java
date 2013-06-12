@@ -19,7 +19,7 @@ public abstract class AbstractRegion implements Region {
     private final District district;
     private final ProtectedRegion region;
     private String owner = null;
-    private boolean buyable = false;
+    private boolean buyable = true;
     private double price;
 
     public AbstractRegion(int id, ProtectedRegion region, District district) {

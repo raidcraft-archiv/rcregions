@@ -3,12 +3,14 @@ package com.raidcraft.rcregions;
 import com.raidcraft.rcregions.api.District;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
 import de.raidcraft.util.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +39,20 @@ public class DistrictManager implements Component {
         DistrictConfig config = plugin.getDistrictConfig();
         for (String key : config.getKeys(false)) {
             ConfigurationSection section = config.getConfigurationSection(key);
-            districts.put(key, new SimpleDistrict(key, section));
+            SimpleDistrict district = new SimpleDistrict(key, section);
+            districts.put(key, district);
+            // load all of the regions defined in the database
+            List<TRegion> regions = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class)
+                    .where().eq("district", district.getName()).findList();
+            RegionManager regionManager = RaidCraft.getComponent(RegionManager.class);
+            for (TRegion tRegion : regions) {
+                try {
+                    district.addRegion(regionManager.createRegion(tRegion));
+                } catch (UnknownDistrictException e) {
+                    // this should never ever occur
+                    e.printStackTrace();
+                }
+            }
             plugin.getLogger().info("Loaded district: " + key);
         }
     }
