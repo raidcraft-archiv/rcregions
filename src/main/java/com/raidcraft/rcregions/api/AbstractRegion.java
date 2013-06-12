@@ -63,6 +63,16 @@ public abstract class AbstractRegion implements Region {
     }
 
     @Override
+    public void drop() {
+
+        region.setMembers(new DefaultDomain());
+        region.setOwners(new DefaultDomain());
+        owner = null;
+        buyable = true;
+        save();
+    }
+
+    @Override
     public int getId() {
 
         return id;

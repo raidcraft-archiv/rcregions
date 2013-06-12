@@ -139,6 +139,14 @@ public class RegionManager implements Component {
                 + ChatColor.AQUA + region.getName() + ChatColor.GREEN + " erfolgreich erworben.");
     }
 
+    public void dropRegion(Player player, Region region) {
+
+        region.drop();
+        // lets check for command we need to execute
+        player.sendMessage(ChatColor.RED + "Du hast das Grundstück "
+                + ChatColor.AQUA + region.getName() + ChatColor.RED + " erfolgreich freigegeben.");
+    }
+
     public void toggleRegionBuyableState(Player player, Region region) {
 
         region.setBuyable(!region.isBuyable());

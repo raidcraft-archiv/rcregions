@@ -31,5 +31,7 @@ public interface Region {
 
     public void claim(Player player);
 
+    public void drop();
+
     public void save();
 }

@@ -15,6 +15,7 @@ import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.minecraft.util.commands.NestedCommand;
 import com.sk89q.worldedit.BlockVector;
 import de.raidcraft.RaidCraft;
+import de.raidcraft.api.commands.QueuedCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -116,15 +117,64 @@ public class RegionCommand {
                 if (!region.isBuyable() || (region.getOwner() != null && region.getOwner().equalsIgnoreCase(sender.getName()))) {
                     throw new CommandException("Du kannst diese Region nicht kaufen.");
                 }
-                if (region.getPrice() > 0 && !RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
-                    throw new CommandException("Du hast nicht genug Geld um das Grundstück zu kaufen. " +
-                            "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
+                if (region.getPrice() > 0) {
+                    if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
+                        throw new CommandException(ChatColor.RED + "Du hast nicht genug Geld um dises Grundstück zu kaufen. " +
+                                "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
+                    }
+                    player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück für "
+                            + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()) + ChatColor.RED + " kaufen möchtest?");
+                } else {
+                    player.sendMessage(ChatColor.RED + "Bist du dir sicher, dass du dieses Grundstück erwerben möchtest?");
                 }
-                plugin.getRegionManager().buyRegion(player, region);
+                new QueuedCommand(player, this, "buyRegion", player, region);
             } catch (RegionException e) {
                 throw new CommandException(e.getMessage());
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(e.getMessage());
+                e.printStackTrace();
             }
         }
+
+        @Command(
+                aliases = {"drop", "sell"},
+                desc = "Drops the Region making it available"
+        )
+        @CommandPermissions("rcregions.region.drop")
+        public void dropRegion(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = (Player) sender;
+            Region region;
+
+            try {
+                if (args.argsLength() > 0) {
+                    region = plugin.getRegionManager().getRegion(args.getString(0));
+                } else {
+                    region = plugin.getRegionManager().getRegion(player.getLocation());
+                }
+                if (region.getOwner() == null || !region.getOwner().equalsIgnoreCase(sender.getName())) {
+                    throw new CommandException("Du bist nicht der Besitzer dieser Region.");
+                }
+                new QueuedCommand(player, this, "dropRegion", player, region);
+            } catch (RegionException e) {
+                throw new CommandException(e.getMessage());
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void buyRegion(Player player, Region region) {
+
+        // delegate
+        plugin.getRegionManager().buyRegion(player, region);
+    }
+
+    public void dropRegion(Player player, Region region) {
+
+        // delegate
+        plugin.getRegionManager().dropRegion(player, region);
     }
 
     public static void showRegionInfo(Player player, Region region) {
