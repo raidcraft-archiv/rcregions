@@ -2,7 +2,7 @@ name: RCRegions
 version: 0.1
 author: Silthus
 website: www.raid-craft.de
-
+database: true
 main: com.raidcraft.rcregions.RegionsPlugin
 depend: [RaidCraft-API,WorldGuard]
 permissions:
