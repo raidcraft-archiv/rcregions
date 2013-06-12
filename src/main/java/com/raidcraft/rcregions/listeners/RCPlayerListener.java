@@ -75,6 +75,7 @@ public class RCPlayerListener implements Listener {
                 }
                 new QueuedCommand(player, this, "buyRegion", player, region, sign);
             }
+            RegionUtil.updateSign(sign, region);
         } catch (WrongSignFormatException e) {
             player.sendMessage(ChatColor.RED + e.getMessage());
             BlockUtil.destroyBlock(sign.getBlock());
