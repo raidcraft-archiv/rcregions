@@ -163,18 +163,18 @@ public class RegionCommand {
                 e.printStackTrace();
             }
         }
-    }
 
-    public void buyRegion(Player player, Region region) {
+        public void buyRegion(Player player, Region region) {
 
-        // delegate
-        plugin.getRegionManager().buyRegion(player, region);
-    }
+            // delegate
+            plugin.getRegionManager().buyRegion(player, region);
+        }
 
-    public void dropRegion(Player player, Region region) {
+        public void dropRegion(Player player, Region region) {
 
-        // delegate
-        plugin.getRegionManager().dropRegion(player, region);
+            // delegate
+            plugin.getRegionManager().dropRegion(player, region);
+        }
     }
 
     public static void showRegionInfo(Player player, Region region) {
