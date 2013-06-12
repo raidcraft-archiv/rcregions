@@ -124,7 +124,8 @@ public class RegionManager implements Component {
         // lets check for command we need to execute
         ConfigurationSection section = plugin.getDistrictConfig().getConfigurationSection(region.getDistrict().getName());
         if (section != null && section.isSet("command-on-claim")) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), section.getString("command-on-claim"));
+            String cmd = section.getString("command-on-claim").replace("%player%", player.getName());
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
         }
         player.sendMessage(ChatColor.GREEN + "Du hast das Grundstück "
                 + ChatColor.AQUA + region.getName() + ChatColor.GREEN + " erfolgreich erworben.");
