@@ -79,22 +79,26 @@ public class RegionManager implements Component {
             if (tRegion != null) {
                 return createRegion(tRegion);
             }
-            // lets check if the region is in a valid district
-            District district = plugin.getDistrictManager().parseDistrict(name);
-            // it seems so, or else an exception would be thrown
-            // so lets create a new database entry for the region
-            tRegion = new TRegion();
-            tRegion.setName(name);
-            tRegion.setDistrict(district.getName());
-            tRegion.setBuyable(false);
-            plugin.getDatabase().save(tRegion);
-            Region region = createRegion(tRegion);
-            tRegion.setOwner(region.getOwner());
-            tRegion.setPrice(region.getPrice());
-            plugin.getDatabase().update(tRegion);
-            return region;
+            // lets check if the region is in a valid district and exists in worldguard
+            if (WorldGuardManager.getRegion(name) != null) {
+                District district = plugin.getDistrictManager().parseDistrict(name);
+                // it seems so, or else an exception would be thrown
+                // so lets create a new database entry for the region
+                tRegion = new TRegion();
+                tRegion.setName(name);
+                tRegion.setDistrict(district.getName());
+                tRegion.setBuyable(false);
+                plugin.getDatabase().save(tRegion);
+                Region region = createRegion(tRegion);
+                tRegion.setOwner(region.getOwner());
+                tRegion.setPrice(region.getPrice());
+                plugin.getDatabase().update(tRegion);
+                return region;
+            }
+            throw new UnknownRegionException("Es gibt keine Region mit dem Namen: " + name);
+        } else {
+            return regions.get(name);
         }
-        throw new UnknownRegionException("Es gibt keine Region mit dem Namen: " + name);
     }
 
     public Region getRegion(Location location) throws UnknownRegionException {
