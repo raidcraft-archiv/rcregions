@@ -16,6 +16,7 @@ public class District {
 
     private final String name;
     private String identifier;
+    private String claimCommand;
     private boolean needsPermission;
     private double minPrice;
     private boolean dropable;
@@ -37,6 +38,7 @@ public class District {
 
         DistrictConfig.SingleDistrictConfig district = RaidCraft.getComponent(RegionsPlugin.class).getMainConfig().getDistrict(getName());
         this.identifier = district.getIdentifier();
+        this.claimCommand = district.getClaimCommand();
         this.minPrice = district.getMinPrice();
         this.dropable = district.isDropable();
         this.dropOnChange = district.dropRegionOnChange();
@@ -63,6 +65,11 @@ public class District {
     public String getIdentifier() {
 
         return identifier;
+    }
+
+    public String getClaimCommand() {
+
+        return claimCommand;
     }
 
     public double getMinPrice() {

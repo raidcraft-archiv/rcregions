@@ -154,6 +154,11 @@ public final class RegionManager implements Component {
             region.setOwner(player.getName());
             region.setBuyable(false);
             region.setAccessFlags(false);
+            // check if we need to execute a command
+            if (region.getDistrict().getClaimCommand() != null) {
+                Bukkit.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                        region.getDistrict().getClaimCommand().replace("%player%", player.getName()));
+            }
         }
     }
 

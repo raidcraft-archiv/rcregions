@@ -43,6 +43,11 @@ public class DistrictConfig extends ConfigurationBase<RegionsPlugin> {
             return name;
         }
 
+        public String getClaimCommand() {
+
+            return section.getString("claim-command", null);
+        }
+
         public String getIdentifier() {
 
             return section.getString("identifier");
