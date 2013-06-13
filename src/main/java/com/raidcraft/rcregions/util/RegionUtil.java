@@ -4,6 +4,8 @@ import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.exceptions.WrongSignFormatException;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.util.CustomItemUtil;
@@ -99,5 +101,19 @@ public class RegionUtil {
             return volume * pricePerBlock;
         }
         return 0;
+    }
+
+    public static void setRegionClaimedFlags(ProtectedRegion region) {
+
+        region.setFlag(DefaultFlag.CHEST_ACCESS, null);
+        region.setFlag(DefaultFlag.USE, null);
+        region.setFlag(DefaultFlag.BUILD, null);
+    }
+
+    public static void setRegionDroppedFlags(ProtectedRegion region) {
+
+        region.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.ALLOW);
+        region.setFlag(DefaultFlag.USE, StateFlag.State.ALLOW);
+        region.setFlag(DefaultFlag.BUILD, null);
     }
 }

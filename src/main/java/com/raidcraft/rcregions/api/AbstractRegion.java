@@ -60,6 +60,7 @@ public abstract class AbstractRegion implements Region {
         // update our reference
         owner = player.getName();
         buyable = false;
+        RegionUtil.setRegionClaimedFlags(region);
         save();
     }
 
@@ -70,6 +71,7 @@ public abstract class AbstractRegion implements Region {
         region.setOwners(new DefaultDomain());
         owner = null;
         buyable = true;
+        RegionUtil.setRegionDroppedFlags(region);
         save();
     }
 
