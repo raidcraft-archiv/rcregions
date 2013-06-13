@@ -315,7 +315,7 @@ public class RegionCommand {
 
         public void toggleRegion(CommandSender sender, Region region) {
 
-            region.setBuyable(region.isBuyable());
+            region.setBuyable(!region.isBuyable());
             if (region.isBuyable()) {
                 sender.sendMessage(ChatColor.GREEN + "Das Grundstück kann nun von anderen Spielern gekauft werden.");
             } else {
