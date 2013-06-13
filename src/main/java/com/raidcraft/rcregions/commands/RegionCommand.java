@@ -144,6 +144,43 @@ public class RegionCommand {
             }
         }
 
+
+        @Command(
+                aliases = {"toggle"},
+                desc = "Toggles the state of the region",
+                usage = "[region]"
+        )
+        @CommandPermissions("rcregions.region.toggle")
+        public void toggleRegion(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = (Player) sender;
+            Region region;
+            try {
+                if (args.argsLength() > 1) {
+                    region = plugin.getRegionManager().getRegion(args.getString(1));
+                } else {
+                    region = plugin.getRegionManager().getRegion(player.getLocation());
+                }
+                if (!sender.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(player.getName())) {
+                    throw new CommandException("Du musst der Besitzer des Grundstücks sein um den Verkaufsstatus zu ändern.");
+                }
+                if (region.isBuyable()) {
+                    player.sendMessage(ChatColor.RED
+                            + "Bist du dir sicher, dass du dieses Grundstück nicht mehr zum Verkauf anbieten willst?");
+                } else {
+                    player.sendMessage(ChatColor.RED
+                            + "Bist du dir sicher, dass du dieses Grundstück zum Verkauf anbieten willst?");
+                }
+                new QueuedCommand(sender, this, "toggleRegion", sender, region);
+            } catch (UnknownRegionException | UnknownDistrictException e) {
+                throw new CommandException(e.getMessage());
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+
         @Command(
                 aliases = {"give"},
                 desc = "Gives the region to the player",
@@ -268,6 +305,16 @@ public class RegionCommand {
         public void giveRegion(OfflinePlayer player, Region region) {
 
             region.claim(player);
+        }
+
+        public void toggleRegion(CommandSender sender, Region region) {
+
+            region.setBuyable(region.isBuyable());
+            if (region.isBuyable()) {
+                sender.sendMessage(ChatColor.GREEN + "Das Grundstück kann nun von anderen Spielern gekauft werden.");
+            } else {
+                sender.sendMessage(ChatColor.RED + "Das Grundstück kann nun nicht mehr von anderen Spielern gekauft werden.");
+            }
         }
     }
 
