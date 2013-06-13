@@ -115,7 +115,7 @@ public class RCPlayerListener implements Listener {
                 new QueuedCommand(player, this, "toggleRegionBuyableState", player, region, sign);
             } else if (!region.isBuyable()) {
                 player.sendMessage(ChatColor.RED + "Dieses Grundstück steht nicht zum Verkauf.");
-            } else if (region.getDistrict().getMaxRegionCount() >= plugin.getRegionManager().getPlayerRegionCount(player, region.getDistrict())) {
+            } else if (region.getDistrict().getMaxRegionCount() <= plugin.getRegionManager().getPlayerRegionCount(player, region.getDistrict())) {
                 player.sendMessage(ChatColor.RED + "Du hast bereits die maximale Anzahl an Grundstücken in diesem Distrikt erworben.");
             } else {
                 if (region.getPrice() > 0) {
