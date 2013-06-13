@@ -93,6 +93,12 @@ public class RCPlayerListener implements Listener {
         if (!SignUtil.isLineEqual(sign.getLine(3), plugin.getMainConfig().sign_identitifer)) {
             return;
         }
+        if (player.getGameMode() == GameMode.CREATIVE && player.isSneaking()) {
+            return;
+        }
+        if (player.getGameMode() == GameMode.CREATIVE) {
+            event.setCancelled(true);
+        }
         try {
             String regionName = RegionUtil.parseRegionName(sign);
             Region region = plugin.getRegionManager().getRegion(regionName);
@@ -135,9 +141,6 @@ public class RCPlayerListener implements Listener {
         } catch (NoSuchMethodException e) {
             RaidCraft.LOGGER.warning(e.getMessage());
             e.printStackTrace();
-        }
-        if (player.getGameMode() == GameMode.CREATIVE && !player.isSneaking()) {
-            event.setCancelled(true);
         }
     }
 
