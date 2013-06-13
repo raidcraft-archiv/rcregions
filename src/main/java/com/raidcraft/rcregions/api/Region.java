@@ -1,6 +1,6 @@
 package com.raidcraft.rcregions.api;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public interface Region {
 
     public void setPrice(double price);
 
-    public void claim(Player player);
+    public void claim(OfflinePlayer player);
 
     public void drop();
 

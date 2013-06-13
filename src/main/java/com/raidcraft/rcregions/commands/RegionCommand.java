@@ -8,6 +8,7 @@ import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
+import com.raidcraft.rcregions.tables.TRegion;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
@@ -16,10 +17,14 @@ import com.sk89q.minecraft.util.commands.NestedCommand;
 import com.sk89q.worldedit.BlockVector;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * 17.12.11 - 11:30
@@ -39,8 +44,9 @@ public class RegionCommand {
             aliases = {"rcr", "region"},
             desc = "Region Commands"
     )
-    @NestedCommand(value = NestedCommands.class)
+    @NestedCommand(value = NestedCommands.class, executeBody = true)
     public void nested(CommandContext args, CommandSender sender) {
+
 
     }
 
@@ -106,6 +112,45 @@ public class RegionCommand {
                 RegionCommand.showRegionInfo(player, region);
             } catch (UnknownRegionException | UnknownDistrictException e) {
                 throw new CommandException(e.getMessage());
+            }
+        }
+
+        @Command(
+                aliases = {"give"},
+                desc = "Gives the region to the player",
+                min = 1,
+                usage = "<player> [region]"
+        )
+        @CommandPermissions("rcregions.region.give")
+        public void giveRegion(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player owner = (Player) sender;
+            OfflinePlayer newOwner = Bukkit.getPlayer(args.getString(0));
+            // lets check in the db if the player exists or if he is online
+            if (newOwner == null) {
+                List<TRegion> player = plugin.getDatabase().find(TRegion.class).where().eq("player", args.getString(0)).findList();
+                if (player.isEmpty()) {
+                    throw new CommandException("Der Spieler muss online sein oder bereits ein Grundstück besitzen.");
+                }
+                newOwner = Bukkit.getOfflinePlayer(args.getString(0));
+            }
+
+            Region region;
+            try {
+                if (args.argsLength() > 1) {
+                    region = plugin.getRegionManager().getRegion(args.getString(1));
+                } else {
+                    region = plugin.getRegionManager().getRegion(owner.getLocation());
+                }
+                if (!sender.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(owner.getName())) {
+                    throw new CommandException("Du musst der Besitzer des Grundstücks sein um es an andere Spieler zu vergeben.");
+                }
+                new QueuedCommand(sender, this, "giveRegion", newOwner, region);
+            } catch (UnknownRegionException | UnknownDistrictException e) {
+                throw new CommandException(e.getMessage());
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(e.getMessage());
+                e.printStackTrace();
             }
         }
 
@@ -189,6 +234,11 @@ public class RegionCommand {
 
             // delegate
             plugin.getRegionManager().dropRegion(player, region);
+        }
+
+        public void giveRegion(OfflinePlayer player, Region region) {
+
+            region.claim(player);
         }
     }
 

@@ -3,7 +3,7 @@ package com.raidcraft.rcregions.api;
 import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public abstract class AbstractRegion implements Region {
     }
 
     @Override
-    public void claim(Player player) {
+    public void claim(OfflinePlayer player) {
 
         // first lets clear out all owners and members
         region.setMembers(new DefaultDomain());
