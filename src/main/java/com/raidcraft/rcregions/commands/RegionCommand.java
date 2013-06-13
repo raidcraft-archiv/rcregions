@@ -128,6 +128,9 @@ public class RegionCommand {
                 if (!region.isBuyable() || (region.getOwner() != null && region.getOwner().equalsIgnoreCase(sender.getName()))) {
                     throw new CommandException("Du kannst diese Region nicht kaufen.");
                 }
+                if (region.getDistrict().getMaxRegionCount() >= plugin.getRegionManager().getPlayerRegionCount(player, region.getDistrict())) {
+                    throw new CommandException("Du hast bereits die maximale Anzahl an Grundstücken in diesem Distrikt erworben.");
+                }
                 if (region.getPrice() > 0) {
                     if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
                         throw new CommandException(ChatColor.RED + "Du hast nicht genug Geld um dises Grundstück zu kaufen. " +

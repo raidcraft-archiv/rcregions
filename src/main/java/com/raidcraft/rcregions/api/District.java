@@ -23,4 +23,6 @@ public interface District {
     public double getPricePerBlock();
 
     public boolean isDefaultBuyable();
+
+    public int getMaxRegionCount();
 }

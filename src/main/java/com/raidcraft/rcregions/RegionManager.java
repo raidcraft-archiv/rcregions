@@ -169,4 +169,12 @@ public class RegionManager implements Component {
             player.sendMessage(ChatColor.GREEN + "Dein Grundstück kann nun nicht mehr von anderen Spielern gekauft werden.");
         }
     }
+
+    public int getPlayerRegionCount(Player player, District district) {
+
+        return plugin.getDatabase().find(TRegion.class)
+                .where()
+                .eq("owner", player.getName())
+                .eq("district", district.getName()).findList().size();
+    }
 }

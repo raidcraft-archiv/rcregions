@@ -17,6 +17,7 @@ public abstract class AbstractDistrict implements District {
     private final Set<String> applicableWorlds = new HashSet<>();
     private final double pricePerBlock;
     private final boolean defaultBuyable;
+    private final int maxRegionCount;
 
     public AbstractDistrict(String name, ConfigurationSection config) {
 
@@ -26,6 +27,7 @@ public abstract class AbstractDistrict implements District {
         this.pricePerBlock = config.getDouble("price-per-block", 0.0);
         this.description = config.getString("description");
         this.defaultBuyable = config.getBoolean("default-buyable", true);
+        this.maxRegionCount = config.getInt("max-regions", 1);
         this.applicableWorlds.addAll(config.getStringList("worlds"));
     }
 
@@ -69,5 +71,11 @@ public abstract class AbstractDistrict implements District {
     public boolean isDefaultBuyable() {
 
         return defaultBuyable;
+    }
+
+    @Override
+    public int getMaxRegionCount() {
+
+        return maxRegionCount;
     }
 }
