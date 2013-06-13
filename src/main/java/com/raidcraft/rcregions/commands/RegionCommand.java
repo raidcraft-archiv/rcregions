@@ -211,7 +211,7 @@ public class RegionCommand {
                 if (!sender.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(owner.getName())) {
                     throw new CommandException("Du musst der Besitzer des Grundstücks sein um es an andere Spieler zu vergeben.");
                 }
-                new QueuedCommand(sender, this, "giveRegion", newOwner, region);
+                new QueuedCommand(sender, this, "giveRegion", sender, newOwner, region);
             } catch (UnknownRegionException | UnknownDistrictException e) {
                 throw new CommandException(e.getMessage());
             } catch (NoSuchMethodException e) {
@@ -302,9 +302,15 @@ public class RegionCommand {
             plugin.getRegionManager().dropRegion(player, region);
         }
 
-        public void giveRegion(OfflinePlayer player, Region region) {
+        public void giveRegion(CommandSender sender, OfflinePlayer player, Region region) {
 
             region.claim(player);
+            sender.sendMessage(ChatColor.GREEN + "Du hast dein Grundstück " + ChatColor.AQUA + region.getName()
+                    + ChatColor.GREEN + " erfolgreich an " + player.getName() + " übertragen.");
+            if (player.isOnline()) {
+                player.getPlayer().sendMessage(ChatColor.GREEN + sender.getName() + " hat dir sein Grundstück "
+                        + ChatColor.AQUA + region.getName() + ChatColor.GREEN + " übertragen.");
+            }
         }
 
         public void toggleRegion(CommandSender sender, Region region) {
