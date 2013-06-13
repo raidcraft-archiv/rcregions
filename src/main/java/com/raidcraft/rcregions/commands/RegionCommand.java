@@ -14,6 +14,7 @@ import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.minecraft.util.commands.NestedCommand;
+import com.sk89q.util.StringUtil;
 import com.sk89q.worldedit.BlockVector;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
@@ -24,7 +25,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 17.12.11 - 11:30
@@ -47,7 +52,23 @@ public class RegionCommand {
     @NestedCommand(value = NestedCommands.class, executeBody = true)
     public void nested(CommandContext args, CommandSender sender) {
 
-
+        Player player = (Player) sender;
+        List<Region> regions = plugin.getRegionManager().getPlayerRegions(player);
+        Set<District> uniqueDistricts = new HashSet<>();
+        Map<String, District> districts = plugin.getDistrictManager().getDistricts();
+        for (Region region : regions) {
+            uniqueDistricts.add(region.getDistrict());
+        }
+        player.sendMessage(ChatColor.YELLOW + "|---------- " + ChatColor.GREEN + "Raid-Craft.de" + ChatColor.YELLOW + " -----------|");
+        player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Regionen: " + ChatColor.YELLOW + regions.size() + " | "
+                + ChatColor.GREEN + "Distrikte: " + ChatColor.YELLOW + uniqueDistricts.size() + "/" + districts.size());
+        for (District district : uniqueDistricts) {
+            ArrayList<String> list = new ArrayList<>();
+            for (Region region : plugin.getRegionManager().getPlayerRegions(player, district)) {
+                list.add(region.toString());
+            }
+            player.sendMessage(ChatColor.YELLOW + "| " + district.toString() + ": " + StringUtil.joinString(list, ", ", 0));
+        }
     }
 
     public static class NestedCommands {

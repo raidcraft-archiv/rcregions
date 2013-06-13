@@ -78,4 +78,28 @@ public abstract class AbstractDistrict implements District {
 
         return maxRegionCount;
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof AbstractDistrict)) return false;
+
+        AbstractDistrict that = (AbstractDistrict) o;
+
+        return name.equals(that.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+
+        return name;
+    }
 }

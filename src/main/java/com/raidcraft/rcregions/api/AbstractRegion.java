@@ -134,4 +134,30 @@ public abstract class AbstractRegion implements Region {
         this.price = price;
         save();
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof AbstractRegion)) return false;
+
+        AbstractRegion that = (AbstractRegion) o;
+
+        return id == that.id && name.equals(that.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = id;
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+
+        return name;
+    }
 }

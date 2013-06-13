@@ -177,4 +177,29 @@ public class RegionManager implements Component {
                 .eq("owner", player.getName())
                 .eq("district", district.getName()).findList().size();
     }
+
+    public List<Region> getPlayerRegions(Player player) {
+
+        List<Region> regions = new ArrayList<>();
+        List<TRegion> result = plugin.getDatabase().find(TRegion.class).where().eq("owner", player.getName()).findList();
+        for (TRegion region : result) {
+            try {
+                regions.add(createRegion(region));
+            } catch (UnknownDistrictException e) {
+                plugin.getLogger().warning(e.getMessage());
+            }
+        }
+        return regions;
+    }
+
+    public List<Region> getPlayerRegions(Player player, District district) {
+
+        List<Region> regions = new ArrayList<>();
+        for (Region region : getPlayerRegions(player)) {
+            if (region.getDistrict().equals(district)) {
+                regions.add(region);
+            }
+        }
+        return regions;
+    }
 }

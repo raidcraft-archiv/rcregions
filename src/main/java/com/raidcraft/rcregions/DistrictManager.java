@@ -76,4 +76,9 @@ public class DistrictManager implements Component {
         }
         throw new UnknownDistrictException("Es gibt keinen Distrikt dem die Region " + regionName + " zugeordnet werden kann.");
     }
+
+    public Map<String, District> getDistricts() {
+
+        return districts;
+    }
 }
