@@ -52,23 +52,7 @@ public class RegionCommand {
     @NestedCommand(value = NestedCommands.class, executeBody = true)
     public void nested(CommandContext args, CommandSender sender) {
 
-        Player player = (Player) sender;
-        List<Region> regions = plugin.getRegionManager().getPlayerRegions(player);
-        Set<District> uniqueDistricts = new HashSet<>();
-        Map<String, District> districts = plugin.getDistrictManager().getDistricts();
-        for (Region region : regions) {
-            uniqueDistricts.add(region.getDistrict());
-        }
-        player.sendMessage(ChatColor.YELLOW + "|---------- " + ChatColor.GREEN + "Raid-Craft.de" + ChatColor.YELLOW + " -----------|");
-        player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Regionen: " + ChatColor.YELLOW + regions.size() + " | "
-                + ChatColor.GREEN + "Distrikte: " + ChatColor.YELLOW + uniqueDistricts.size() + "/" + districts.size());
-        for (District district : uniqueDistricts) {
-            ArrayList<String> list = new ArrayList<>();
-            for (Region region : plugin.getRegionManager().getPlayerRegions(player, district)) {
-                list.add(region.toString());
-            }
-            player.sendMessage(ChatColor.YELLOW + "| " + district.toString() + ": " + StringUtil.joinString(list, ", ", 0));
-        }
+        showPlayerInfo(sender, sender.getName());
     }
 
     public static class NestedCommands {
@@ -111,6 +95,30 @@ public class RegionCommand {
             } catch (UnknownRegionException | UnknownDistrictException e) {
                 throw new CommandException(e.getMessage());
             }
+        }
+
+        @Command(
+                aliases = {"regions", "list"},
+                desc = "Shows all regions of the given player",
+                usage = "[player]"
+        )
+        @CommandPermissions("rcregions.region.list")
+        public void showRegions(CommandContext args, CommandSender sender) throws CommandException {
+
+            if (args.argsLength() > 0 && !sender.hasPermission("rcregions.admin")) {
+                throw new CommandException("Du hast keine Rechte dir die Regionen von anderen Spielern anzeigen zu lassen!");
+            }
+            String player;
+            if (args.argsLength() > 0) {
+                player = args.getString(0);
+                Player bukkitPlayer = Bukkit.getPlayer(player);
+                if (bukkitPlayer != null) {
+                    player = bukkitPlayer.getName();
+                }
+            } else {
+                player = sender.getName();
+            }
+            showPlayerInfo(sender, player);
         }
 
         @Command(
@@ -272,5 +280,26 @@ public class RegionCommand {
 
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Besitzer: " + ChatColor.YELLOW + region.getOwner());
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Preis: " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
+    }
+
+    public static void showPlayerInfo(CommandSender sender, String player) {
+
+        RegionsPlugin plugin = RaidCraft.getComponent(RegionsPlugin.class);
+        List<Region> regions = plugin.getRegionManager().getPlayerRegions(player);
+        Set<District> uniqueDistricts = new HashSet<>();
+        Map<String, District> districts = plugin.getDistrictManager().getDistricts();
+        for (Region region : regions) {
+            uniqueDistricts.add(region.getDistrict());
+        }
+        sender.sendMessage(ChatColor.YELLOW + "|---------- " + ChatColor.GREEN + "Raid-Craft.de" + ChatColor.YELLOW + " -----------|");
+        sender.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Regionen: " + ChatColor.YELLOW + regions.size() + " | "
+                + ChatColor.GREEN + "Distrikte: " + ChatColor.YELLOW + uniqueDistricts.size() + "/" + districts.size());
+        for (District district : uniqueDistricts) {
+            ArrayList<String> list = new ArrayList<>();
+            for (Region region : plugin.getRegionManager().getPlayerRegions(player, district)) {
+                list.add(region.toString());
+            }
+            sender.sendMessage(ChatColor.YELLOW + "| " + district.toString() + ": " + StringUtil.joinString(list, ", ", 0));
+        }
     }
 }

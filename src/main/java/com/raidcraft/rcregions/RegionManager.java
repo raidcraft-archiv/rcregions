@@ -178,10 +178,10 @@ public class RegionManager implements Component {
                 .eq("district", district.getName()).findList().size();
     }
 
-    public List<Region> getPlayerRegions(Player player) {
+    public List<Region> getPlayerRegions(String player) {
 
         List<Region> regions = new ArrayList<>();
-        List<TRegion> result = plugin.getDatabase().find(TRegion.class).where().eq("owner", player.getName()).findList();
+        List<TRegion> result = plugin.getDatabase().find(TRegion.class).where().eq("owner", player).findList();
         for (TRegion region : result) {
             try {
                 regions.add(createRegion(region));
@@ -192,7 +192,7 @@ public class RegionManager implements Component {
         return regions;
     }
 
-    public List<Region> getPlayerRegions(Player player, District district) {
+    public List<Region> getPlayerRegions(String player, District district) {
 
         List<Region> regions = new ArrayList<>();
         for (Region region : getPlayerRegions(player)) {
