@@ -4,7 +4,7 @@ author: Silthus
 website: www.raid-craft.de
 database: true
 main: com.raidcraft.rcregions.RegionsPlugin
-depend: [RaidCraft-API,WorldGuard]
+depend: [RaidCraft-API]
 permissions:
   rcregions.user:
       description: Gives access to basic Region commands.
