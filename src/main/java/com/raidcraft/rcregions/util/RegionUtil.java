@@ -55,7 +55,7 @@ public class RegionUtil {
         String[] lines = new String[4];
         StringBuilder sb = new StringBuilder();
         if (region.getPrice() > 0) {
-            sb.append(CustomItemUtil.getSellPriceString(region.getPrice()));
+            sb.append(CustomItemUtil.getSellPriceString(region.getPrice(), ChatColor.BLACK));
         } else {
             sb.append(ChatColor.GREEN).append("Kostenlos");
         }

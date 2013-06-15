@@ -102,6 +102,7 @@ public class RCPlayerListener implements Listener {
         try {
             String regionName = RegionUtil.parseRegionName(sign);
             Region region = plugin.getRegionManager().getRegion(regionName);
+            RegionUtil.updateSign(sign, region);
             // lets check if the player already owns the region
             // if yes toggle the buyable status
             if (region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) {
