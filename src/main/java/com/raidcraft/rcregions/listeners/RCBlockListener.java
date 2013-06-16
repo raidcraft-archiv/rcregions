@@ -37,7 +37,7 @@ public class RCBlockListener implements Listener {
             return;
         }
         // lets check permissions
-        if (!event.getPlayer().hasPermission("rcregions.sign.create")) {
+        if (!event.getPlayer().hasPermission("rcregions.sign.place")) {
             event.getPlayer().sendMessage(ChatColor.RED + "Du hast keine Rechte Regions Schilder aufzustellen.");
             BlockUtil.destroyBlock(event.getBlock());
             event.setCancelled(true);
