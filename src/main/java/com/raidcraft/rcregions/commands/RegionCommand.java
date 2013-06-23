@@ -194,7 +194,7 @@ public class RegionCommand {
             OfflinePlayer newOwner = Bukkit.getPlayer(args.getString(0));
             // lets check in the db if the player exists or if he is online
             if (newOwner == null) {
-                List<TRegion> player = plugin.getDatabase().find(TRegion.class).where().eq("player", args.getString(0)).findList();
+                List<TRegion> player = plugin.getDatabase().find(TRegion.class).where().eq("owner", args.getString(0)).findList();
                 if (player.isEmpty()) {
                     throw new CommandException("Der Spieler muss online sein oder bereits ein Grundstück besitzen.");
                 }
