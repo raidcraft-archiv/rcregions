@@ -65,6 +65,7 @@ public class RegionManager implements Component {
         }
         // create a new region in the cache
         SimpleRegion simpleRegion = new SimpleRegion(region);
+        simpleRegion.updateOwner();
         regions.put(name, simpleRegion);
         return simpleRegion;
     }

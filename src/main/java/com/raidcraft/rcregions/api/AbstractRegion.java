@@ -1,8 +1,12 @@
 package com.raidcraft.rcregions.api;
 
+import com.raidcraft.rcregions.RegionsPlugin;
+import com.raidcraft.rcregions.tables.TRegion;
 import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.RaidCraft;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -135,6 +139,16 @@ public abstract class AbstractRegion implements Region {
 
         this.price = price;
         save();
+    }
+
+    @Override
+    public void updateOwner() {
+
+        TRegion tRegion = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class).where().eq("name", name).findUnique();
+        if(tRegion == null || tRegion.getOwner() == null || tRegion.getOwner().isEmpty()) return;
+        DefaultDomain owners = new DefaultDomain();
+        owners.addPlayer(Bukkit.getOfflinePlayer(tRegion.getOwner()).getName());
+        region.setOwners(owners);
     }
 
     @Override

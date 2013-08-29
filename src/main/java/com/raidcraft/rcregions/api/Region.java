@@ -34,4 +34,6 @@ public interface Region {
     public void drop();
 
     public void save();
+
+    public void updateOwner();
 }
