@@ -149,6 +149,7 @@ public abstract class AbstractRegion implements Region {
         DefaultDomain owners = new DefaultDomain();
         owners.addPlayer(Bukkit.getOfflinePlayer(tRegion.getOwner()).getName());
         region.setOwners(owners);
+        save();
     }
 
     @Override
