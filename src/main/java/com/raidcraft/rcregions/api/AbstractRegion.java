@@ -6,7 +6,6 @@ import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -145,9 +144,11 @@ public abstract class AbstractRegion implements Region {
     public void updateOwner() {
 
         TRegion tRegion = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class).where().eq("name", name).findUnique();
+        RaidCraft.LOGGER.info("RCR DEBUG 0 region: " + name);
         if(tRegion == null || tRegion.getOwner() == null || tRegion.getOwner().isEmpty()) return;
         DefaultDomain owners = new DefaultDomain();
-        owners.addPlayer(Bukkit.getOfflinePlayer(tRegion.getOwner()).getName());
+        RaidCraft.LOGGER.info("RCR DEBUG 1 region: " + name + "| owner:" + tRegion.getOwner());
+        owners.addPlayer(tRegion.getOwner());
         region.setOwners(owners);
         save();
     }
