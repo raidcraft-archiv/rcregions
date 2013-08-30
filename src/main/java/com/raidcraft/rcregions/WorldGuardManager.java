@@ -94,12 +94,12 @@ public class WorldGuardManager {
 
     public static boolean isOwner(String player, String id, World world) {
 
-        return getRegion(id, world).isOwner(wrapPlayer(Bukkit.getServer().getPlayer(player)));
+        return getRegion(id, world).getOwners().contains(player);
     }
 
     public static boolean isOwner(String player, ProtectedRegion region) {
 
-        return region.isOwner(wrapPlayer(Bukkit.getServer().getPlayer(player)));
+        return region.getOwners().contains(player);
     }
 
     public static Set<String> getOwners(String id, World world) {
