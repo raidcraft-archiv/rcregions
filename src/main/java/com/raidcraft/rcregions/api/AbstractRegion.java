@@ -1,6 +1,7 @@
 package com.raidcraft.rcregions.api;
 
 import com.raidcraft.rcregions.RegionsPlugin;
+import com.raidcraft.rcregions.WorldGuardManager;
 import com.raidcraft.rcregions.tables.TRegion;
 import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -144,13 +145,11 @@ public abstract class AbstractRegion implements Region {
     public void updateOwner() {
 
         TRegion tRegion = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class).where().eq("name", name).findUnique();
-        RaidCraft.LOGGER.info("RCR DEBUG 0 region: " + name);
         if(tRegion == null || tRegion.getOwner() == null || tRegion.getOwner().isEmpty()) return;
+        if(WorldGuardManager.isOwner(tRegion.getOwner(), region)) return;
         DefaultDomain owners = new DefaultDomain();
-        RaidCraft.LOGGER.info("RCR DEBUG 1 region: " + name + "| owner:" + tRegion.getOwner());
         owners.addPlayer(tRegion.getOwner());
         region.setOwners(owners);
-        save();
     }
 
     @Override

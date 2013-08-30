@@ -55,6 +55,7 @@ public class RegionManager implements Component {
                 }
             }
         }
+        WorldGuardManager.save();
     }
 
     public Region createRegion(TRegion region) throws UnknownDistrictException {
