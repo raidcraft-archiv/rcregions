@@ -1,6 +1,7 @@
 package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.District;
+import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.tables.TRegion;
@@ -47,7 +48,8 @@ public class DistrictManager implements Component {
             RegionManager regionManager = RaidCraft.getComponent(RegionManager.class);
             for (TRegion tRegion : regions) {
                 try {
-                    district.addRegion(regionManager.createRegion(tRegion));
+                    Region region = regionManager.createRegion(tRegion);
+                    if(region != null) district.addRegion(region);
                 } catch (UnknownDistrictException e) {
                     // this should never ever occur
                     e.printStackTrace();

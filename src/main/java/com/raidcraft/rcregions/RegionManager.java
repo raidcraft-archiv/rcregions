@@ -64,6 +64,13 @@ public class RegionManager implements Component {
         if (regions.containsKey(name)) {
             return regions.get(name);
         }
+
+        // check if worldguard region still exists
+        if(WorldGuardManager.getRegion(region.getName()) == null) {
+            RaidCraft.LOGGER.warning("[RCRegion] WorldGuard region doesn't exist for plot '" + region.getName() + "'!");
+            return null;
+        }
+
         // create a new region in the cache
         SimpleRegion simpleRegion = new SimpleRegion(region);
         simpleRegion.updateOwner();
