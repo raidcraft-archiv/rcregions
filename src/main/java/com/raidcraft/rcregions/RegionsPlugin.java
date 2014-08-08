@@ -1,5 +1,8 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.api.configactions.CA_RestrictPlayerToRegion;
+import com.raidcraft.rcregions.api.configactions.CA_UnrestrictPlayerFromRegion;
+import com.raidcraft.rcregions.api.trigger.RegionTrigger;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
@@ -7,6 +10,10 @@ import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.api.BasePlugin;
+import de.raidcraft.api.action.action.ActionException;
+import de.raidcraft.api.action.action.ActionFactory;
+import de.raidcraft.api.action.trigger.TriggerManager;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -24,6 +31,8 @@ public class RegionsPlugin extends BasePlugin {
     private DistrictManager districtManager;
     private MainConfig mainConfig;
     private DistrictConfig districtConfig;
+    @Getter
+    private RestrictionManager restrictionManager;
 
     @Override
     public void enable() {
@@ -40,6 +49,9 @@ public class RegionsPlugin extends BasePlugin {
 
         registerCommands(RegionCommand.class, getName());
         Bukkit.getScheduler().runTaskTimer(this, new PlayerTracker(this), -1, 20);
+        restrictionManager = new RestrictionManager(this);
+
+        setupActionApi();
 //        Bukkit.getPluginManager().registerEvents(new Listener() {
 //            @EventHandler
 //            public void entry(RcPlayerEntryRegionEvent event) {
@@ -68,6 +80,21 @@ public class RegionsPlugin extends BasePlugin {
         getDistrictConfig().reload();
         getRegionManager().reload();
         getDistrictManager().reload();
+    }
+
+    public void setupActionApi() {
+
+        try {
+            ActionFactory.getInstance().registerAction(
+                    this, "restrict-to-region", new CA_RestrictPlayerToRegion(this));
+            ActionFactory.getInstance().registerAction(
+                    this, "unrestrict-to-region", new CA_UnrestrictPlayerFromRegion(this));
+
+        } catch (ActionException e) {
+            e.printStackTrace();
+        }
+
+        TriggerManager.getInstance().registerTrigger(this, new RegionTrigger());
     }
 
     @Override
