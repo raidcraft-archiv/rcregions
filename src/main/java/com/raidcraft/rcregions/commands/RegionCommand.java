@@ -297,14 +297,24 @@ public class RegionCommand {
         @CommandPermissions("rcregions.region.restrictto")
         public void restrictTo(CommandContext args, CommandSender sender) throws CommandException {
 
-            Player player = (Player) sender;
+            UUID playerId = UUIDUtil.convertPlayer(args.getString(0));
+            if (playerId == null) {
+                sender.sendMessage("Player (" + args.getString(0) + ") not found");
+                return;
+            }
+            Player player = Bukkit.getPlayer(playerId);
+            if (player == null) {
+                sender.sendMessage("Player (" + args.getString(0) + ") not online");
+                return;
+            }
             String msg = null;
             if (args.argsLength() > 2) {
                 msg = args.getJoinedStrings(2);
             }
+
             try {
                 plugin.getRestrictionManager()
-                        .restrictPlayerToRegion(player, args.getString(0), msg);
+                        .restrictPlayerToRegion(player, args.getString(1), msg);
             } catch (RegionException e) {
                 sender.sendMessage(e.getMessage());
             }
@@ -319,10 +329,19 @@ public class RegionCommand {
         @CommandPermissions("rcregions.region.unrestrictfrom")
         public void unRestrictFrom(CommandContext args, CommandSender sender) throws CommandException {
 
-            Player player = (Player) sender;
+            UUID playerId = UUIDUtil.convertPlayer(args.getString(0));
+            if (playerId == null) {
+                sender.sendMessage("Player (" + args.getString(0) + ") not found");
+                return;
+            }
+            Player player = Bukkit.getPlayer(playerId);
+            if (player == null) {
+                sender.sendMessage("Player (" + args.getString(0) + ") not online");
+                return;
+            }
             try {
                 plugin.getRestrictionManager()
-                        .removePlayerToRegionRestriction(player, args.getString(0));
+                        .removePlayerToRegionRestriction(player, args.getString(1));
             } catch (RegionException e) {
                 sender.sendMessage(e.getMessage());
             }
