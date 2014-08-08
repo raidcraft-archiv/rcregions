@@ -7,6 +7,7 @@ import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.api.BasePlugin;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,23 @@ public class RegionsPlugin extends BasePlugin {
         registerEvents(new RCBlockListener(this));
         registerEvents(new RCPlayerListener(this));
 
-        registerCommands(RegionCommand.class);
+        registerCommands(RegionCommand.class, getName());
+        Bukkit.getScheduler().runTaskTimer(this, new PlayerTracker(this), -1, 20);
+//        Bukkit.getPluginManager().registerEvents(new Listener() {
+//            @EventHandler
+//            public void entry(RcPlayerEntryRegionEvent event) {
+//
+//                Bukkit.broadcastMessage(event.getPlayer().getName()
+//                        + " enter " + event.getRegion().getId());
+//            }
+//
+//            @EventHandler
+//            public void exit(RcPlayerExitRegionEvent event) {
+//
+//                Bukkit.broadcastMessage(event.getPlayer().getName()
+//                        + " exit " + event.getRegion().getId());
+//            }
+//        }, this);
     }
 
     @Override

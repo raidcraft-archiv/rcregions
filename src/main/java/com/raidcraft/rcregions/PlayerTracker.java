@@ -5,14 +5,15 @@ import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerExitRegionEvent;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.RaidCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,9 +40,10 @@ public class PlayerTracker implements Runnable, Listener {
     private RcPlayerExitRegionEvent exitEvent;
 
 
-    public PlayerTracker(World world) {
+    public PlayerTracker(Plugin plugin) {
 
         wg = WorldGuardManager.getWorldGuard();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @Override
@@ -69,21 +71,25 @@ public class PlayerTracker implements Runnable, Listener {
             } else {
                 // player entry region
                 entryEvent = new RcPlayerEntryRegionEvent(player, regio);
+                RaidCraft.callEvent(entryEvent);
                 if (entryEvent.isCancelled()) {
                     teleportBack(player);
                     return false;
                 }
             }
-            for (ProtectedRegion oldRegion : lastSet) {
-                // player exit region
-                exitEvent = new RcPlayerExitRegionEvent(player, regio);
-                if (exitEvent.isCancelled()) {
-                    teleportBack(player);
-                    return false;
-                }
-            }
             newSet.add(regio);
+
         }
+        for (ProtectedRegion oldRegion : lastSet) {
+            // player exit region
+            exitEvent = new RcPlayerExitRegionEvent(player, oldRegion);
+            RaidCraft.callEvent(exitEvent);
+            if (exitEvent.isCancelled()) {
+                teleportBack(player);
+                return false;
+            }
+        }
+        lastRegion.put(player.getUniqueId(), newSet);
         return true;
     }
 
