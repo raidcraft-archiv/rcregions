@@ -70,10 +70,10 @@ public class PlayerTracker implements Runnable, Listener {
                 lastSet.remove(regio);
             } else {
                 // player entry region
-                entryEvent = new RcPlayerEntryRegionEvent(player, regio);
+                entryEvent = new RcPlayerEntryRegionEvent(player, regio,
+                        lastLocation.get(player.getUniqueId()));
                 RaidCraft.callEvent(entryEvent);
                 if (entryEvent.isCancelled()) {
-                    teleportBack(player);
                     return false;
                 }
             }
@@ -82,22 +82,16 @@ public class PlayerTracker implements Runnable, Listener {
         }
         for (ProtectedRegion oldRegion : lastSet) {
             // player exit region
-            exitEvent = new RcPlayerExitRegionEvent(player, oldRegion);
+            exitEvent = new RcPlayerExitRegionEvent(player, oldRegion,
+                    lastLocation.get(player.getUniqueId()));
             RaidCraft.callEvent(exitEvent);
             if (exitEvent.isCancelled()) {
-                teleportBack(player);
                 return false;
             }
         }
         lastRegion.put(player.getUniqueId(), newSet);
         return true;
     }
-
-    public void teleportBack(Player player) {
-
-        player.teleport(lastLocation.get(player.getUniqueId()));
-    }
-
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void join(PlayerJoinEvent event) {
