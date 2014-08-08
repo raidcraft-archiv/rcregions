@@ -2,6 +2,7 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerExitRegionEvent;
 import com.raidcraft.rcregions.exceptions.RegionException;
+import com.raidcraft.rcregions.tables.RestrictRegionType;
 import com.raidcraft.rcregions.tables.TRestrictRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -93,6 +94,7 @@ public class RestrictionManager implements Listener {
         restrictedRegion.setPlayer(player.getUniqueId());
         restrictedRegion.setRegionName(wgRegion.getId());
         restrictedRegion.setWorldName(player.getWorld().getName());
+        restrictedRegion.setType(RestrictRegionType.EXIT);
         plugin.getDatabase().save(restrictedRegion);
 
         if (alreadyRestricted == null) {
