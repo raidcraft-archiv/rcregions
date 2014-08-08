@@ -24,7 +24,8 @@ public class CA_RestrictPlayerToRegion implements Action<Player> {
 
         try {
             String region = config.getString("region", null);
-            restrictionManager.restrictPlayerToRegion(player, region);
+            String msg = config.getString("msg", null);
+            restrictionManager.restrictPlayerToRegion(player, region, msg);
         } catch (RegionException e) {
             e.printStackTrace();
         }

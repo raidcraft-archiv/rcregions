@@ -9,6 +9,7 @@ import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
+import com.raidcraft.rcregions.tables.TRestrictRegion;
 import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.action.action.ActionException;
 import de.raidcraft.api.action.action.ActionFactory;
@@ -102,6 +103,7 @@ public class RegionsPlugin extends BasePlugin {
 
         ArrayList<Class<?>> tables = new ArrayList<>();
         tables.add(TRegion.class);
+        tables.add(TRestrictRegion.class);
         return tables;
     }
 
