@@ -105,7 +105,7 @@ public class RCPlayerListener implements Listener {
             RegionUtil.updateSign(sign, region);
             // lets check if the player already owns the region
             // if yes toggle the buyable status
-            if (region.getOwner() != null && region.getOwner().equalsIgnoreCase(player.getName())) {
+            if (region.getOwnerId() != null && region.getOwnerId().equals(player.getUniqueId())) {
                 if (region.isBuyable()) {
                     player.sendMessage(ChatColor.RED
                             + "Bist du dir sicher, dass du dieses Grundstück nicht mehr zum Verkauf anbieten willst?");
@@ -120,7 +120,7 @@ public class RCPlayerListener implements Listener {
                 player.sendMessage(ChatColor.RED + "Du hast bereits die maximale Anzahl an Grundstücken in diesem Distrikt erworben.");
             } else {
                 if (region.getPrice() > 0) {
-                    if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
+                    if (!RaidCraft.getEconomy().hasEnough(player.getUniqueId(), region.getPrice())) {
                         player.sendMessage(ChatColor.RED + "Du hast nicht genug Geld um dises Grundstück zu kaufen. " +
                                 "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
                         event.setCancelled(true);

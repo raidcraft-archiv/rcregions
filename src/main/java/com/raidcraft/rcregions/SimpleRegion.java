@@ -24,7 +24,7 @@ public class SimpleRegion extends AbstractRegion {
 
         EbeanServer database = RaidCraft.getDatabase(RegionsPlugin.class);
         TRegion region = database.find(TRegion.class, getId());
-        region.setOwner(getOwner());
+        region.setOwnerId(getOwnerId());
         region.setDistrict(getDistrict().getName());
         region.setPrice(getPrice());
         region.setBuyable(isBuyable());

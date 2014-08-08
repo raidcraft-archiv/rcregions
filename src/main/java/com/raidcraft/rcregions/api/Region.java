@@ -3,6 +3,7 @@ package com.raidcraft.rcregions.api;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Silthus
@@ -17,7 +18,7 @@ public interface Region {
 
     public boolean hasOwner();
 
-    public String getOwner();
+    public UUID getOwnerId();
 
     public Set<String> getMembers();
 
