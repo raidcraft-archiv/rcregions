@@ -2,7 +2,9 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerExitRegionEvent;
 import com.raidcraft.rcregions.exceptions.RegionException;
+import com.raidcraft.rcregions.tables.TRestrictRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,9 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -21,8 +22,7 @@ import java.util.UUID;
  */
 public class RestrictionManager implements Listener {
 
-    private Map<UUID, Set<ProtectedRegion>> restrictedTo = new HashMap<>();
-    private Map<UUID, Set<ProtectedRegion>> cannotEnter = new HashMap<>();
+    private Map<UUID, Map<ProtectedRegion, TRestrictRegion>> restrictedTo = new HashMap<>();
     private WorldGuardPlugin wg;
     private RegionsPlugin plugin;
 
@@ -30,35 +30,76 @@ public class RestrictionManager implements Listener {
 
         this.plugin = plugin;
         wg = WorldGuardManager.getWorldGuard();
+        load();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public void restrictPlayerToRegion(Player player, String region) throws RegionException {
+    private void load() {
+
+        List<TRestrictRegion> regions = plugin.getDatabase().find(TRestrictRegion.class).findList();
+        HashMap<String, RegionManager> worlds = new HashMap<>();
+        for (TRestrictRegion region : regions) {
+            // get world regionmanager
+            RegionManager regionManager = worlds.get(region.getWorldName());
+            if (regionManager == null) {
+                regionManager = wg.getRegionManager(Bukkit.getWorld(region.getWorldName()));
+                worlds.put(region.getWorldName(), regionManager);
+            }
+            // load region
+            ProtectedRegion wgRegion = regionManager.getRegion(region.getRegionName());
+            if (wgRegion == null) {
+                plugin.getLogger().warning("Region (" + region.getRegionName()
+                        + ") not exist in world (" + region.getWorldName() + ")");
+                continue;
+            }
+            region.setRegion(wgRegion);
+            Map<ProtectedRegion, TRestrictRegion> alreadyRestricted =
+                    restrictedTo.get(region.getPlayer());
+            if (alreadyRestricted == null) {
+                alreadyRestricted = new HashMap<>();
+                restrictedTo.put(region.getPlayer(), alreadyRestricted);
+            }
+            alreadyRestricted.put(wgRegion, region);
+        }
+    }
+
+    public void restrictPlayerToRegion(Player player, String region, String msg) throws RegionException {
 
         if (region == null) {
             throw new RegionException("region is null (restrictPlayerToRegion)");
         }
         ProtectedRegion wgRegion = wg.getRegionManager(player.getWorld()).getRegion(region);
+        // exists region?
         if (wgRegion == null) {
             throw new RegionException("Region (" + region + ") existiert nicht (restrictPlayerToRegion)");
         }
-        Set<ProtectedRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
-
-        if (alreadyRestricted != null && alreadyRestricted.contains(wgRegion)) {
-            throw new RegionException("Spieler (" + player.getName()
-                    + ") ist bereits auf die Region (" + region + ") beschränkt");
-        }
+        // check if player is in region
         if (!wgRegion.contains(player.getLocation().getBlockX(),
                 player.getLocation().getBlockY(),
                 player.getLocation().getBlockZ())) {
             throw new RegionException("Spieler (" + player.getName()
                     + ") steht nicht in Region (" + region + ") auf die er beschränkt wird");
         }
+
+        Map<ProtectedRegion, TRestrictRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
+        if (alreadyRestricted != null && alreadyRestricted.containsKey(wgRegion)) {
+            throw new RegionException("Spieler (" + player.getName()
+                    + ") ist bereits auf die Region (" + region + ") beschränkt");
+        }
+        // save all
+        TRestrictRegion restrictedRegion = new TRestrictRegion();
+        restrictedRegion.setRegion(wgRegion);
+        restrictedRegion.setMsg(msg);
+        restrictedRegion.setPlayer(player.getUniqueId());
+        restrictedRegion.setRegionName(wgRegion.getId());
+        restrictedRegion.setWorldName(player.getWorld().getName());
+        plugin.getDatabase().save(restrictedRegion);
+
         if (alreadyRestricted == null) {
-            alreadyRestricted = new HashSet<>();
+            alreadyRestricted = new HashMap<>();
             restrictedTo.put(player.getUniqueId(), alreadyRestricted);
         }
-        alreadyRestricted.add(wgRegion);
+        alreadyRestricted.put(wgRegion, restrictedRegion);
     }
 
     public void removePlayerToRegionRestriction(Player player, String region) throws RegionException {
@@ -71,11 +112,14 @@ public class RestrictionManager implements Listener {
             throw new RegionException("Region (" + region + ") existiert nicht (removePlayerToRegionRestriction)");
         }
 
-        Set<ProtectedRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
-        if (alreadyRestricted == null || !alreadyRestricted.contains(wgRegion)) {
+        Map<ProtectedRegion, TRestrictRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
+        if (alreadyRestricted == null || !alreadyRestricted.containsKey(wgRegion)) {
             throw new RegionException("Spieler (" + player.getName()
                     + ") steht nicht auf Region (" + region + ") beschränkt");
         }
+        // delete db entry
+        TRestrictRegion restrictedRegion = alreadyRestricted.get(wgRegion);
+        plugin.getDatabase().delete(restrictedRegion);
         alreadyRestricted.remove(wgRegion);
         if (alreadyRestricted.size() <= 0) {
             restrictedTo.remove(player.getUniqueId());
@@ -88,7 +132,8 @@ public class RestrictionManager implements Listener {
         if (!restrictedTo.containsKey(event.getPlayer().getUniqueId())) return;
 
         // if player is not restricted to region
-        if (!restrictedTo.get(event.getPlayer().getUniqueId()).contains(event.getRegion())) {
+        TRestrictRegion region = restrictedTo.get(event.getPlayer().getUniqueId()).get(event.getRegion());
+        if (region == null) {
             return;
         }
         Location loc = event.getLastLocation();
@@ -98,7 +143,11 @@ public class RestrictionManager implements Listener {
                     + event.getRegion().getId() + ") aber alte Position ist auch in dieser Region");
             return;
         }
-        event.getPlayer().sendMessage("Du darfst diesen Ort nicht verlassen");
+        String msg = region.getMsg();
+        if (msg == null) {
+            msg = "Du darfst die Region nicht verlassen";
+        }
+        event.getPlayer().sendMessage(msg);
         event.getPlayer().teleport(loc);
         event.setCancelled(true);
     }
