@@ -288,6 +288,46 @@ public class RegionCommand {
             }
         }
 
+        @Command(
+                aliases = {"restrictto"},
+                desc = "Restrict a player to a region",
+                usage = "<playername> <regionname> [msg if try to exit]",
+                min = 2
+        )
+        @CommandPermissions("rcregions.region.restrictto")
+        public void restrictTo(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = (Player) sender;
+            String msg = null;
+            if (args.argsLength() > 2) {
+                msg = args.getJoinedStrings(2);
+            }
+            try {
+                plugin.getRestrictionManager()
+                        .restrictPlayerToRegion(player, args.getString(0), msg);
+            } catch (RegionException e) {
+                sender.sendMessage(e.getMessage());
+            }
+        }
+
+        @Command(
+                aliases = {"unrestrictfrom"},
+                desc = "Umrestrict a player to a region",
+                usage = "<playername> <regionname>",
+                min = 2
+        )
+        @CommandPermissions("rcregions.region.unrestrictfrom")
+        public void unRestrictFrom(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = (Player) sender;
+            try {
+                plugin.getRestrictionManager()
+                        .removePlayerToRegionRestriction(player, args.getString(0));
+            } catch (RegionException e) {
+                sender.sendMessage(e.getMessage());
+            }
+        }
+
         public void buyRegion(Player player, Region region) {
 
             // delegate
