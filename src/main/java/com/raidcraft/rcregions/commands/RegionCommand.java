@@ -18,8 +18,8 @@ import com.sk89q.util.StringUtil;
 import com.sk89q.worldedit.BlockVector;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
+import de.raidcraft.util.CommandUtil;
 import de.raidcraft.util.UUIDUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -189,14 +189,14 @@ public class RegionCommand {
         public void giveRegion(CommandContext args, CommandSender sender) throws CommandException {
 
             Player owner = (Player) sender;
-            OfflinePlayer newOwner = Bukkit.getPlayer(args.getString(0));
+            OfflinePlayer newOwner = CommandUtil.grabOfflinePlayer(args.getString(0));
             // lets check in the db if the player exists or if he is online
             if (newOwner == null) {
                 List<TRegion> player = plugin.getDatabase().find(TRegion.class).where().eq("owner", args.getString(0)).findList();
                 if (player.isEmpty()) {
                     throw new CommandException("Der Spieler muss online sein oder bereits ein Grundstück besitzen.");
                 }
-                newOwner = Bukkit.getOfflinePlayer(args.getString(0));
+                newOwner = CommandUtil.grabOfflinePlayer(args.getString(0));
             }
 
             Region region;
@@ -297,16 +297,7 @@ public class RegionCommand {
         @CommandPermissions("rcregions.region.restrictto")
         public void restrictTo(CommandContext args, CommandSender sender) throws CommandException {
 
-            UUID playerId = UUIDUtil.convertPlayer(args.getString(0));
-            if (playerId == null) {
-                sender.sendMessage("Player (" + args.getString(0) + ") not found");
-                return;
-            }
-            Player player = Bukkit.getPlayer(playerId);
-            if (player == null) {
-                sender.sendMessage("Player (" + args.getString(0) + ") not online");
-                return;
-            }
+            Player player = CommandUtil.grabPlayer(args.getString(0));
             String msg = null;
             if (args.argsLength() > 2) {
                 msg = args.getJoinedStrings(2);
@@ -329,16 +320,7 @@ public class RegionCommand {
         @CommandPermissions("rcregions.region.unrestrictfrom")
         public void unRestrictFrom(CommandContext args, CommandSender sender) throws CommandException {
 
-            UUID playerId = UUIDUtil.convertPlayer(args.getString(0));
-            if (playerId == null) {
-                sender.sendMessage("Player (" + args.getString(0) + ") not found");
-                return;
-            }
-            Player player = Bukkit.getPlayer(playerId);
-            if (player == null) {
-                sender.sendMessage("Player (" + args.getString(0) + ") not online");
-                return;
-            }
+            Player player = CommandUtil.grabPlayer(args.getString(0));
             try {
                 plugin.getRestrictionManager()
                         .removePlayerToRegionRestriction(player, args.getString(1));
