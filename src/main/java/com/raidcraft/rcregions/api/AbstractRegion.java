@@ -7,11 +7,13 @@ import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
+import de.raidcraft.util.UUIDUtil;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Silthus
@@ -22,7 +24,7 @@ public abstract class AbstractRegion implements Region {
     private final String name;
     private final District district;
     private final ProtectedRegion region;
-    private String owner = null;
+    private UUID owner = null;
     private boolean buyable;
     private double price;
 
@@ -36,12 +38,13 @@ public abstract class AbstractRegion implements Region {
         this.buyable = district.isDefaultBuyable();
 
         List<String> players = new ArrayList<>(region.getOwners().getPlayers());
+        // TODO: UUID rework - WorldGuard
         if (players.size() == 1) {
-            owner = players.get(0);
+            owner = UUIDUtil.convertPlayer(players.get(0));
         } else if (!players.isEmpty()) {
             for (String player : players) {
                 if (owner == null) {
-                    owner = player;
+                    owner = UUIDUtil.convertPlayer(player);
                 } else {
                     // switch over all other "owners" to members
                     // a region can only have one owner at a time
@@ -62,7 +65,7 @@ public abstract class AbstractRegion implements Region {
         owners.addPlayer(player.getName());
         region.setOwners(owners);
         // update our reference
-        owner = player.getName();
+        owner = player.getUniqueId();
         buyable = false;
         RegionUtil.setRegionClaimedFlags(region);
         save();
@@ -104,7 +107,7 @@ public abstract class AbstractRegion implements Region {
     }
 
     @Override
-    public String getOwner() {
+    public UUID getOwnerId() {
 
         return owner;
     }
@@ -145,10 +148,15 @@ public abstract class AbstractRegion implements Region {
     public void updateOwner() {
 
         TRegion tRegion = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class).where().eq("name", name).findUnique();
-        if(tRegion == null || tRegion.getOwner() == null || tRegion.getOwner().isEmpty()) return;
-        if(WorldGuardManager.isOwner(tRegion.getOwner(), region)) return;
+        if(tRegion == null || tRegion.getOwnerId() == null) return;
+        // TODO: UUID rework - WorldGuard
+        String playerName = UUIDUtil.getNameFromUUID(tRegion.getOwnerId());
+        if(playerName == null) {
+            return;
+        }
+        if(WorldGuardManager.isOwner(playerName, region)) return;
         DefaultDomain owners = new DefaultDomain();
-        owners.addPlayer(tRegion.getOwner());
+        owners.addPlayer(playerName);
         region.setOwners(owners);
     }
 

@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.util.CustomItemUtil;
 import de.raidcraft.util.SignUtil;
+import de.raidcraft.util.UUIDUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 
@@ -72,7 +73,7 @@ public class RegionUtil {
 
         sb = new StringBuilder();
         if (region.hasOwner()) {
-            sb.append(region.getOwner());
+            sb.append(UUIDUtil.getNameFromUUID(region.getOwnerId()));
         } else {
             sb.append("Server");
         }

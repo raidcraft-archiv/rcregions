@@ -1,12 +1,21 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.api.configactions.CA_RestrictPlayerToRegion;
+import com.raidcraft.rcregions.api.configactions.CA_UnrestrictPlayerFromRegion;
+import com.raidcraft.rcregions.api.trigger.RegionTrigger;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
+import com.raidcraft.rcregions.tables.TRestrictRegion;
 import de.raidcraft.api.BasePlugin;
+import de.raidcraft.api.action.action.ActionException;
+import de.raidcraft.api.action.action.ActionFactory;
+import de.raidcraft.api.action.trigger.TriggerManager;
+import lombok.Getter;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +32,8 @@ public class RegionsPlugin extends BasePlugin {
     private DistrictManager districtManager;
     private MainConfig mainConfig;
     private DistrictConfig districtConfig;
+    @Getter
+    private RestrictionManager restrictionManager;
 
     @Override
     public void enable() {
@@ -38,6 +49,25 @@ public class RegionsPlugin extends BasePlugin {
         registerEvents(new RCPlayerListener(this));
 
         registerCommands(RegionCommand.class);
+        Bukkit.getScheduler().runTaskTimer(this, new PlayerTracker(this), -1, 20);
+        restrictionManager = new RestrictionManager(this);
+
+        setupActionApi();
+//        Bukkit.getPluginManager().registerEvents(new Listener() {
+//            @EventHandler
+//            public void entry(RcPlayerEntryRegionEvent event) {
+//
+//                Bukkit.broadcastMessage(event.getPlayer().getName()
+//                        + " enter " + event.getRegion().getId());
+//            }
+//
+//            @EventHandler
+//            public void exit(RcPlayerExitRegionEvent event) {
+//
+//                Bukkit.broadcastMessage(event.getPlayer().getName()
+//                        + " exit " + event.getRegion().getId());
+//            }
+//        }, this);
     }
 
     @Override
@@ -53,11 +83,27 @@ public class RegionsPlugin extends BasePlugin {
         getDistrictManager().reload();
     }
 
+    public void setupActionApi() {
+
+        try {
+            ActionFactory.getInstance().registerAction(
+                    this, "restrict-to-region", new CA_RestrictPlayerToRegion(this));
+            ActionFactory.getInstance().registerAction(
+                    this, "unrestrict-to-region", new CA_UnrestrictPlayerFromRegion(this));
+
+        } catch (ActionException e) {
+            e.printStackTrace();
+        }
+
+        TriggerManager.getInstance().registerTrigger(this, new RegionTrigger());
+    }
+
     @Override
     public List<Class<?>> getDatabaseClasses() {
 
         ArrayList<Class<?>> tables = new ArrayList<>();
         tables.add(TRegion.class);
+        tables.add(TRestrictRegion.class);
         return tables;
     }
 

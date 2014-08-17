@@ -18,7 +18,8 @@ import com.sk89q.util.StringUtil;
 import com.sk89q.worldedit.BlockVector;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.commands.QueuedCommand;
-import org.bukkit.Bukkit;
+import de.raidcraft.util.CommandUtil;
+import de.raidcraft.util.UUIDUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * 17.12.11 - 11:30
@@ -52,7 +54,7 @@ public class RegionCommand {
     @NestedCommand(value = NestedCommands.class, executeBody = true)
     public void nested(CommandContext args, CommandSender sender) {
 
-        showPlayerInfo(sender, sender.getName());
+        showPlayerInfo(sender, ((Player) sender).getUniqueId());
     }
 
     public static class NestedCommands {
@@ -91,7 +93,8 @@ public class RegionCommand {
                 Location location = new Location(player.getWorld(), maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ());
                 player.teleport(location);
                 player.sendMessage(ChatColor.YELLOW + "Teleported to Region "
-                        + ChatColor.GREEN + region.getName() + ChatColor.YELLOW + " owned by " + ChatColor.GREEN + region.getOwner());
+                        + ChatColor.GREEN + region.getName() + ChatColor.YELLOW + " owned by " + ChatColor.GREEN
+                        + UUIDUtil.getNameFromUUID(region.getOwnerId()));
             } catch (UnknownRegionException | UnknownDistrictException e) {
                 throw new CommandException(e.getMessage());
             }
@@ -108,15 +111,10 @@ public class RegionCommand {
             if (args.argsLength() > 0 && !sender.hasPermission("rcregions.admin")) {
                 throw new CommandException("Du hast keine Rechte dir die Regionen von anderen Spielern anzeigen zu lassen!");
             }
-            String player;
-            if (args.argsLength() > 0) {
-                player = args.getString(0);
-                Player bukkitPlayer = Bukkit.getPlayer(player);
-                if (bukkitPlayer != null) {
-                    player = bukkitPlayer.getName();
-                }
-            } else {
-                player = sender.getName();
+            String name = (args.argsLength() > 0) ? args.getString(0) : sender.getName();
+            UUID player = UUIDUtil.convertPlayer(name);
+            if (player == null) {
+                throw new CommandException("Spieler " + name + " wurde nicht gefunden");
             }
             showPlayerInfo(sender, player);
         }
@@ -161,7 +159,7 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
-                if (!sender.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(player.getName())) {
+                if (!sender.hasPermission("rcregions.admin") && !region.getOwnerId().equals(player.getUniqueId())) {
                     throw new CommandException("Du musst der Besitzer des Grundstücks sein um den Verkaufsstatus zu ändern.");
                 }
                 if (region.isBuyable()) {
@@ -191,14 +189,14 @@ public class RegionCommand {
         public void giveRegion(CommandContext args, CommandSender sender) throws CommandException {
 
             Player owner = (Player) sender;
-            OfflinePlayer newOwner = Bukkit.getPlayer(args.getString(0));
+            OfflinePlayer newOwner = CommandUtil.grabOfflinePlayer(args.getString(0));
             // lets check in the db if the player exists or if he is online
             if (newOwner == null) {
                 List<TRegion> player = plugin.getDatabase().find(TRegion.class).where().eq("owner", args.getString(0)).findList();
                 if (player.isEmpty()) {
                     throw new CommandException("Der Spieler muss online sein oder bereits ein Grundstück besitzen.");
                 }
-                newOwner = Bukkit.getOfflinePlayer(args.getString(0));
+                newOwner = CommandUtil.grabOfflinePlayer(args.getString(0));
             }
 
             Region region;
@@ -208,7 +206,7 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(owner.getLocation());
                 }
-                if (!sender.hasPermission("rcregions.admin") && !region.getOwner().equalsIgnoreCase(owner.getName())) {
+                if (!sender.hasPermission("rcregions.admin") && !region.getOwnerId().equals(owner.getUniqueId())) {
                     throw new CommandException("Du musst der Besitzer des Grundstücks sein um es an andere Spieler zu vergeben.");
                 }
                 new QueuedCommand(sender, this, "giveRegion", sender, newOwner, region);
@@ -236,14 +234,14 @@ public class RegionCommand {
                 } else {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
-                if (!region.isBuyable() || (region.getOwner() != null && region.getOwner().equalsIgnoreCase(sender.getName()))) {
+                if (!region.isBuyable() || (region.getOwnerId() != null && region.getOwnerId().equals(player.getUniqueId()))) {
                     throw new CommandException("Du kannst diese Region nicht kaufen.");
                 }
                 if (region.getDistrict().getMaxRegionCount() <= plugin.getRegionManager().getPlayerRegionCount(player, region.getDistrict())) {
                     throw new CommandException("Du hast bereits die maximale Anzahl an Grundstücken in diesem Distrikt erworben.");
                 }
                 if (region.getPrice() > 0) {
-                    if (!RaidCraft.getEconomy().hasEnough(player.getName(), region.getPrice())) {
+                    if (!RaidCraft.getEconomy().hasEnough(player.getUniqueId(), region.getPrice())) {
                         throw new CommandException(ChatColor.RED + "Du hast nicht genug Geld um dises Grundstück zu kaufen. " +
                                 "Du benötigst " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
                     }
@@ -278,7 +276,7 @@ public class RegionCommand {
                     region = plugin.getRegionManager().getRegion(player.getLocation());
                 }
                 if (!sender.hasPermission("rcregions.admin") &&
-                        (region.getOwner() == null || !region.getOwner().equalsIgnoreCase(sender.getName()))) {
+                        (region.getOwnerId() == null || !region.getOwnerId().equals(player.getUniqueId()))) {
                     throw new CommandException("Du bist nicht der Besitzer dieser Region.");
                 }
                 new QueuedCommand(player, this, "dropRegion", player, region);
@@ -287,6 +285,47 @@ public class RegionCommand {
             } catch (NoSuchMethodException e) {
                 plugin.getLogger().warning(e.getMessage());
                 e.printStackTrace();
+            }
+        }
+
+        @Command(
+                aliases = {"restrictto"},
+                desc = "Restrict a player to a region",
+                usage = "<playername> <regionname> [msg if try to exit]",
+                min = 2
+        )
+        @CommandPermissions("rcregions.region.restrictto")
+        public void restrictTo(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = CommandUtil.grabPlayer(args.getString(0));
+            String msg = null;
+            if (args.argsLength() > 2) {
+                msg = args.getJoinedStrings(2);
+            }
+
+            try {
+                plugin.getRestrictionManager()
+                        .restrictPlayerToRegion(player, args.getString(1), msg);
+            } catch (RegionException e) {
+                sender.sendMessage(e.getMessage());
+            }
+        }
+
+        @Command(
+                aliases = {"unrestrictfrom"},
+                desc = "Umrestrict a player to a region",
+                usage = "<playername> <regionname>",
+                min = 2
+        )
+        @CommandPermissions("rcregions.region.unrestrictfrom")
+        public void unRestrictFrom(CommandContext args, CommandSender sender) throws CommandException {
+
+            Player player = CommandUtil.grabPlayer(args.getString(0));
+            try {
+                plugin.getRestrictionManager()
+                        .removePlayerToRegionRestriction(player, args.getString(1));
+            } catch (RegionException e) {
+                sender.sendMessage(e.getMessage());
             }
         }
 
@@ -331,11 +370,11 @@ public class RegionCommand {
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Region: " + ChatColor.YELLOW + region.toString() + " | "
                 + ChatColor.GREEN + "Distrikt: " + ChatColor.YELLOW + district.toString());
 
-        player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Besitzer: " + ChatColor.YELLOW + region.getOwner());
+        player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Besitzer: " + ChatColor.YELLOW + UUIDUtil.getNameFromUUID(region.getOwnerId()));
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Preis: " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
     }
 
-    public static void showPlayerInfo(CommandSender sender, String player) {
+    public static void showPlayerInfo(CommandSender sender, UUID player) {
 
         RegionsPlugin plugin = RaidCraft.getComponent(RegionsPlugin.class);
         List<Region> regions = plugin.getRegionManager().getPlayerRegions(player);

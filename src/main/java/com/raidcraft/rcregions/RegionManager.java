@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Silthus
@@ -66,7 +67,7 @@ public class RegionManager implements Component {
         }
 
         // check if worldguard region still exists
-        if(WorldGuardManager.getRegion(region.getName()) == null) {
+        if (WorldGuardManager.getRegion(region.getName()) == null) {
             RaidCraft.LOGGER.warning("[RCRegion] WorldGuard region doesn't exist for plot '" + region.getName() + "'!");
             return null;
         }
@@ -98,7 +99,7 @@ public class RegionManager implements Component {
                 tRegion.setBuyable(false);
                 plugin.getDatabase().save(tRegion);
                 Region region = createRegion(tRegion);
-                tRegion.setOwner(region.getOwner());
+                tRegion.setOwnerId(region.getOwnerId());
                 tRegion.setPrice(region.getPrice());
                 plugin.getDatabase().update(tRegion);
                 return region;
@@ -135,15 +136,15 @@ public class RegionManager implements Component {
 
         if (region.getPrice() > 0) {
             // lets substract the cost
-            RaidCraft.getEconomy().substract(player.getName(), region.getPrice(), BalanceSource.BUY_REGION, region.getName());
-            if (region.getOwner() != null) {
+            RaidCraft.getEconomy().substract(player.getUniqueId(), region.getPrice(), BalanceSource.BUY_REGION, region.getName());
+            if (region.getOwnerId() != null) {
                 // give the old owner the money substracted the taxes
                 double amount = region.getPrice() - region.getPrice() * plugin.getMainConfig().taxes;
-                RaidCraft.getEconomy().add(region.getOwner(),
+                RaidCraft.getEconomy().add(region.getOwnerId(),
                         amount,
                         BalanceSource.SELL_REGION, region.getName()
                 );
-                Player oldOwner = Bukkit.getPlayer(region.getOwner());
+                Player oldOwner = Bukkit.getPlayer(region.getOwnerId());
                 if (oldOwner != null) {
                     oldOwner.sendMessage(ChatColor.GREEN + "Deine Region " + ChatColor.AQUA + region.getName() + ChatColor.GREEN
                             + " wurde erfolreich für " + RaidCraft.getEconomy().getFormattedAmount(amount) + " an " + player.getName() + " verkauft.");
@@ -183,14 +184,15 @@ public class RegionManager implements Component {
 
         return plugin.getDatabase().find(TRegion.class)
                 .where()
-                .eq("owner", player.getName())
+                .eq("owner_id", player.getUniqueId())
                 .eq("district", district.getName()).findList().size();
     }
 
-    public List<Region> getPlayerRegions(String player) {
+    public List<Region> getPlayerRegions(UUID player) {
 
         List<Region> regions = new ArrayList<>();
-        List<TRegion> result = plugin.getDatabase().find(TRegion.class).where().eq("owner", player).findList();
+        List<TRegion> result = plugin.getDatabase().find(TRegion.class)
+                .where().eq("owner_id", player.toString()).findList();
         for (TRegion region : result) {
             try {
                 regions.add(createRegion(region));
@@ -201,7 +203,7 @@ public class RegionManager implements Component {
         return regions;
     }
 
-    public List<Region> getPlayerRegions(String player, District district) {
+    public List<Region> getPlayerRegions(UUID player, District district) {
 
         List<Region> regions = new ArrayList<>();
         for (Region region : getPlayerRegions(player)) {
