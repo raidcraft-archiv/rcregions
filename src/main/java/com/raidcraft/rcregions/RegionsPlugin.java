@@ -48,7 +48,7 @@ public class RegionsPlugin extends BasePlugin {
         registerEvents(new RCBlockListener(this));
         registerEvents(new RCPlayerListener(this));
 
-        registerCommands(RegionCommand.class, getName());
+        registerCommands(RegionCommand.class);
         Bukkit.getScheduler().runTaskTimer(this, new PlayerTracker(this), -1, 20);
         restrictionManager = new RestrictionManager(this);
 
