@@ -70,7 +70,7 @@ public class WorldGuardManager {
 
         Map<String, ProtectedRegion> regionMap = new HashMap<String, ProtectedRegion>();
         com.sk89q.worldguard.protection.managers.RegionManager regionManager
-                = getWorldGuard().getRegionContainer().get(player.getWorld());
+                = getWorldGuard().getRegionManager(player.getWorld());
         Map<String, ProtectedRegion> regions = regionManager.getRegions();
         int count = regionManager.getRegionCountOfPlayer(wrapPlayer(player));
         int i = 0;
