@@ -3,8 +3,7 @@ package com.raidcraft.rcregions;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
-import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import org.bukkit.Bukkit;
@@ -19,7 +18,6 @@ import java.util.Set;
 
 /**
  * 17.12.11 - 11:30
- *
  * @author Silthus
  */
 public class WorldGuardManager {
@@ -71,7 +69,8 @@ public class WorldGuardManager {
     public static Map<String, ProtectedRegion> getPlayerRegions(Player player) {
 
         Map<String, ProtectedRegion> regionMap = new HashMap<String, ProtectedRegion>();
-        RegionManager regionManager = getWorldGuard().getRegionManager(player.getWorld());
+        com.sk89q.worldguard.protection.managers.RegionManager regionManager
+                = getWorldGuard().getRegionManager(player.getWorld());
         Map<String, ProtectedRegion> regions = regionManager.getRegions();
         int count = regionManager.getRegionCountOfPlayer(wrapPlayer(player));
         int i = 0;
@@ -127,7 +126,7 @@ public class WorldGuardManager {
         for (World world : Bukkit.getServer().getWorlds()) {
             try {
                 getWorldGuard().getRegionManager(world).save();
-            } catch (ProtectionDatabaseException e) {
+            } catch (StorageException e) {
                 RaidCraft.LOGGER.warning(e.getMessage());
             }
         }

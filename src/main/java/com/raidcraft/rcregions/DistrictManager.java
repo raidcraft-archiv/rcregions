@@ -55,7 +55,7 @@ public class DistrictManager implements Component {
                     e.printStackTrace();
                 }
             }
-            plugin.getLogger().info("Loaded district: " + key);
+            plugin.info("Loaded district: " + key);
         }
     }
 
