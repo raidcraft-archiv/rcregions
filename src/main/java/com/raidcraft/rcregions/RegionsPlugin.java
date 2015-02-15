@@ -11,9 +11,7 @@ import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
 import com.raidcraft.rcregions.tables.TRestrictRegion;
 import de.raidcraft.api.BasePlugin;
-import de.raidcraft.api.action.action.ActionException;
-import de.raidcraft.api.action.action.ActionFactory;
-import de.raidcraft.api.action.trigger.TriggerManager;
+import de.raidcraft.api.action.ActionAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
@@ -85,17 +83,10 @@ public class RegionsPlugin extends BasePlugin {
 
     public void setupActionApi() {
 
-        try {
-            ActionFactory.getInstance().registerAction(
-                    this, "restrict-to-region", new CA_RestrictPlayerToRegion(this));
-            ActionFactory.getInstance().registerAction(
-                    this, "unrestrict-to-region", new CA_UnrestrictPlayerFromRegion(this));
-
-        } catch (ActionException e) {
-            e.printStackTrace();
-        }
-
-        TriggerManager.getInstance().registerTrigger(this, new RegionTrigger());
+        ActionAPI.register(this)
+                .action("restrict-to-region", new CA_RestrictPlayerToRegion(this))
+                .action("unrestrict-to-region", new CA_UnrestrictPlayerFromRegion(this))
+                .trigger(new RegionTrigger());
     }
 
     @Override
