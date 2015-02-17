@@ -79,13 +79,12 @@ public class RestrictionManager implements Listener {
                 player.getLocation().getBlockY(),
                 player.getLocation().getBlockZ())) {
             throw new RegionException("Spieler (" + player.getName()
-                    + ") steht nicht in Region (" + region + ") auf die er beschränkt wird");
+                    + ") steht nicht in Region (" + region + ") auf die er beschränkt wird!");
         }
 
         Map<ProtectedRegion, TRestrictRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
         if (alreadyRestricted != null && alreadyRestricted.containsKey(wgRegion)) {
-            throw new RegionException("Spieler (" + player.getName()
-                    + ") ist bereits auf die Region (" + region + ") beschränkt");
+            return;
         }
         // save all
         TRestrictRegion restrictedRegion = new TRestrictRegion();
@@ -116,8 +115,7 @@ public class RestrictionManager implements Listener {
 
         Map<ProtectedRegion, TRestrictRegion> alreadyRestricted = restrictedTo.get(player.getUniqueId());
         if (alreadyRestricted == null || !alreadyRestricted.containsKey(wgRegion)) {
-            throw new RegionException("Spieler (" + player.getName()
-                    + ") steht nicht auf Region (" + region + ") beschränkt");
+            return;
         }
         // delete db entry
         TRestrictRegion restrictedRegion = alreadyRestricted.get(wgRegion);

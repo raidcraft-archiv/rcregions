@@ -1,7 +1,7 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.api.configactions.CA_RestrictPlayerToRegion;
-import com.raidcraft.rcregions.api.configactions.CA_UnrestrictPlayerFromRegion;
+import com.raidcraft.rcregions.api.configactions.RestrictPlayerToRegionAction;
+import com.raidcraft.rcregions.api.configactions.UnrestrictPlayerFromRegionAction;
 import com.raidcraft.rcregions.api.trigger.RegionTrigger;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
@@ -84,8 +84,8 @@ public class RegionsPlugin extends BasePlugin {
     public void setupActionApi() {
 
         ActionAPI.register(this)
-                .action("restrict-to-region", new CA_RestrictPlayerToRegion(this))
-                .action("unrestrict-to-region", new CA_UnrestrictPlayerFromRegion(this))
+                .action("restrict-to-region", new RestrictPlayerToRegionAction(this))
+                .action("unrestrict-to-region", new UnrestrictPlayerFromRegionAction(this))
                 .trigger(new RegionTrigger());
     }
 
