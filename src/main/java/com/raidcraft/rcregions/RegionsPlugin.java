@@ -1,10 +1,13 @@
 package com.raidcraft.rcregions;
 
+import com.raidcraft.rcregions.api.Region;
 import com.raidcraft.rcregions.api.configactions.RestrictPlayerToRegionAction;
 import com.raidcraft.rcregions.api.configactions.UnrestrictPlayerFromRegionAction;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
+import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
+import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
@@ -14,6 +17,8 @@ import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.action.ActionAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +91,30 @@ public class RegionsPlugin extends BasePlugin {
         ActionAPI.register(this)
                 .action("restrict-to-region", new RestrictPlayerToRegionAction(this))
                 .action("unrestrict-to-region", new UnrestrictPlayerFromRegionAction(this))
+                .action("region.buy", (Player player, ConfigurationSection config) -> {
+                    try {
+                        Region region = getRegionManager().getRegion(config.getString("region"));
+                        getRegionManager().buyRegion(player, region);
+                    } catch (UnknownRegionException | UnknownDistrictException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .action("region.claim", (Player player, ConfigurationSection config) -> {
+                    try {
+                        Region region = getRegionManager().getRegion(config.getString("region"));
+                        region.claim(player);
+                    } catch (UnknownRegionException | UnknownDistrictException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .action("region.drop", (Player player, ConfigurationSection config) -> {
+                    try {
+                        Region region = getRegionManager().getRegion(config.getString("region"));
+                        getRegionManager().dropRegion(player, region);
+                    } catch (UnknownRegionException | UnknownDistrictException e) {
+                        e.printStackTrace();
+                    }
+                })
                 .trigger(new RegionTrigger());
     }
 
