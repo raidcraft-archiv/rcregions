@@ -164,7 +164,7 @@ public class RegionManager implements Component {
 
     public void dropRegion(Player player, Region region) {
 
-        region.drop();
+        region.drop(player);
         // lets check for command we need to execute
         player.sendMessage(ChatColor.RED + "Du hast das Grundstück "
                 + ChatColor.AQUA + region.getName() + ChatColor.RED + " erfolgreich freigegeben.");
