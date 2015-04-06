@@ -17,12 +17,14 @@ public class RCBuyRegionEvent extends Event implements Cancellable {
 
     private final Player player;
     private final Region region;
+    private double price;
     private boolean cancelled;
 
-    public RCBuyRegionEvent(Player player, Region region) {
+    public RCBuyRegionEvent(Player player, Region region, double price) {
 
         this.player = player;
         this.region = region;
+        this.price = price;
     }
 
     // Bukkit stuff

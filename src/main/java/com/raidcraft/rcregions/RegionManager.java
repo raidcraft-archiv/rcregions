@@ -2,6 +2,7 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.District;
 import com.raidcraft.rcregions.api.Region;
+import com.raidcraft.rcregions.api.events.RCBuyRegionEvent;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.exceptions.UnknownRegionException;
 import com.raidcraft.rcregions.tables.TRegion;
@@ -135,11 +136,14 @@ public class RegionManager implements Component {
     public void buyRegion(Player player, Region region) {
 
         if (region.getPrice() > 0) {
+            RCBuyRegionEvent event = new RCBuyRegionEvent(player, region, region.getPrice());
+            RaidCraft.callEvent(event);
+            if (event.isCancelled()) return;
             // lets substract the cost
-            RaidCraft.getEconomy().substract(player.getUniqueId(), region.getPrice(), BalanceSource.BUY_REGION, region.getName());
+            RaidCraft.getEconomy().substract(player.getUniqueId(), event.getPrice(), BalanceSource.BUY_REGION, region.getName());
             if (region.getOwnerId() != null) {
                 // give the old owner the money substracted the taxes
-                double amount = region.getPrice() - region.getPrice() * plugin.getMainConfig().taxes;
+                double amount = event.getPrice() - event.getPrice() * plugin.getMainConfig().taxes;
                 RaidCraft.getEconomy().add(region.getOwnerId(),
                         amount,
                         BalanceSource.SELL_REGION, region.getName()

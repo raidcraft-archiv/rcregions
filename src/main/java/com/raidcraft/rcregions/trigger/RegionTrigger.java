@@ -1,5 +1,6 @@
 package com.raidcraft.rcregions.trigger;
 
+import com.raidcraft.rcregions.api.events.RCBuyRegionEvent;
 import com.raidcraft.rcregions.api.events.RCClaimRegionEvent;
 import com.raidcraft.rcregions.api.events.RCDropRegionEvent;
 import com.raidcraft.rcregions.api.events.RcPlayerEntryRegionEvent;
@@ -68,6 +69,24 @@ public class RegionTrigger extends Trigger implements Listener {
 
         if (!event.getPlayer().isOnline()) return;
         informListeners("drop", event.getPlayer().getPlayer(), config -> {
+            if (config.isSet("region")) {
+                return event.getRegion().getName().equalsIgnoreCase(config.getString("region"));
+            }
+            if (config.isSet("district")) {
+                return event.getRegion().getDistrict().getName().equalsIgnoreCase(config.getString("district"));
+            }
+            return true;
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onRegionBuy(RCBuyRegionEvent event) {
+
+        if (!event.getPlayer().isOnline()) return;
+        informListeners("drop", event.getPlayer().getPlayer(), config -> {
+            if (config.isSet("min-price")) {
+                if (event.getPrice() < config.getDouble("min-price")) return false;
+            }
             if (config.isSet("region")) {
                 return event.getRegion().getName().equalsIgnoreCase(config.getString("region"));
             }
