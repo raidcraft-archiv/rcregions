@@ -1,4 +1,4 @@
-package com.raidcraft.rcregions.api.raidcraftevents;
+package com.raidcraft.rcregions.api.events;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;

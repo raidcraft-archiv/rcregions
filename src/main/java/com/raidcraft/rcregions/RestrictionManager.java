@@ -1,6 +1,6 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerExitRegionEvent;
+import com.raidcraft.rcregions.api.events.RcPlayerExitRegionEvent;
 import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.tables.RestrictRegionType;
 import com.raidcraft.rcregions.tables.TRestrictRegion;

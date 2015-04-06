@@ -1,7 +1,7 @@
 package com.raidcraft.rcregions;
 
-import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerEntryRegionEvent;
-import com.raidcraft.rcregions.api.raidcraftevents.RcPlayerExitRegionEvent;
+import com.raidcraft.rcregions.api.events.RcPlayerEntryRegionEvent;
+import com.raidcraft.rcregions.api.events.RcPlayerExitRegionEvent;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;

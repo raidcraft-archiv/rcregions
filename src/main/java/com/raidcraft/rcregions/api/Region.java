@@ -32,7 +32,7 @@ public interface Region {
 
     public void claim(OfflinePlayer player);
 
-    public void drop();
+    public void drop(OfflinePlayer player);
 
     public void save();
 

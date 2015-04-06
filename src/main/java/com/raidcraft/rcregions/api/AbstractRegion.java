@@ -2,6 +2,8 @@ package com.raidcraft.rcregions.api;
 
 import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.WorldGuardManager;
+import com.raidcraft.rcregions.api.events.RCClaimRegionEvent;
+import com.raidcraft.rcregions.api.events.RCDropRegionEvent;
 import com.raidcraft.rcregions.tables.TRegion;
 import com.raidcraft.rcregions.util.RegionUtil;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -58,6 +60,9 @@ public abstract class AbstractRegion implements Region {
     @Override
     public void claim(OfflinePlayer player) {
 
+        RCClaimRegionEvent event = new RCClaimRegionEvent(player, this);
+        RaidCraft.callEvent(event);
+        if (event.isCancelled()) return;
         // first lets clear out all owners and members
         region.setMembers(new DefaultDomain());
         // and set the new owner in a new default domain
@@ -72,8 +77,11 @@ public abstract class AbstractRegion implements Region {
     }
 
     @Override
-    public void drop() {
+    public void drop(OfflinePlayer player) {
 
+        RCDropRegionEvent event = new RCDropRegionEvent(player, this);
+        RaidCraft.callEvent(event);
+        if (event.isCancelled()) return;
         region.setMembers(new DefaultDomain());
         region.setOwners(new DefaultDomain());
         owner = null;

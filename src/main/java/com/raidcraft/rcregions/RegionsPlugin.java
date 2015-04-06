@@ -2,7 +2,6 @@ package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.configactions.RestrictPlayerToRegionAction;
 import com.raidcraft.rcregions.api.configactions.UnrestrictPlayerFromRegionAction;
-import com.raidcraft.rcregions.api.trigger.RegionTrigger;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
@@ -10,6 +9,7 @@ import com.raidcraft.rcregions.listeners.RCBlockListener;
 import com.raidcraft.rcregions.listeners.RCPlayerListener;
 import com.raidcraft.rcregions.tables.TRegion;
 import com.raidcraft.rcregions.tables.TRestrictRegion;
+import com.raidcraft.rcregions.trigger.RegionTrigger;
 import de.raidcraft.api.BasePlugin;
 import de.raidcraft.api.action.ActionAPI;
 import lombok.Getter;
