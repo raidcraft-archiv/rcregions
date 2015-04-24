@@ -369,8 +369,9 @@ public class RegionCommand {
         player.sendMessage(ChatColor.YELLOW + "|---------- " + ChatColor.GREEN + "Raid-Craft.de" + ChatColor.YELLOW + " -----------|");
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Region: " + ChatColor.YELLOW + region.toString() + " | "
                 + ChatColor.GREEN + "Distrikt: " + ChatColor.YELLOW + district.toString());
-
-        player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Besitzer: " + ChatColor.YELLOW + UUIDUtil.getNameFromUUID(region.getOwnerId()));
+        if (region.hasOwner()) {
+            player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Besitzer: " + ChatColor.YELLOW + UUIDUtil.getNameFromUUID(region.getOwnerId()));
+        }
         player.sendMessage(ChatColor.YELLOW + "| " + ChatColor.GREEN + "Preis: " + RaidCraft.getEconomy().getFormattedAmount(region.getPrice()));
     }
 

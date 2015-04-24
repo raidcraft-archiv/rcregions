@@ -116,12 +116,9 @@ public class RegionManager implements Component {
         List<Region> regionList = new ArrayList<>();
         ApplicableRegionSet regions = WorldGuardManager.getLocalRegions(location);
         for (ProtectedRegion region : regions) {
-            if (this.regions.containsKey(region.getId())) {
-                try {
-                    regionList.add(getRegion(region.getId()));
-                } catch (UnknownRegionException | UnknownDistrictException e) {
-                    plugin.getLogger().warning(e.getMessage());
-                }
+            try {
+                regionList.add(getRegion(region.getId()));
+            } catch (UnknownDistrictException ignored) {
             }
         }
         if (regionList.isEmpty()) {

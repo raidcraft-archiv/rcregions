@@ -7,12 +7,14 @@ import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
+import de.raidcraft.util.CaseInsensitiveMap;
 import de.raidcraft.util.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Silthus
@@ -20,7 +22,8 @@ import java.util.Map;
 public class DistrictManager implements Component {
 
     private final RegionsPlugin plugin;
-    private final Map<String, District> districts = new HashMap<>();
+    private final Map<String, District> districts = new CaseInsensitiveMap<>();
+    private final Pattern DISTRICT_PATTERN = Pattern.compile("^([a-zA-Z]+)(\\d+)$");
 
     protected DistrictManager(RegionsPlugin plugin) {
 
@@ -70,10 +73,11 @@ public class DistrictManager implements Component {
     public District parseDistrict(String regionName) throws UnknownDistrictException {
 
         regionName = StringUtils.formatName(regionName);
-        // lets go thru all districts and check if the region name has a registered identifier
-        for (District district : districts.values()) {
-            if (regionName.startsWith(district.getIdentifier())) {
-                return district;
+        Matcher matcher = DISTRICT_PATTERN.matcher(regionName);
+        if (matcher.matches()) {
+            String districtKey = matcher.group(1);
+            if (districts.containsKey(districtKey)) {
+                return districts.get(districtKey);
             }
         }
         throw new UnknownDistrictException("Es gibt keinen Distrikt dem die Region " + regionName + " zugeordnet werden kann.");
