@@ -76,8 +76,10 @@ public class DistrictManager implements Component {
         Matcher matcher = DISTRICT_PATTERN.matcher(regionName);
         if (matcher.matches()) {
             String districtKey = matcher.group(1);
-            if (districts.containsKey(districtKey)) {
-                return districts.get(districtKey);
+            for (District district : districts.values()) {
+                if (district.getIdentifier().equalsIgnoreCase(districtKey)) {
+                    return district;
+                }
             }
         }
         throw new UnknownDistrictException("Es gibt keinen Distrikt dem die Region " + regionName + " zugeordnet werden kann.");
