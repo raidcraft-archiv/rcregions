@@ -48,12 +48,10 @@ public class PlayerTracker implements Runnable, Listener {
 
     @Override
     public void run() {
-        playerCache = java.util.Arrays.asList(Bukkit.getOnlinePlayers());
-        for (Player player : playerCache) {
-            if (trackPlayer(player)) {
-                lastLocation.put(player.getUniqueId(), player.getLocation());
-            }
-        }
+
+        playerCache = Bukkit.getOnlinePlayers();
+        playerCache.stream().filter(this::trackPlayer)
+                .forEach(player -> lastLocation.put(player.getUniqueId(), player.getLocation()));
     }
 
     public boolean trackPlayer(Player player) {
