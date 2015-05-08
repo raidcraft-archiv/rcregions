@@ -1,4 +1,4 @@
-package com.raidcraft.rcregions.api.configactions;
+package com.raidcraft.rcregions.actions;
 
 import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.RestrictionManager;

@@ -1,8 +1,8 @@
 package com.raidcraft.rcregions;
 
 import com.raidcraft.rcregions.api.Region;
-import com.raidcraft.rcregions.api.configactions.RestrictPlayerToRegionAction;
-import com.raidcraft.rcregions.api.configactions.UnrestrictPlayerFromRegionAction;
+import com.raidcraft.rcregions.actions.RestrictPlayerToRegionAction;
+import com.raidcraft.rcregions.actions.UnrestrictPlayerFromRegionAction;
 import com.raidcraft.rcregions.commands.RegionCommand;
 import com.raidcraft.rcregions.config.DistrictConfig;
 import com.raidcraft.rcregions.config.MainConfig;
@@ -43,7 +43,7 @@ public class RegionsPlugin extends BasePlugin {
 
         // load all configs
         mainConfig = configure(new MainConfig(this), true);
-        districtConfig = configure(new DistrictConfig(this), false);
+        districtConfig = configure(new DistrictConfig(this));
         // the region manager needs to init first because the district manager needs it
         regionManager = new RegionManager(this);
         districtManager = new DistrictManager(this);

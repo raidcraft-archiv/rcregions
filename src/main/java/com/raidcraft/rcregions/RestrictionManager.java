@@ -5,8 +5,10 @@ import com.raidcraft.rcregions.exceptions.RegionException;
 import com.raidcraft.rcregions.tables.RestrictRegionType;
 import com.raidcraft.rcregions.tables.TRestrictRegion;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.raidcraft.api.flight.flight.RCStartFlightEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -24,13 +26,13 @@ import java.util.UUID;
 public class RestrictionManager implements Listener {
 
     private Map<UUID, Map<ProtectedRegion, TRestrictRegion>> restrictedTo = new HashMap<>();
-    private WorldGuardPlugin wg;
+    private WorldGuardPlugin worldGuard;
     private RegionsPlugin plugin;
 
     public RestrictionManager(RegionsPlugin plugin) {
 
         this.plugin = plugin;
-        wg = WorldGuardManager.getWorldGuard();
+        worldGuard = WorldGuardManager.getWorldGuard();
         load();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -43,7 +45,7 @@ public class RestrictionManager implements Listener {
             // get world regionmanager
             RegionManager regionManager = worlds.get(region.getWorldName());
             if (regionManager == null) {
-                regionManager = wg.getRegionManager(Bukkit.getWorld(region.getWorldName()));
+                regionManager = worldGuard.getRegionManager(Bukkit.getWorld(region.getWorldName()));
                 worlds.put(region.getWorldName(), regionManager);
             }
             // load region
@@ -64,12 +66,12 @@ public class RestrictionManager implements Listener {
         }
     }
 
-    public void restrictPlayerToRegion(Player player, String region, String msg) throws RegionException {
+    public void restrictPlayerToRegion(Player player, String region, String message) throws RegionException {
 
         if (region == null) {
             throw new RegionException("region is null (restrictPlayerToRegion)");
         }
-        ProtectedRegion wgRegion = wg.getRegionManager(player.getWorld()).getRegion(region);
+        ProtectedRegion wgRegion = worldGuard.getRegionManager(player.getWorld()).getRegion(region);
         // exists region?
         if (wgRegion == null) {
             throw new RegionException("Region (" + region + ") existiert nicht (restrictPlayerToRegion)");
@@ -89,7 +91,7 @@ public class RestrictionManager implements Listener {
         // save all
         TRestrictRegion restrictedRegion = new TRestrictRegion();
         restrictedRegion.setRegion(wgRegion);
-        restrictedRegion.setMsg(msg);
+        restrictedRegion.setMsg(message);
         restrictedRegion.setPlayer(player.getUniqueId());
         restrictedRegion.setRegionName(wgRegion.getId());
         restrictedRegion.setWorldName(player.getWorld().getName());
@@ -108,7 +110,7 @@ public class RestrictionManager implements Listener {
         if (region == null) {
             throw new RegionException("region is null (removePlayerToRegionRestriction)");
         }
-        ProtectedRegion wgRegion = wg.getRegionManager(player.getWorld()).getRegion(region);
+        ProtectedRegion wgRegion = worldGuard.getRegionManager(player.getWorld()).getRegion(region);
         if (wgRegion == null) {
             throw new RegionException("Region (" + region + ") existiert nicht (removePlayerToRegionRestriction)");
         }
@@ -150,5 +152,28 @@ public class RestrictionManager implements Listener {
         event.getPlayer().sendMessage(msg);
         event.getPlayer().teleport(loc);
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFlight(RCStartFlightEvent event) {
+
+        if (!restrictedTo.containsKey(event.getPlayer().getUniqueId())) return;
+
+        // if player is not restricted to region
+        Map<ProtectedRegion, TRestrictRegion> restrictRegionMap = restrictedTo.get(event.getPlayer().getUniqueId());
+        ApplicableRegionSet regions = worldGuard
+                .getRegionManager(event.getFlight().getStartLocation().getWorld())
+                .getApplicableRegions(event.getFlight().getStartLocation());
+        Location endLocation = event.getFlight().getEndLocation();
+        for (ProtectedRegion region : regions) {
+            if (restrictRegionMap.containsKey(region)) {
+                if (!region.contains(endLocation.getBlockX(), endLocation.getBlockY(), endLocation.getBlockZ())) {
+                    // player will fly outside the region
+                    event.setCancelled(true);
+                    event.setMessage(restrictRegionMap.get(region).getMsg());
+                    return;
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.raidcraft.rcregions.api.configactions;
+package com.raidcraft.rcregions.actions;
 
 import com.raidcraft.rcregions.RegionsPlugin;
 import com.raidcraft.rcregions.RestrictionManager;
@@ -25,8 +25,8 @@ public class RestrictPlayerToRegionAction implements Action<Player> {
 
         try {
             String region = config.getString("region", null);
-            String msg = config.getString("msg", null);
-            restrictionManager.restrictPlayerToRegion(player, region, msg);
+            String message = config.getString("message", null);
+            restrictionManager.restrictPlayerToRegion(player, region, message);
         } catch (RegionException e) {
             e.printStackTrace();
             player.sendMessage(ChatColor.RED + e.getMessage());
