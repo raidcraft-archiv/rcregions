@@ -10,31 +10,31 @@ import java.util.UUID;
  */
 public interface Region {
 
-    public int getId();
+    int getId();
 
-    public String getName();
+    String getName();
 
-    public District getDistrict();
+    District getDistrict();
 
-    public boolean hasOwner();
+    boolean hasOwner();
 
-    public UUID getOwnerId();
+    UUID getOwnerId();
 
-    public Set<String> getMembers();
+    Set<String> getMembers();
 
-    public void setBuyable(boolean buyable);
+    void setBuyable(boolean buyable);
 
-    public boolean isBuyable();
+    boolean isBuyable();
 
-    public double getPrice();
+    double getPrice();
 
-    public void setPrice(double price);
+    void setPrice(double price);
 
-    public void claim(OfflinePlayer player);
+    void claim(OfflinePlayer player);
 
-    public void drop(OfflinePlayer player);
+    void drop(OfflinePlayer player);
 
-    public void save();
+    void save();
 
-    public void updateOwner();
+    void updateOwner();
 }

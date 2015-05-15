@@ -8,21 +8,21 @@ import java.util.Set;
  */
 public interface District {
 
-    public String getName();
+    String getName();
 
-    public String getFriendlyName();
+    String getFriendlyName();
 
-    public String getIdentifier();
+    String getIdentifier();
 
-    public String getDescription();
+    String getDescription();
 
-    public Set<String> getApplicableWorlds();
+    Set<String> getApplicableWorlds();
 
-    public List<Region> getRegions();
+    List<Region> getRegions();
 
-    public double getPricePerBlock();
+    double getPricePerBlock();
 
-    public boolean isDefaultBuyable();
+    boolean isDefaultBuyable();
 
-    public int getMaxRegionCount();
+    int getMaxRegionCount();
 }
