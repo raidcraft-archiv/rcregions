@@ -10,6 +10,7 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.util.UUIDUtil;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -150,6 +151,12 @@ public abstract class AbstractRegion implements Region {
 
         this.price = price;
         save();
+    }
+
+    @Override
+    public boolean isInsideRegion(Location location) {
+
+        return region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override

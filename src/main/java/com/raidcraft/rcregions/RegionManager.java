@@ -12,6 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
 import de.raidcraft.api.economy.BalanceSource;
+import de.raidcraft.util.CaseInsensitiveMap;
 import de.raidcraft.util.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,7 +21,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +31,7 @@ import java.util.UUID;
 public class RegionManager implements Component {
 
     private final RegionsPlugin plugin;
-    private final Map<String, Region> regions = new HashMap<>();
+    private final Map<String, Region> regions = new CaseInsensitiveMap<>();
 
     protected RegionManager(RegionsPlugin plugin) {
 
@@ -62,9 +62,8 @@ public class RegionManager implements Component {
 
     public Region createRegion(TRegion region) throws UnknownDistrictException {
 
-        String name = StringUtils.formatName(region.getName().toLowerCase());
-        if (regions.containsKey(name)) {
-            return regions.get(name);
+        if (regions.containsKey(region.getName())) {
+            return regions.get(region.getName());
         }
 
         // check if worldguard region still exists
@@ -76,7 +75,7 @@ public class RegionManager implements Component {
         // create a new region in the cache
         SimpleRegion simpleRegion = new SimpleRegion(region);
         simpleRegion.updateOwner();
-        regions.put(name, simpleRegion);
+        regions.put(simpleRegion.getName(), simpleRegion);
         return simpleRegion;
     }
 

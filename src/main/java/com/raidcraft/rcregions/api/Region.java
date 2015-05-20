@@ -1,5 +1,6 @@
 package com.raidcraft.rcregions.api;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
@@ -21,6 +22,8 @@ public interface Region {
     UUID getOwnerId();
 
     Set<String> getMembers();
+
+    boolean isInsideRegion(Location location);
 
     void setBuyable(boolean buyable);
 

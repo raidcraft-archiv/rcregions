@@ -103,6 +103,11 @@ public class RCPlayerListener implements Listener {
             String regionName = RegionUtil.parseRegionName(sign);
             Region region = plugin.getRegionManager().getRegion(regionName);
             RegionUtil.updateSign(sign, region);
+
+            if (!region.isInsideRegion(sign.getLocation())) {
+                player.sendMessage(ChatColor.RED + "Das Schild befindet sich nicht in der richtigen Region!");
+                return;
+            }
             // lets check if the player already owns the region
             // if yes toggle the buyable status
             if (region.getOwnerId() != null && region.getOwnerId().equals(player.getUniqueId())) {
