@@ -48,16 +48,15 @@ public class RegionManager implements Component {
     private void loadRegions() {
 
         // lets get all regions from the database first
-        plugin.getDatabase().find(TRegion.class).findList().stream()
-                .filter(tRegion -> Bukkit.getWorld(tRegion.getWorld()) != null)
-                .filter(entry -> !regions.containsKey(StringUtils.formatName(entry.getName())))
-                .forEach(entry -> {
-                    try {
-                        createRegion(entry);
-                    } catch (UnknownDistrictException e) {
-                        plugin.getLogger().warning(e.getMessage());
-                    }
-                });
+        for (TRegion entry : plugin.getDatabase().find(TRegion.class).findList()) {
+            if (!regions.containsKey(StringUtils.formatName(entry.getName()))) {
+                try {
+                    createRegion(entry);
+                } catch (UnknownDistrictException e) {
+                    plugin.getLogger().warning(e.getMessage());
+                }
+            }
+        }
         WorldGuardManager.save();
     }
 
