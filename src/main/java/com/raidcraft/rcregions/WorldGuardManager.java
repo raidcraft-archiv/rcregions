@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -59,6 +60,17 @@ public class WorldGuardManager {
             }
         }
         return region;
+    }
+
+    public static Optional<World> getRegionWorld(String id) {
+
+        for (World world : Bukkit.getServer().getWorlds()) {
+            ProtectedRegion region = getWorldGuard().getRegionManager(world).getRegion(id);
+            if (region != null) {
+                return Optional.of(world);
+            }
+        }
+        return Optional.empty();
     }
 
     private static LocalPlayer wrapPlayer(Player player) {

@@ -17,13 +17,16 @@ import de.raidcraft.util.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Silthus
@@ -48,15 +51,21 @@ public class RegionManager implements Component {
     private void loadRegions() {
 
         // lets get all regions from the database first
-        for (TRegion entry : plugin.getDatabase().find(TRegion.class).findList()) {
-            if (!regions.containsKey(StringUtils.formatName(entry.getName()))) {
-                try {
-                    createRegion(entry);
-                } catch (UnknownDistrictException e) {
-                    plugin.getLogger().warning(e.getMessage());
+        plugin.getDatabase().find(TRegion.class).findList().stream()
+                .filter(entry -> !regions.containsKey(StringUtils.formatName(entry.getName()))).forEach(entry -> {
+            try {
+                if (entry.getWorld() == null) {
+                    Optional<World> world = WorldGuardManager.getRegionWorld(entry.getName());
+                    if (world.isPresent()) {
+                        entry.setWorld(world.get().getName());
+                        plugin.getDatabase().update(entry);
+                    }
                 }
+                createRegion(entry);
+            } catch (UnknownDistrictException e) {
+                plugin.getLogger().warning(e.getMessage());
             }
-        }
+        });
         WorldGuardManager.save();
     }
 
@@ -64,6 +73,10 @@ public class RegionManager implements Component {
 
         if (regions.containsKey(region.getName())) {
             return regions.get(region.getName());
+        }
+
+        if (Bukkit.getWorld(region.getWorld()) == null) {
+            return null;
         }
 
         // check if worldguard region still exists
@@ -200,7 +213,7 @@ public class RegionManager implements Component {
                 plugin.getLogger().warning(e.getMessage());
             }
         }
-        return regions;
+        return regions.stream().filter(region -> region != null).collect(Collectors.toList());
     }
 
     public List<Region> getPlayerRegions(UUID player, District district) {

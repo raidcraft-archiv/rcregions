@@ -9,10 +9,12 @@ import de.raidcraft.RaidCraft;
 import de.raidcraft.api.Component;
 import de.raidcraft.util.CaseInsensitiveMap;
 import de.raidcraft.util.StringUtils;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,13 +48,20 @@ public class DistrictManager implements Component {
             SimpleDistrict district = new SimpleDistrict(key, section);
             districts.put(key, district);
             // load all of the regions defined in the database
-            List<TRegion> regions = RaidCraft.getDatabase(RegionsPlugin.class).find(TRegion.class)
+            List<TRegion> regions = plugin.getDatabase().find(TRegion.class)
                     .where().eq("district", district.getName()).findList();
             RegionManager regionManager = RaidCraft.getComponent(RegionManager.class);
             for (TRegion tRegion : regions) {
                 try {
+                    if (tRegion.getWorld() == null) {
+                        Optional<World> world = WorldGuardManager.getRegionWorld(tRegion.getName());
+                        if (world.isPresent()) {
+                            tRegion.setWorld(world.get().getName());
+                            plugin.getDatabase().update(tRegion);
+                        }
+                    }
                     Region region = regionManager.createRegion(tRegion);
-                    if(region != null) district.addRegion(region);
+                    if (region != null) district.addRegion(region);
                 } catch (UnknownDistrictException e) {
                     // this should never ever occur
                     e.printStackTrace();

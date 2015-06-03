@@ -25,15 +25,17 @@ public abstract class AbstractRegion implements Region {
 
     private final int id;
     private final String name;
+    private final String world;
     private final District district;
     private final ProtectedRegion region;
     private UUID owner = null;
     private boolean buyable;
     private double price;
 
-    public AbstractRegion(int id, ProtectedRegion region, District district) {
+    public AbstractRegion(int id, String world, ProtectedRegion region, District district) {
 
         this.id = id;
+        this.world = world;
         this.name = region.getId();
         this.district = district;
         this.region = region;
@@ -101,6 +103,12 @@ public abstract class AbstractRegion implements Region {
     public String getName() {
 
         return name;
+    }
+
+    @Override
+    public String getWorld() {
+
+        return world;
     }
 
     @Override

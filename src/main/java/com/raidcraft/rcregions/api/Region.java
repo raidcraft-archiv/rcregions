@@ -17,6 +17,8 @@ public interface Region {
 
     District getDistrict();
 
+    String getWorld();
+
     boolean hasOwner();
 
     UUID getOwnerId();

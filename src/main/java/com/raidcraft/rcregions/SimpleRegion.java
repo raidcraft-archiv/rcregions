@@ -13,7 +13,7 @@ public class SimpleRegion extends AbstractRegion {
 
     protected SimpleRegion(TRegion region) throws UnknownDistrictException {
 
-        super(region.getId(),
+        super(region.getId(), region.getWorld(),
                 WorldGuardManager.getRegion(region.getName()),
                 RaidCraft.getComponent(DistrictManager.class).getDistrict(region.getDistrict())
         );
