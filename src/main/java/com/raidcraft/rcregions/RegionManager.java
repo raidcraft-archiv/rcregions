@@ -75,6 +75,17 @@ public class RegionManager implements Component {
             return regions.get(region.getName());
         }
 
+        if (region.getWorld() == null) {
+            Optional<World> world = WorldGuardManager.getRegionWorld(region.getName());
+            if (world.isPresent()) {
+                region.setWorld(world.get().getName());
+                plugin.getDatabase().update(region);
+            } else {
+                plugin.getLogger().warning("Unable to find world for " + region.getName());
+                return null;
+            }
+        }
+
         if (Bukkit.getWorld(region.getWorld()) == null) {
             return null;
         }
