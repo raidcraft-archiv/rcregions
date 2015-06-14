@@ -27,6 +27,7 @@ public class TRegion {
     @NotNull
     private String district;
     private String world;
+    private String owner;
     private UUID ownerId;
     private double price;
     private boolean buyable;

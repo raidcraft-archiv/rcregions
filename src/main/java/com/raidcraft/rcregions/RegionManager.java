@@ -14,6 +14,7 @@ import de.raidcraft.api.Component;
 import de.raidcraft.api.economy.BalanceSource;
 import de.raidcraft.util.CaseInsensitiveMap;
 import de.raidcraft.util.StringUtils;
+import de.raidcraft.util.UUIDUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -124,6 +125,7 @@ public class RegionManager implements Component {
                 plugin.getDatabase().save(tRegion);
                 Region region = createRegion(tRegion);
                 tRegion.setOwnerId(region.getOwnerId());
+                tRegion.setOwner(UUIDUtil.getNameFromUUID(region.getOwnerId()));
                 tRegion.setPrice(region.getPrice());
                 plugin.getDatabase().update(tRegion);
                 return region;

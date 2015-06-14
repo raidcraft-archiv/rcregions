@@ -5,6 +5,7 @@ import com.raidcraft.rcregions.api.AbstractRegion;
 import com.raidcraft.rcregions.exceptions.UnknownDistrictException;
 import com.raidcraft.rcregions.tables.TRegion;
 import de.raidcraft.RaidCraft;
+import de.raidcraft.util.UUIDUtil;
 
 /**
  * @author Silthus
@@ -25,6 +26,7 @@ public class SimpleRegion extends AbstractRegion {
         EbeanServer database = RaidCraft.getDatabase(RegionsPlugin.class);
         TRegion region = database.find(TRegion.class, getId());
         region.setOwnerId(getOwnerId());
+        region.setOwner(UUIDUtil.getNameFromUUID(getOwnerId()));
         region.setDistrict(getDistrict().getName());
         region.setPrice(getPrice());
         region.setBuyable(isBuyable());
