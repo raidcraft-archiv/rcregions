@@ -28,8 +28,7 @@
     </parent>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@raid-craft.de:22109/${project.artifactId}.git</developerConnection>
-        <tag>HEAD</tag>
+        <developerConnection>scm:git:ssh://git@git.raid-craft.de:2222/raid-craft-de/rcregions.git</developerConnection>
     </scm>
 
     <repositories>
