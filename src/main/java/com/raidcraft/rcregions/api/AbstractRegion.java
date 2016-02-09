@@ -70,7 +70,7 @@ public abstract class AbstractRegion implements Region {
         region.setMembers(new DefaultDomain());
         // and set the new owner in a new default domain
         DefaultDomain owners = new DefaultDomain();
-        owners.addPlayer(player.getName());
+        owners.addPlayer(UUIDUtil.getNameFromUUID(player.getUniqueId()));
         region.setOwners(owners);
         // update our reference
         owner = player.getUniqueId();

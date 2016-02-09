@@ -137,7 +137,7 @@ public class WorldGuardManager {
 
         for (World world : Bukkit.getServer().getWorlds()) {
             try {
-                getWorldGuard().getRegionManager(world).save();
+                getWorldGuard().getRegionManager(world).saveChanges();
             } catch (StorageException e) {
                 RaidCraft.LOGGER.warning(e.getMessage());
             }
